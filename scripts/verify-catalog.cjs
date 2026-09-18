@@ -1,0 +1,41 @@
+const { chromium } = require('C:/Users/INTEL/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const fs = require('fs');
+const path = require('path');
+(async () => {
+  const browser = await chromium.launch({headless:true});
+  const page = await browser.newPage({viewport:{width:1440,height:1000}, colorScheme:'light'});
+  const errors=[];
+  page.on('pageerror', e => errors.push(e.message));
+  fs.mkdirSync('qa',{recursive:true});
+  await page.goto('http://127.0.0.1:3000/', {waitUntil:'networkidle'});
+  const cards = await page.locator('#catalogo .card').count();
+  if(cards!==7) throw Error(`Expected seven products, got ${cards}`);
+  await page.locator('#catalogo').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'qa/catalog-desktop.png'});
+  const slugs=['lenovo-xt80','acuaticos-x7','erazer-xf21','haylou-rs4-plus','zeblaze-stratos-2-ultra','blackview-bv200','microwear-w-ai-3'];
+  for(const slug of slugs) {
+    const res=await page.goto(`http://127.0.0.1:3000/p/${slug}`,{waitUntil:'networkidle'});
+    if(res.status()!==200) throw Error(`${slug}: ${res.status()}`);
+    const main=page.locator('.stage .product-photo');
+    await main.evaluate(im => im.decode());
+    const before=await main.getAttribute('src');
+    await page.locator('.photo-thumb').nth(1).click();
+    await main.evaluate(im => im.decode());
+    if(before===await main.getAttribute('src')) throw Error(`Gallery did not change for ${slug}`);
+    await page.locator('.photo-thumb').first().click();
+    const data=await page.locator('script[type="application/ld+json"]').allTextContents();
+    const product=data.map(JSON.parse).find(x => x['@type']==='Product');
+    if(!product.image?.length || product.aggregateRating) throw Error(`Invalid product structured data ${slug}`);
+    if(slug!=='lenovo-xt80' && product.offers) throw Error(`Unexpected unknown-price offer ${slug}`);
+    if(slug==='blackview-bv200') await page.screenshot({path:'qa/bv200-desktop.png',fullPage:true});
+  }
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('http://127.0.0.1:3000/p/zeblaze-stratos-2-ultra',{waitUntil:'networkidle'});
+  await page.screenshot({path:'qa/product-mobile.png',fullPage:true});
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error('Mobile horizontal overflow');
+  const rejected=await page.request.post('http://127.0.0.1:3000/api/orders',{data:{zone:'lima',customer:{name:'QA',phone:'000',email:'qa@example.com'},items:[{id:'blackview-bv200',q:1}]}});
+  if(rejected.status()!==400) throw Error('Unknown price order was not rejected');
+  if(errors.length) throw Error(errors.join('\n'));
+  console.log('Verified seven product routes, images, gallery selection, structured data, mobile layout and unknown-price order rejection.');
+  await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

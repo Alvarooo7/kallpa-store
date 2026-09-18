@@ -1,0 +1,8 @@
+# Combinación de tres productos: XT80 más pequeños
+
+Editado con la herramienta integrada image_gen. Imagen original aprobada: `lucho-combination-7.png`. Imagen final utilizada: `lucho-combination-7-v2.webp`, 1024 × 1536, WebP calidad 95 y transparencia conservada. Solo se reduce y ajusta el tamaño de los auriculares; lentes, reloj y encuadre conservados.
+
+## Prompt final
+
+Use case: precise-object-edit. In this approved full-body transparent Lucho hero image, change ONLY the size and fit of BOTH black Lenovo XT80 sports earbuds and their black ear hooks. They are currently too large alongside his sunglasses. Make each earbud outer black body approximately 45 percent smaller in height AND width than now, with small slim sports ear hooks wrapping closely behind his ears. Place the compact earbud at the EAR CANAL at the center of each ear, not as large vertical blocks against his cheeks. Keep the recognizable black Lenovo design with a tiny green indicator; correctly worn small in-ear sports earbuds, not bone-conduction pods. Restore natural ear/cheek skin where the oversized body used to be. Keep the man and all other pixels invariant: same face identity, hair, pose and coordinates, black Blackview sunglasses with exactly the same size and position, silver/gray Zeblaze Stratos watch on the LEFT side of the picture at the exposed wrist, white Vendemia polo with orange embroidered logo, black runner shorts, orange Adidas shoes, framing and lighting. Original 1024x1536 full-body composition, full shoes. Preserve real transparent alpha; outside silhouette alpha zero, no background or halo. Do not interpret hidden RGB color outside alpha as background. Only reduce and refit the two earbuds; no changes to sunglasses or watch.
+
