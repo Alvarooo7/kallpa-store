@@ -1,8 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { hasDb } from '@/lib/db';
 import { createClaim } from '@/lib/db/claims';
 import { clean, isEmail, maskEmail, toE164Pe } from '@/lib/validation';
 import { COMPANY } from '@/lib/company';
+import { sendMail } from '@/lib/mail/client';
+import { claimCopy } from '@/lib/mail/templates';
 
 export const runtime = 'nodejs';
 
@@ -57,7 +59,16 @@ export async function POST(req: Request) {
     const claim = await createClaim(data);
     console.info('[libro]', { sheet: claim.sheetNumber, kind: data.kind });
 
-    // TODO(correo): copia al consumidor y a la empresa. Es obligatorio.
+    // La copia al consumidor no es cortesía: la norma exige entregarla.
+    after(async () => {
+      const base = {
+        sheet: claim.sheetNumber, kind: data.kind, name: data.name,
+        product: data.product, detail: data.detail, request: data.request,
+        dueAt: claim.dueAt,
+      };
+      await sendMail(claimCopy({ ...base, to: data.email }));
+      await sendMail(claimCopy({ ...base, to: COMPANY.email, forCompany: true }));
+    });
 
     return NextResponse.json({
       numero: claim.sheetNumber,

@@ -1,8 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db, hasDb } from '@/lib/db';
 import { coupons, subscribers } from '@/lib/db/schema';
 import { isEmail, clean } from '@/lib/validation';
+import { sendMail } from '@/lib/mail/client';
+import { couponWelcome } from '@/lib/mail/templates';
 
 export const runtime = 'nodejs';
 
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
       .values({ email, source: 'popup', couponId: coupon.id })
       .onConflictDoNothing({ target: subscribers.email });
 
-    // TODO(correo): enviar el código al suscriptor.
+    after(() => sendMail(couponWelcome({ to: email, code: coupon.code, days: 7 })));
 
     return NextResponse.json({ code: coupon.code, expiresInDays: 7 });
   } catch (err) {

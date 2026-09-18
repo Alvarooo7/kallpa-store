@@ -1,9 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { bySlug } from '@/lib/catalog';
 import { hasDb } from '@/lib/db';
 import { createOrder } from '@/lib/db/orders';
 import { clampQty, clean, isEmail, maskEmail, toE164Pe } from '@/lib/validation';
 import { COMPANY } from '@/lib/company';
+import { sendMail } from '@/lib/mail/client';
+import { orderConfirmation, orderInternal } from '@/lib/mail/templates';
 
 export const runtime = 'nodejs';
 
@@ -103,7 +105,28 @@ export async function POST(req: Request) {
     // Nunca PII en los logs: el número de pedido basta para rastrear.
     console.info('[pedido]', { number: result.number, zone, items: lines.length, reused: result.reused });
 
-    // TODO(correo): encolar confirmación al cliente y aviso interno.
+    // El correo sale DESPUÉS de responder, con `after`: en Vercel una promesa
+    // suelta se corta al devolver la respuesta. Y si falla, el pedido ya está
+    // guardado — queda registrado en la tabla `emails` para reintentarlo.
+    if (!result.reused) {
+      const mailLines = lines.map((l) => ({ name: l.name, qty: l.qty, unitCents: l.unitCents }));
+      after(async () => {
+        await sendMail(orderConfirmation({
+          to: email, name, number: result.number, lines: mailLines,
+          totalCents: result.totalCents, zone, isExpress,
+        }));
+        const internal = process.env.MAIL_INTERNAL;
+        if (internal) {
+          await sendMail(orderInternal({
+            to: internal, number: result.number, lines: mailLines, totalCents: result.totalCents,
+            zone, isExpress,
+            customer: { name, phone: phoneE164, email },
+            shipping,
+          }));
+        }
+      });
+    }
+
     // TODO(pasarela): si es anticipado o express, generar el link de pago.
 
     return NextResponse.json({

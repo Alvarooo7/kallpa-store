@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 // Cambia esta lista para personalizar las palabras del banner.
-const CATEGORIES = ['audífonos', 'smartwatches', 'lentes'] as const;
+const CATEGORIES = ['audífonos', 'smartwatch', 'lentes'] as const;
 
 export function HeroSearchPrompt() {
   const [index, setIndex] = useState(0);
@@ -29,7 +29,7 @@ export function HeroSearchPrompt() {
 
   return (
     <>
-      <span className="sr-only">¿Buscas audífonos, smartwatches o lentes?</span>
+      <span className="sr-only">¿Buscas audífonos, smartwatch o lentes?</span>
       <span className="hero-search-prompt" aria-hidden="true">
         ¿Buscas <span className="hero-search-word"><span key={index}>{CATEGORIES[index]}?</span></span>
       </span>

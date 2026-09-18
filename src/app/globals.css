@@ -565,7 +565,8 @@ ul.ben li{margin-bottom:.34em}
 /* Banner móvil: Luchito y texto breve dentro de una sola escena. */
 .hero-banner{display:contents}
 .hero-mobile-photo,.hero-summary-mobile,.hero-mobile-delivery{display:none}
-.hero-search-word{display:block;min-height:1.55em;white-space:nowrap;color:#ff9668;font-weight:600}
+.hero-search-prompt{display:inline-flex;align-items:baseline;gap:.25em;white-space:nowrap}
+.hero-search-word{display:inline-block;min-height:1.55em;white-space:nowrap;color:#ff9668;font-weight:600}
 .hero-search-word>span{display:inline-block;animation:hero-search-enter .2s ease-out}
 @keyframes hero-search-enter{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:760px){
