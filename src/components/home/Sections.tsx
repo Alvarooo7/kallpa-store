@@ -6,6 +6,7 @@ import { ProductCard } from '../ProductCard';
 import { CutoffClock } from '../DeliveryPromise';
 import { PRODUCTS, PAINS, USES, bySlug } from '@/lib/catalog';
 import { HeroProducts } from './HeroProducts';
+import { HeroSearchPrompt } from './HeroSearchPrompt';
 
 export function Hero() {
   const featured = ['lenovo-xt80', 'zeblaze-stratos-2-ultra', 'blackview-bv200'].map(id => bySlug(id)!);
@@ -19,7 +20,7 @@ export function Hero() {
           <h1>Hoy lo pides. Hoy lo tienes.</h1>
           <p className="hsub">
             <span className="hero-summary-full">Pide antes de las <b>9 a.m.</b> Recibe de 12 a 7 p.m. y paga al recibir.</span>
-            <span className="hero-summary-mobile">Tu equipo deportivo.<br />Pagas al recibir.</span>
+            <span className="hero-summary-mobile"><HeroSearchPrompt /><br />Pagas al recibir.</span>
           </p>
           <div className="speed" style={{ marginBottom: 26 }}>
             <div className="s">
