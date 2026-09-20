@@ -44,7 +44,7 @@ export function Header() {
           <div className="r">
             <span className="hide-md">Lima y todo el Perú</span>
             <span className="sep" />
-            <a href={waLink('Hola Vendemia, quiero información')} target="_blank" rel="noopener noreferrer">
+            <a href={waLink('Hola Kallpa, quiero información')} target="_blank" rel="noopener noreferrer">
               {COMPANY.whatsappPretty}
             </a>
           </div>
@@ -53,7 +53,7 @@ export function Header() {
 
       <header className="nav">
         <div className="wrap">
-          <Link href="/" className="logo">Vendemia<i>.</i></Link>
+          <Link href="/" className="logo">Kallpa<i>.</i></Link>
           <nav className="main">
             <Link href="/">Inicio</Link>
             <Link href="/#catalogo">Catálogo</Link>
@@ -120,7 +120,7 @@ export function Header() {
               <Link href="/#combo" onClick={() => setMenu(false)}>Smartwatches</Link>
               <Link href="/envios" onClick={() => setMenu(false)}>Envíos y pagos</Link>
               <div className="foot">
-                <a className="btn sm" style={{ background: '#25D366' }} href={waLink('Hola Vendemia')} target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
+                <a className="btn sm" style={{ background: '#25D366' }} href={waLink('Hola Kallpa')} target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
                 <button className="btn sm out" onClick={() => { setMenu(false); openUI('lead'); }}>Mi 10% de descuento</button>
               </div>
             </div>

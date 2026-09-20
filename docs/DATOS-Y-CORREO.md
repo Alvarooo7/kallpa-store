@@ -264,9 +264,9 @@ creado en vez de uno nuevo.
 serio firma correo de un dominio que no controlas, y Gmail y Outlook lo mandarían
 a spam o lo rechazarían. Hace falta:
 
-1. Un dominio propio (`vendemia.pe`).
+1. Un dominio propio (`kallpita.store`).
 2. Verificarlo en el proveedor con sus registros **SPF, DKIM y DMARC**.
-3. Enviar desde `pedidos@vendemia.pe`, con `reply-to` al Gmail si quieres seguir
+3. Enviar desde `pedidos@notifications.kallpita.store`, con `reply-to` al Gmail si quieres seguir
    leyendo las respuestas ahí.
 
 Sin esto, el correo de confirmación no llega, y un cliente que pagó y no recibe
@@ -338,24 +338,25 @@ Hecho:
   precio". Se valida el correo y el celular se normaliza a E.164. Los `console`
   ya no imprimen datos personales: va el número de pedido, y cuando hace falta
   el correo para depurar, enmascarado (`ma***@gmail.com`).
-- **Capa de datos** con Drizzle sobre Supabase: `src/lib/db/{index,schema,orders,claims}.ts`.
+- **Capa de datos** con `@supabase/supabase-js` (service key, solo servidor): `src/lib/db/{index,orders,claims}.ts`.
 - **Migraciones** en `supabase/migrations/`: `0001_init.sql` crea las doce tablas,
   las secuencias correlativas, la función `reserve_stock` y activa RLS en todas;
-  `0002_seed_inventory.sql` carga los siete slugs y el cupón de bienvenida.
-- `createOrder` hace todo en **una transacción**: reserva stock, crea cliente,
+  `0002_seed_inventory.sql` carga los siete slugs y el cupón de bienvenida;
+  `0003_rpc_functions.sql` crea `create_order`, `create_claim` y `release_stock`.
+- `createOrder` llama al rpc `create_order` y hace todo en **una transacción**: reserva stock, crea cliente,
   saca correlativo, congela precio y nombre en `order_items` y guarda el envío.
   Si falta stock, la transacción se deshace entera.
 - `createClaim` numera la hoja de forma **correlativa** y calcula el vencimiento
   a 15 días hábiles saltando sábados y domingos.
-- **Sin `DATABASE_URL` las rutas devuelven 503 con el enlace de WhatsApp.** No
+- **Sin `SUPABASE_SERVICE_ROLE_KEY` las rutas devuelven 503 con el enlace de WhatsApp.** No
   fingen un número de pedido que nadie guardó.
 
 Para levantarlo:
 
 ```bash
 npm install                     # en PowerShell, no por el puente: es mucho más rápido
-# Supabase → SQL Editor → pegar 0001_init.sql → Run → luego 0002_seed_inventory.sql
-# .env.local con DATABASE_URL (pooler, puerto 6543)
+# Supabase → SQL Editor → pegar 0001_init.sql → Run → luego 0002 y 0003
+# .env.local con NEXT_PUBLIC_SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY
 npm run dev
 ```
 

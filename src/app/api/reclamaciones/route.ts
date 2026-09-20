@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     orderNumber: clean(raw.pedido, 40) || undefined,
     detail: clean(raw.detalle, 4000),
     request: clean(raw.pedidoConsumidor, 2000),
-    amountCents: Number.isFinite(Number(raw.monto)) && Number(raw.monto) > 0
+    amountCents: Number.isFinite(Number(raw.monto)) && Number(raw.monto) > 0 && Number(raw.monto) < 1_000_000
       ? Math.round(Number(raw.monto) * 100)
       : undefined,
   };
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
   data.phone = toE164Pe(data.phone) ?? data.phone;
 
   if (!hasDb) {
-    console.error('[libro] DATABASE_URL no configurada: la hoja NO se registró');
+    console.error('[libro] Supabase no configurado: la hoja NO se registró');
     return NextResponse.json(
       {
         error: 'No pudimos registrar tu hoja en este momento. Escríbenos y la registramos contigo.',

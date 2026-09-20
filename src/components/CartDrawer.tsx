@@ -11,7 +11,7 @@ export function CartDrawer() {
   const on = ui === 'cart';
   const needsQuote = cart.some(l => !bySlug(l.id)?.priceKnown);
   const hasConfirmedPrice = cart.some(l => bySlug(l.id)?.priceKnown);
-  const quoteMessage = `Hola Vendemia, quiero confirmar precio y disponibilidad de mi selección: ${cart.map(l => `${l.q} × ${bySlug(l.id)?.short}`).join(', ')}.`;
+  const quoteMessage = `Hola Kallpa, quiero confirmar precio y disponibilidad de mi selección: ${cart.map(l => `${l.q} × ${bySlug(l.id)?.short}`).join(', ')}.`;
 
   return (
     <aside className={`drawer${on ? ' on' : ''}`} aria-hidden={!on}>

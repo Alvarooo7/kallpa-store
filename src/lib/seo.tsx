@@ -5,7 +5,7 @@ import { money } from './format';
 
 export const DEFAULT_TITLE = `${COMPANY.brand} — Audífonos, smartwatches y lentes con entrega hoy en Lima`;
 export const DEFAULT_DESC =
-  'Descubre audífonos deportivos, smartwatches Haylou y Zeblaze y lentes inteligentes. Fotos, características y asesoría para elegir tu equipo en Vendemia.';
+  'Descubre audífonos deportivos, smartwatches Haylou y Zeblaze y lentes inteligentes. Fotos, características y asesoría para elegir tu equipo en Kallpa.';
 
 export function productMetadata(p: Product): Metadata {
   const title = `${p.name} | Entrega hoy en Lima · ${COMPANY.brand}`;

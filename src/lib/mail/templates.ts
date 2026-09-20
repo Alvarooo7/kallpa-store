@@ -1,6 +1,6 @@
 import { COMPANY, SITE_URL, waLink } from '@/lib/company';
 import { deliveryPromise } from '@/lib/delivery';
-import { btn, money, shell } from './layout';
+import { btn, esc, money, shell } from './layout';
 import type { Mail } from './client';
 
 type Line = { name: string; qty: number; unitCents: number };
@@ -9,7 +9,7 @@ const rows = (lines: Line[]) =>
   lines
     .map(
       (l) => `<tr>
-    <td style="padding:8px 0;border-bottom:1px solid #EFEFF1;font-size:14px">${l.name}<br>
+    <td style="padding:8px 0;border-bottom:1px solid #EFEFF1;font-size:14px">${esc(l.name)}<br>
       <span style="color:#6B7076;font-size:13px">${l.qty} × ${money(l.unitCents)}</span></td>
     <td style="padding:8px 0;border-bottom:1px solid #EFEFF1;text-align:right;font-size:14px;white-space:nowrap">${money(l.unitCents * l.qty)}</td>
   </tr>`,
@@ -40,7 +40,7 @@ export function orderConfirmation(p: {
   const html = shell(
     `Pedido ${p.number}`,
     `<p style="margin:0 0 6px;font-size:13px;color:#6B7076;letter-spacing:.08em;text-transform:uppercase">Pedido ${p.number}</p>
-     <h1 style="margin:0 0 14px;font-size:22px;line-height:1.25">Gracias, ${p.name}. Ya lo tenemos.</h1>
+     <h1 style="margin:0 0 14px;font-size:22px;line-height:1.25">Gracias, ${esc(p.name)}. Ya lo tenemos.</h1>
      <p style="margin:0 0 18px;font-size:15px;line-height:1.6"><strong>${entrega}</strong><br>${pago}</p>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 6px">
        ${rows(p.lines)}
@@ -65,7 +65,7 @@ Total: ${money(p.totalCents)} (IGV incluido)
 WhatsApp: ${COMPANY.whatsappPretty}
 ${SITE_URL}`;
 
-  return { to: p.to, subject: `Pedido ${p.number} confirmado · Vendemia Store`, html, text, template: 'order_confirmation', ref: p.number };
+  return { to: p.to, subject: `Pedido ${p.number} confirmado · Kallpa`, html, text, template: 'order_confirmation', ref: p.number };
 }
 
 /** 2 · Aviso interno. El que hace que el negocio funcione. */
@@ -87,13 +87,13 @@ export function orderInternal(p: {
     `<p style="margin:0 0 6px;font-size:13px;color:#E85D26;font-weight:700;letter-spacing:.08em;text-transform:uppercase">${modo}</p>
      <h1 style="margin:0 0 16px;font-size:22px">Pedido ${p.number} — ${money(p.totalCents)}</h1>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7">
-       <tr><td style="color:#6B7076;width:90px">Cliente</td><td><strong>${p.customer.name}</strong></td></tr>
-       <tr><td style="color:#6B7076">Celular</td><td><a href="${waLink(`Hola ${p.customer.name}, confirmamos tu pedido ${p.number}`)}">${p.customer.phone}</a></td></tr>
-       <tr><td style="color:#6B7076">Correo</td><td>${p.customer.email}</td></tr>
-       <tr><td style="color:#6B7076;vertical-align:top">Destino</td><td>${destino}</td></tr>
+       <tr><td style="color:#6B7076;width:90px">Cliente</td><td><strong>${esc(p.customer.name)}</strong></td></tr>
+       <tr><td style="color:#6B7076">Celular</td><td><a href="${waLink(`Hola ${p.customer.name}, confirmamos tu pedido ${p.number}`)}">${esc(p.customer.phone)}</a></td></tr>
+       <tr><td style="color:#6B7076">Correo</td><td>${esc(p.customer.email)}</td></tr>
+       <tr><td style="color:#6B7076;vertical-align:top">Destino</td><td>${esc(destino)}</td></tr>
      </table>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0">${rows(p.lines)}</table>
-     <p style="margin:18px 0 0">${btn(waLink(`Hola ${p.customer.name}, te escribo de Vendemia por tu pedido ${p.number}`), 'Confirmar por WhatsApp')}</p>`,
+     <p style="margin:18px 0 0">${btn(waLink(`Hola ${p.customer.name}, te escribo de Kallpa por tu pedido ${p.number}`), 'Confirmar por WhatsApp')}</p>`,
     'Confirma con el cliente antes de despachar: baja la tasa de rechazo en contraentrega.',
   );
 
@@ -121,7 +121,7 @@ export function couponWelcome(p: { to: string; code: string; days: number }): Ma
     'Te escribimos solo cuando entra stock nuevo o hay una oferta de verdad. Si prefieres que no, respóndenos y te sacamos.',
   );
   const text = `Acá está tu 10 %.\n\nCódigo: ${p.code}\nUn solo uso · vence en ${p.days} días.\n\n${SITE_URL}`;
-  return { to: p.to, subject: 'Tu 10 % de bienvenida · Vendemia Store', html, text, template: 'coupon_welcome', ref: p.code };
+  return { to: p.to, subject: 'Tu 10 % de bienvenida · Kallpa', html, text, template: 'coupon_welcome', ref: p.code };
 }
 
 /** 4 · Copia de la hoja del libro de reclamaciones. Obligatoria. */
@@ -137,10 +137,10 @@ export function claimCopy(p: {
     `<p style="margin:0 0 6px;font-size:13px;color:#6B7076;letter-spacing:.08em;text-transform:uppercase">Hoja ${p.sheet}</p>
      <h1 style="margin:0 0 14px;font-size:22px">${p.forCompany ? `${p.kind} registrado` : `Registramos tu ${p.kind}`}</h1>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7">
-       <tr><td style="color:#6B7076;width:110px;vertical-align:top">Consumidor</td><td>${p.name}</td></tr>
-       <tr><td style="color:#6B7076;vertical-align:top">Producto</td><td>${p.product}</td></tr>
-       <tr><td style="color:#6B7076;vertical-align:top">Detalle</td><td>${p.detail}</td></tr>
-       <tr><td style="color:#6B7076;vertical-align:top">Pedido</td><td>${p.request}</td></tr>
+       <tr><td style="color:#6B7076;width:110px;vertical-align:top">Consumidor</td><td>${esc(p.name)}</td></tr>
+       <tr><td style="color:#6B7076;vertical-align:top">Producto</td><td>${esc(p.product)}</td></tr>
+       <tr><td style="color:#6B7076;vertical-align:top">Detalle</td><td>${esc(p.detail)}</td></tr>
+       <tr><td style="color:#6B7076;vertical-align:top">Pedido</td><td>${esc(p.request)}</td></tr>
      </table>
      <div style="background:#F4F4F5;border-radius:12px;padding:16px;margin:20px 0 0;font-size:14px;line-height:1.6">
        <strong>Plazo de respuesta: 15 días hábiles</strong>, es decir hasta el <strong>${vence}</strong>.

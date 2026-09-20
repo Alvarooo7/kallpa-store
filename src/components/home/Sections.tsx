@@ -15,7 +15,7 @@ export function Hero() {
       <div className="wrap">
         <div className="hero-copy">
           <div className="hero-banner">
-          <div className="hero-mobile-photo"><Image src="/hero/luchito-mobile-v3.webp" alt="Luchito de tres cuartos, con brazos cruzados y mirada directa, polo blanco Vendemia y shorts deportivos negros" fill quality={95} sizes="(max-width: 760px) 280px, 1px" /></div>
+          <div className="hero-mobile-photo"><Image src="/hero/luchito-mobile-v3.webp" alt="Luchito de tres cuartos, con brazos cruzados y mirada directa, polo blanco Kallpa y shorts deportivos negros" fill quality={95} sizes="(max-width: 760px) 280px, 1px" /></div>
           <span className="eb">Delivery gratis el mismo día</span>
           <h1>Hoy lo pides. Hoy lo tienes.</h1>
           <p className="hsub">
@@ -169,7 +169,7 @@ export function PorQue() {
         <div className="why">
           <div className="whyfig"><ProductImage p={bySlug('acuaticos-x7')!} /></div>
           <div>
-            <span className="eb">Por qué Vendemia</span>
+            <span className="eb">Por qué Kallpa</span>
             <h2>El stock ya está acá.<br />Por eso llega hoy.</h2>
             <p>
               No importamos por pedido ni te hacemos esperar 20 días. Compramos, probamos y guardamos el stock en Lima.

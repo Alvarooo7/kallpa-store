@@ -1,8 +1,7 @@
 import { db } from '@/lib/db';
-import { emails } from '@/lib/db/schema';
 
 const KEY = process.env.RESEND_API_KEY;
-const FROM = process.env.MAIL_FROM ?? 'Vendemia Store <pedidos@example.com>';
+const FROM = process.env.MAIL_FROM ?? 'Kallpa <pedidos@example.com>';
 const REPLY_TO = process.env.MAIL_REPLY_TO;
 
 export type Mail = {
@@ -25,10 +24,11 @@ export async function sendMail(mail: Mail): Promise<{ ok: boolean; id?: string }
   const log = async (status: 'sent' | 'failed', providerId?: string, error?: string) => {
     if (!db) return;
     try {
-      await db.insert(emails).values({
-        toEmail: mail.to, template: mail.template, ref: mail.ref ?? null,
-        providerId: providerId ?? null, status, error: error ?? null,
+      const { error: dbError } = await db.from('emails').insert({
+        to_email: mail.to, template: mail.template, ref: mail.ref ?? null,
+        provider_id: providerId ?? null, status, error: error ?? null,
       });
+      if (dbError) throw new Error(dbError.message);
     } catch (e) {
       console.error('[correo] no se pudo registrar el envío', String(e));
     }

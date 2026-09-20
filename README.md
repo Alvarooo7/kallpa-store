@@ -1,4 +1,4 @@
-# Vendemia Store — tienda en Next.js
+# Kallpita Store — tienda en Next.js
 
 Tienda de tecnología con stock propio en Lima: delivery gratis el mismo día con
 corte a las 9 a.m., express desde S/ 10, envío gratis a provincias y pago contra

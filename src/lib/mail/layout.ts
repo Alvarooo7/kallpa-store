@@ -8,7 +8,7 @@ export function shell(title: string, body: string, footerNote?: string): string 
 <body style="margin:0;padding:24px 12px;background:#F4F4F5;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#101112">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto">
     <tr><td style="padding:0 0 18px">
-      <span style="font-size:20px;font-weight:700;letter-spacing:-.5px">Vendemia<span style="color:#E85D26">.</span></span>
+      <span style="font-size:20px;font-weight:700;letter-spacing:-.5px">Kallpa<span style="color:#E85D26">.</span></span>
     </td></tr>
     <tr><td style="background:#fff;border:1px solid #E6E6E8;border-radius:14px;padding:26px">
       ${body}
@@ -25,5 +25,9 @@ export function shell(title: string, body: string, footerNote?: string): string 
 
 export const btn = (href: string, label: string) =>
   `<a href="${href}" style="display:inline-block;background:#E85D26;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:12px 22px;border-radius:99px">${label}</a>`;
+
+/** Todo texto que viene del cliente pasa por acá antes de entrar a un HTML. */
+export const esc = (v: unknown): string =>
+  String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 export const money = (cents: number) => `S/ ${(cents / 100).toFixed(2)}`;

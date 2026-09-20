@@ -1,4 +1,4 @@
-/* Vendemia Store — sistema de diseño.
+/* Kallpa — sistema de diseño.
    Tokens + componentes. Sin Tailwind a propósito: ver README. */
 
 :root{
@@ -69,6 +69,7 @@ h3{font-size:1.02rem;font-weight:600}
 header.nav{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--w) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 header.nav .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;min-height:66px}
 .logo{font-family:"Outfit",sans-serif;font-weight:700;font-size:1.4rem;letter-spacing:-.04em}
+header.nav .logo{font-size:1.68rem}
 .logo i{color:var(--acc);font-style:normal}
 nav.main{display:flex;gap:28px;justify-content:center}
 nav.main a{font-size:.88rem;color:var(--t2);font-weight:500}

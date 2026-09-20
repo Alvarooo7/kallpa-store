@@ -1,4 +1,4 @@
--- Vendemia Store — esquema transaccional
+-- Kallpita Store — esquema transaccional
 -- Aplicar en Supabase: SQL Editor → pegar → Run.
 -- El catálogo NO vive acá: está versionado en src/lib/catalog.ts.
 

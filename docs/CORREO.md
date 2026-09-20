@@ -68,7 +68,7 @@ En `.env.local` y en Vercel (Settings → Environment Variables):
 
 ```
 RESEND_API_KEY=re_...
-MAIL_FROM="Vendemia Store <pedidos@send.TUDOMINIO.com>"
+MAIL_FROM="Kallpita <pedidos@notifications.kallpita.store>"
 MAIL_REPLY_TO=kallpa.contacto.peru@gmail.com
 MAIL_INTERNAL=kallpa.contacto.peru@gmail.com
 ```

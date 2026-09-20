@@ -20,7 +20,7 @@ const DOCS = {
     <p>Escríbenos por WhatsApp al <b>947 144 7017</b> con tu número de pedido y una foto o video de la falla. Te respondemos el mismo día hábil y coordinamos el recojo.</p>`},
 
   privacidad: { t:'Política de privacidad', body:`
-    <p>${EMPRESA} (en adelante, “Vendemia Store”) trata tus datos personales conforme a la <b>Ley 29733, Ley de Protección de Datos Personales</b>, y su reglamento.</p>
+    <p>${EMPRESA} (en adelante, “Kallpa”) trata tus datos personales conforme a la <b>Ley 29733, Ley de Protección de Datos Personales</b>, y su reglamento.</p>
     <h4>Qué datos recogemos</h4>
     <ul>
       <li><b>Para entregarte el pedido:</b> nombre, DNI cuando la agencia lo exige, teléfono, correo, dirección y distrito.</li>

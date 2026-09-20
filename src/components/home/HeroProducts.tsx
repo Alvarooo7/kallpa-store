@@ -63,7 +63,7 @@ export function HeroProducts({ products }: { products: Product[] }) {
           quality={95} sizes="(max-width: 1000px) 50vw, 440px"
           className={`hero-lucho-variant${mask === activeMask ? ' visible' : ''}`}
           aria-hidden={mask !== activeMask}
-          alt={mask === activeMask ? `Lucho${wearing.length ? ` usando ${wearing.join(', ')}` : ''}, con polo blanco Vendemia, shorts negros y zapatillas Adidas naranjas` : ''}
+          alt={mask === activeMask ? `Lucho${wearing.length ? ` usando ${wearing.join(', ')}` : ''}, con polo blanco Kallpa, shorts negros y zapatillas Adidas naranjas` : ''}
           onLoad={() => setReady(previous => previous.includes(mask) ? previous : [...previous, mask])}
         />)}
       </div>

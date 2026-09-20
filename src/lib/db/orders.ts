@@ -1,6 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
 import { db } from './index';
-import { customers, inventory, orderItems, orders, shippingDetails, stockMoves } from './schema';
 
 export type NewOrderLine = { slug: string; name: string; qty: number; unitCents: number };
 
@@ -21,99 +19,50 @@ export type OrderResult =
   | { ok: true; number: string; id: number; totalCents: number; igvCents: number; reused: boolean }
   | { ok: false; reason: 'no_stock'; slug: string };
 
+type OrderRpc =
+  | { ok: true; number: string; id: number; total_cents: number; igv_cents: number; reused: boolean }
+  | { ok: false; reason: 'no_stock'; slug: string };
+
 const IGV_RATE = 0.18;
 
 /**
- * Crea el pedido en una sola transacción: correlativo, cliente, líneas con el
- * precio congelado, reserva de stock y datos de envío.
+ * Crea el pedido con la función `create_order` (supabase/migrations/0003):
+ * correlativo, cliente, líneas con el precio congelado, reserva de stock y
+ * datos de envío, todo en una sola transacción.
  *
  * Si la reserva de stock falla, la transacción entera se deshace: no queda un
  * pedido huérfano de un producto que no tenemos.
  */
 export async function createOrder(input: NewOrder): Promise<OrderResult> {
-  if (!db) throw new Error('DATABASE_URL no está configurada');
-
-  // Idempotencia: el mismo doble clic devuelve el pedido ya creado.
-  if (input.idempotencyKey) {
-    const prev = await db.select().from(orders).where(eq(orders.idempotencyKey, input.idempotencyKey)).limit(1);
-    if (prev[0]) {
-      return { ok: true, id: prev[0].id, number: prev[0].number, totalCents: prev[0].totalCents, igvCents: prev[0].igvCents, reused: true };
-    }
-  }
+  if (!db) throw new Error('Supabase no está configurado');
 
   const subtotalCents = input.lines.reduce((s, l) => s + l.unitCents * l.qty, 0);
   // Los precios ya incluyen IGV: lo desagregamos para tenerlo en columna propia.
   const igvCents = Math.round(subtotalCents - subtotalCents / (1 + IGV_RATE));
 
-  return db.transaction(async (tx) => {
-    for (const l of input.lines) {
-      const [row] = await tx.execute<{ reserve_stock: boolean }>(
-        sql`select reserve_stock(${l.slug}, ${l.qty}) as reserve_stock`,
-      );
-      if (!row?.reserve_stock) {
-        tx.rollback();
-        return { ok: false, reason: 'no_stock', slug: l.slug } as const;
-      }
-    }
-
-    const [customer] = await tx
-      .insert(customers)
-      .values({ email: input.customer.email, name: input.customer.name, phoneE164: input.customer.phoneE164 })
-      .onConflictDoUpdate({
-        target: customers.email,
-        set: { name: input.customer.name, phoneE164: input.customer.phoneE164 },
-      })
-      .returning({ id: customers.id });
-
-    const [{ number }] = await tx.execute<{ number: string }>(
-      sql`select 'VD-' || to_char(now() at time zone 'America/Lima', 'YYYY') || '-' ||
-                 lpad(nextval('order_seq')::text, 6, '0') as number`,
-    );
-
-    const [order] = await tx
-      .insert(orders)
-      .values({
-        number,
-        customerId: customer.id,
-        zone: input.zone,
-        isExpress: input.isExpress,
-        payMethod: input.payMethod,
-        subtotalCents,
-        igvCents,
-        totalCents: subtotalCents,
-        idempotencyKey: input.idempotencyKey ?? null,
-      })
-      .returning({ id: orders.id });
-
-    await tx.insert(orderItems).values(
-      input.lines.map((l) => ({
-        orderId: order.id,
-        productSlug: l.slug,
-        productName: l.name,
-        qty: l.qty,
-        unitCents: l.unitCents,
-        lineCents: l.unitCents * l.qty,
-      })),
-    );
-
-    await tx.insert(stockMoves).values(
-      input.lines.map((l) => ({ productSlug: l.slug, delta: -l.qty, reason: 'venta', orderId: order.id })),
-    );
-
-    await tx.insert(shippingDetails).values({ orderId: order.id, ...input.shipping });
-
-    return { ok: true, id: order.id, number, totalCents: subtotalCents, igvCents, reused: false } as const;
+  const { data, error } = await db.rpc('create_order', {
+    p: {
+      customer: { name: input.customer.name, email: input.customer.email, phone_e164: input.customer.phoneE164 },
+      zone: input.zone,
+      is_express: input.isExpress,
+      pay_method: input.payMethod,
+      subtotal_cents: subtotalCents,
+      igv_cents: igvCents,
+      idempotency_key: input.idempotencyKey ?? null,
+      lines: input.lines.map((l) => ({ slug: l.slug, name: l.name, qty: l.qty, unit_cents: l.unitCents })),
+      shipping: input.shipping,
+    },
   });
+  if (error) throw new Error(error.message);
+
+  const r = data as OrderRpc;
+  if (!r.ok) return r;
+  return { ok: true, id: r.id, number: r.number, totalCents: r.total_cents, igvCents: r.igv_cents, reused: r.reused };
 }
 
 /** Libera la reserva cuando un pedido se cancela o se rechaza. */
 export async function releaseStock(orderId: number) {
   if (!db) return;
-  const lines = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
-  for (const l of lines) {
-    await db
-      .update(inventory)
-      .set({ reserved: sql`greatest(0, ${inventory.reserved} - ${l.qty})`, updatedAt: new Date() })
-      .where(eq(inventory.productSlug, l.productSlug));
-  }
+  const { error } = await db.rpc('release_stock', { p_order_id: orderId });
+  if (error) throw new Error(error.message);
 }

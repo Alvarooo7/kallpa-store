@@ -1,21 +1,14 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
+import { createClient } from '@supabase/supabase-js';
 
 /**
- * Supabase detrás de Supavisor en modo transacción (puerto 6543).
- * `prepare: false` es obligatorio ahí: el pooler no mantiene sentencias
- * preparadas entre conexiones.
+ * Cliente de servidor con la service key: salta RLS, por eso NUNCA debe
+ * importarse desde un componente de cliente ni llevar prefijo NEXT_PUBLIC_.
  */
-const url = process.env.DATABASE_URL;
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const client = url
-  ? postgres(url, { prepare: false, max: 1, idle_timeout: 20 })
-  : null;
-
-export const db = client ? drizzle(client, { schema }) : null;
+export const db =
+  url && key ? createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } }) : null;
 
 /** true cuando hay base configurada. Las rutas lo consultan antes de escribir. */
 export const hasDb = db !== null;
-
-export { schema };

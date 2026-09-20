@@ -1,6 +1,4 @@
-import { sql } from 'drizzle-orm';
 import { db } from './index';
-import { claimEvents, claims } from './schema';
 
 export type NewClaim = {
   kind: 'reclamo' | 'queja';
@@ -23,25 +21,32 @@ export function dueInBusinessDays(days = 15, from = new Date()): Date {
 }
 
 /**
- * Registra la hoja con numeración CORRELATIVA. No es una preferencia técnica:
- * el D.S. 011-2011-PCM lo exige, igual que conservar el registro.
+ * Registra la hoja con numeración CORRELATIVA (función `create_claim`,
+ * supabase/migrations/0003). No es una preferencia técnica: el D.S.
+ * 011-2011-PCM lo exige, igual que conservar el registro.
  */
 export async function createClaim(input: NewClaim) {
-  if (!db) throw new Error('DATABASE_URL no está configurada');
+  if (!db) throw new Error('Supabase no está configurado');
 
-  return db.transaction(async (tx) => {
-    const [{ sheet }] = await tx.execute<{ sheet: string }>(
-      sql`select 'LR-' || to_char(now() at time zone 'America/Lima', 'YYYY') || '-' ||
-                 lpad(nextval('claim_seq')::text, 6, '0') as sheet`,
-    );
-
-    const [claim] = await tx
-      .insert(claims)
-      .values({ ...input, sheetNumber: sheet, dueAt: dueInBusinessDays(15) })
-      .returning({ id: claims.id, sheetNumber: claims.sheetNumber, dueAt: claims.dueAt });
-
-    await tx.insert(claimEvents).values({ claimId: claim.id, event: 'recibido' });
-
-    return claim;
+  const { data, error } = await db.rpc('create_claim', {
+    p: {
+      kind: input.kind,
+      name: input.name,
+      doc_id: input.docId,
+      email: input.email,
+      phone: input.phone,
+      address: input.address ?? null,
+      guardian: input.guardian ?? null,
+      product: input.product,
+      order_number: input.orderNumber ?? null,
+      amount_cents: input.amountCents ?? null,
+      detail: input.detail,
+      request: input.request,
+      due_at: dueInBusinessDays(15).toISOString(),
+    },
   });
+  if (error) throw new Error(error.message);
+
+  const r = data as { id: number; sheet_number: string; due_at: string };
+  return { id: r.id, sheetNumber: r.sheet_number, dueAt: new Date(r.due_at) };
 }

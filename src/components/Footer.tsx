@@ -7,7 +7,7 @@ export function Footer() {
       <div className="wrap">
         <div className="cols">
           <div>
-            <div className="logo">Vendemia<i style={{ color: 'var(--acc)' }}>.</i></div>
+            <div className="logo">Kallpa<i style={{ color: 'var(--acc)' }}>.</i></div>
             <p style={{ maxWidth: '33ch' }}>
               Tecnología que llega hoy. Stock propio en Lima, envío gratis a provincias y pago contra entrega.
             </p>

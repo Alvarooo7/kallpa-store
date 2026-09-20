@@ -76,7 +76,7 @@ export async function POST(req: Request) {
 
   // ── sin base no se finge un pedido ──
   if (!hasDb) {
-    console.error('[pedido] DATABASE_URL no configurada: no se guardó nada');
+    console.error('[pedido] Supabase no configurado: no se guardó nada');
     return NextResponse.json(
       {
         error: 'No pudimos registrar tu pedido en este momento.',

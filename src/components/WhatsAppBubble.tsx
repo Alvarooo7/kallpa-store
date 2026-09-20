@@ -21,7 +21,7 @@ export function WhatsAppBubble() {
       <div style={{ position: 'relative' }}>
         <a
           className="btn2"
-          href={waLink(`Hola Vendemia, quiero ${items}`)}
+          href={waLink(`Hola Kallpa, quiero ${items}`)}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Escríbenos por WhatsApp"
