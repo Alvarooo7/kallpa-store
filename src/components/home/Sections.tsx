@@ -58,11 +58,11 @@ export function Usos() {
         <div className="band">
           <div className="shead">
             <div><span className="eb">Explora</span><h2>¿Para qué lo necesitas?</h2></div>
-            <Link className="vall" href="#catalogo">Ver todo</Link>
+            <Link className="vall" href="/catalogo">Ver todo</Link>
           </div>
           <div className="cats">
             {USES.map((u) => (
-              <Link key={u.t} className="cat" href="#catalogo">
+              <Link key={u.t} className="cat" href={u.href}>
                 <div className="tile use-photo"><Image src={u.image} alt={u.alt} fill quality={90} sizes="(max-width: 620px) 90vw, (max-width: 960px) 45vw, 400px" /></div>
                 <div className="row">
                   <div><b>{u.t}</b><span>{u.n}</span></div>

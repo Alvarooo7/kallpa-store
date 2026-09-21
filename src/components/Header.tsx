@@ -56,7 +56,7 @@ export function Header() {
           <Link href="/" className="logo">Kallpa<i>.</i></Link>
           <nav className="main">
             <Link href="/">Inicio</Link>
-            <Link href="/#catalogo">Catálogo</Link>
+            <Link href="/catalogo">Catálogo</Link>
             <Link href="/#usos">Por uso</Link>
             <Link href="/#combo">Smartwatches</Link>
             <Link href="/envios">Envíos</Link>
@@ -114,7 +114,7 @@ export function Header() {
         {menu && (
           <div className="mnav on">
             <div className="wrap">
-              <Link href="/#catalogo" onClick={() => setMenu(false)}>Catálogo</Link>
+              <Link href="/catalogo" onClick={() => setMenu(false)}>Catálogo</Link>
               <Link href="/#usos" onClick={() => setMenu(false)}>Por uso</Link>
               <Link href="/#diagnostico" onClick={() => setMenu(false)}>¿Qué quieres resolver?</Link>
               <Link href="/#combo" onClick={() => setMenu(false)}>Smartwatches</Link>

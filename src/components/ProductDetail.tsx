@@ -26,7 +26,7 @@ export function ProductDetail({ p, recs }: { p: Product; recs: Product[] }) {
   return (
     <div className="wrap" style={{ paddingTop: 26, paddingBottom: 40 }}>
       <nav aria-label="Ruta" style={{ fontSize: '.8rem', color: 'var(--t2)', marginBottom: 18 }}>
-        <Link href="/">Inicio</Link> / <Link href="/#catalogo">Catálogo</Link> / <span style={{ color: 'var(--t)' }}>{p.short}</span>
+        <Link href="/">Inicio</Link> / <Link href="/catalogo">Catálogo</Link> / <span style={{ color: 'var(--t)' }}>{p.short}</span>
       </nav>
 
       <div className="sheet" style={{ width: '100%', boxShadow: 'none' }}>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useShop } from './Providers';
 import { track } from '@/lib/analytics';
 
@@ -17,6 +18,7 @@ export function LeadModal() {
   const { ui, openUI, closeUI } = useShop();
   const [code, setCode] = useState<string | null>(null);
   const [mail, setMail] = useState('');
+  const [copied, setCopied] = useState(false);
   const on = ui === 'lead';
 
   // Tres disparadores: tiempo, scroll y salida. Una vez cada 30 días.
@@ -45,6 +47,24 @@ export function LeadModal() {
     setCode(res.code ?? 'VD10-0000');
   }
 
+  async function copyCode() {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      const field = document.createElement('textarea');
+      field.value = code;
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.appendChild(field);
+      field.select();
+      document.execCommand('copy');
+      field.remove();
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
+  }
+
   if (!on) return null;
 
   return (
@@ -69,12 +89,13 @@ export function LeadModal() {
             {code ? (
               <>
                 <p>Te lo mandamos también a <b style={{ color: 'var(--t)' }}>{mail}</b>. Úsalo en el paso de pago.</p>
-                <div className="ok">
+                <button className="ok coupon-copy" type="button" onClick={copyCode} aria-label={`Copiar código ${code}`}>
                   <span style={{ fontSize: '.76rem', color: 'var(--t2)', letterSpacing: '.1em', textTransform: 'uppercase' }}>Tu código</span>
                   <div className="code">{code}</div>
+                  <span className="coupon-copy-help" role="status">{copied ? '✓ Código copiado' : 'Toca para copiar'}</span>
                   <span style={{ fontSize: '.78rem', color: 'var(--t2)' }}>Un solo uso · vence en 7 días</span>
-                </div>
-                <button className="btn acc block" style={{ marginTop: 14 }} onClick={closeUI}>Ver el catálogo</button>
+                </button>
+                <Link className="btn acc block" href="/catalogo" style={{ marginTop: 14 }} onClick={closeUI}>Ver el catálogo</Link>
               </>
             ) : (
               <>

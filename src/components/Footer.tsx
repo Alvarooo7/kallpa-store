@@ -15,7 +15,7 @@ export function Footer() {
           <div>
             <h4>Tienda</h4>
             <ul>
-              <li><Link href="/#catalogo">Catálogo</Link></li>
+              <li><Link href="/catalogo">Catálogo</Link></li>
               <li><Link href="/#usos">Por uso</Link></li>
               <li><Link href="/#combo">Smartwatches</Link></li>
               <li><Link href="/#diagnostico">¿Qué quieres resolver?</Link></li>

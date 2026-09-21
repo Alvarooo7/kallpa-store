@@ -328,6 +328,19 @@ section{padding:52px 0}
 .lead p{font-size:.9rem;color:var(--t2)}
 .lead .ok{background:var(--w2);border-radius:12px;padding:16px;text-align:center}
 .lead .code{font-family:"Outfit",sans-serif;font-weight:700;font-size:1.4rem;letter-spacing:.05em;color:var(--acc);margin:6px 0}
+.coupon-copy{width:100%;border:1px solid transparent;display:grid;justify-items:center;gap:2px;transition:border-color .18s,transform .18s}
+.coupon-copy:hover{border-color:var(--acc);transform:translateY(-1px)}
+.coupon-copy-help{font-size:.72rem;font-weight:700;color:var(--acc);margin-bottom:5px}
+.catalog-head{padding:54px 0 28px}
+.catalog-head h1{font-size:clamp(2.3rem,5vw,4.2rem);max-width:13ch;margin:7px 0 14px}
+.catalog-head p{max-width:58ch;color:var(--t2);font-size:1rem}
+.catalog-tabs{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+.catalog-tab{border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:.78rem;font-weight:600;background:var(--w)}
+.catalog-tab:hover,.catalog-tab.on{background:var(--k);border-color:var(--k);color:#fff}
+.catalog-results{padding:18px 0 72px}
+.catalog-results .shead{margin-bottom:25px}
+.catalog-related{border-top:1px solid var(--line);margin-top:50px;padding-top:28px}
+.catalog-related h2{font-size:1.35rem;margin-bottom:14px}
 .lead .fine{font-size:.74rem;color:var(--t2);margin-top:10px;text-align:center}
 @media (max-width:620px){ .lead{grid-template-columns:1fr} .lead .side{padding:18px} .lead .side .big{font-size:2.4rem} }
 
