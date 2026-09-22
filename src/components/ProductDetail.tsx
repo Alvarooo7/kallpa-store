@@ -107,7 +107,6 @@ export function ProductDetail({ p, recs, availability }: { p: Product; recs: Pro
                   <table className="specs">
                     <tbody>{Object.entries(p.specs).map(([k, v]) => <tr key={k}><td>{k}</td><td>{v}</td></tr>)}</tbody>
                   </table>
-                  {p.note && <p className="product-note">{p.note}</p>}
                   {p.sources.length > 0 && <div className="product-sources"><b>Fuentes</b><ul>{p.sources.map(s => <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>)}</ul></div>}
                 </div>
               </details>
