@@ -446,17 +446,24 @@ footer .bot{display:flex;justify-content:space-between;gap:16px;padding-top:18px
 .x:hover{color:var(--acc)}
 .db{flex:1;overflow:auto;padding:8px 22px}
 .df{border-top:1px solid var(--line);padding:18px 22px;display:grid;gap:11px}
-.li{display:grid;grid-template-columns:54px 1fr auto;gap:13px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
-.cart-quantity{margin:7px 0 5px}
-.cart-quantity button{width:28px;height:28px}
-.cart-quantity output{min-width:26px;text-align:center;font-family:"Outfit",sans-serif;font-weight:700;font-size:.8rem}
-.cart-quantity small{padding:0 8px 0 2px;color:var(--t2);font-size:.65rem}
+.li{display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:16px;align-items:start;padding:18px 0;border-bottom:1px solid var(--line)}
+.li-info{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:3px}
+.cart-quantity-row{display:flex;align-items:center;gap:9px;margin:9px 0 6px}
+.cart-quantity button{width:30px;height:30px}
+.cart-quantity output{min-width:30px;text-align:center;font-family:"Outfit",sans-serif;font-weight:700;font-size:.82rem}
+.cart-stock-limit{color:var(--t2);font-size:.68rem;white-space:nowrap}
+.li-total{padding-top:2px;font-family:"Outfit",sans-serif;font-weight:700;white-space:nowrap}
 .li .t{border-radius:9px;aspect-ratio:1/1;display:grid;place-items:center;color:#fff}
 .li .t svg{width:66%}
 .li b{font-family:"Outfit",sans-serif;font-weight:600;font-size:.87rem;line-height:1.2;display:block}
 .li .q{font-size:.76rem;color:var(--t2)}
 .li .rm{background:none;border:0;font-size:.72rem;color:var(--t2);text-decoration:underline;padding:0}
 .li .rm:hover{color:var(--acc)}
+@media(max-width:480px){
+  .db{padding-left:18px;padding-right:18px}
+  .li{grid-template-columns:58px minmax(0,1fr);gap:14px;padding:19px 0}
+  .li-total{grid-column:2;padding-top:2px;font-size:1rem}
+}
 .bar{height:5px;border-radius:99px;background:var(--w2);overflow:hidden;margin:7px 0 7px}
 .bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
 .express-goal{display:grid;grid-template-columns:1fr auto;gap:3px 10px;padding:12px;border-radius:11px;background:var(--w2)}

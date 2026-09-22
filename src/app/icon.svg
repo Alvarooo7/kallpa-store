@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="13" fill="#ffffff"/>
-  <text x="32" y="46" text-anchor="middle" fill="#e85d26" font-family="Outfit, Arial, sans-serif" font-size="43" font-weight="700" letter-spacing="-3">K</text>
+  <text x="28" y="46" text-anchor="middle" fill="#101112" font-family="Outfit, Arial, sans-serif" font-size="43" font-weight="700" letter-spacing="-3">K</text>
+  <circle cx="50" cy="43" r="4.5" fill="#e85d26"/>
 </svg>

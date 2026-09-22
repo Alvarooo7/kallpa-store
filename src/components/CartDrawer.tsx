@@ -35,19 +35,21 @@ export function CartDrawer() {
           return (
             <div className="li" key={`${l.id}:${l.variantId ?? 'base'}`}>
               <div className="t" style={{ background: variant?.swatch ?? p.bg }}><ProductImage p={p} /></div>
-              <div>
+              <div className="li-info">
                 <b>{p.short}</b>
                 {variant && <span className="q variant-line">{variant.label}</span>}
                 <span className="q">{priceKnown ? `${money(unitPrice)} c/u` : 'Consultar precio'}</span>
-                <div className="cart-quantity">
-                  <button type="button" aria-label={`Quitar una unidad de ${p.short}`} disabled={l.q <= 1} onClick={() => setQuantity(l.id, l.q - 1, l.variantId)}>−</button>
-                  <output aria-label={`Cantidad de ${p.short}`}>{l.q}</output>
-                  <button type="button" aria-label={`Agregar una unidad de ${p.short}`} disabled={l.max !== null && l.max !== undefined && l.q >= l.max} onClick={() => setQuantity(l.id, l.q + 1, l.variantId)}>+</button>
-                  {l.max !== null && l.max !== undefined && <small>de {l.max}</small>}
+                <div className="cart-quantity-row">
+                  <div className="cart-quantity">
+                    <button type="button" aria-label={`Quitar una unidad de ${p.short}`} disabled={l.q <= 1} onClick={() => setQuantity(l.id, l.q - 1, l.variantId)}>−</button>
+                    <output aria-label={`Cantidad de ${p.short}`}>{l.q}</output>
+                    <button type="button" aria-label={`Agregar una unidad de ${p.short}`} disabled={l.max !== null && l.max !== undefined && l.q >= l.max} onClick={() => setQuantity(l.id, l.q + 1, l.variantId)}>+</button>
+                  </div>
+                  {l.max !== null && l.max !== undefined && <small className="cart-stock-limit">Máx. {l.max}</small>}
                 </div>
                 <button className="rm" onClick={() => remove(l.id, l.variantId)}>quitar</button>
               </div>
-              <span style={{ fontWeight: 700, fontFamily: 'Outfit, sans-serif' }}>{priceKnown ? money(unitPrice * l.q) : 'Por confirmar'}</span>
+              <span className="li-total">{priceKnown ? money(unitPrice * l.q) : 'Por confirmar'}</span>
             </div>
           );
         })}
