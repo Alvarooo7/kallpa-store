@@ -1,9 +1,7 @@
--- Funciones atómicas que llama el servidor con supabase-js (rpc).
--- supabase-js habla REST y no tiene transacciones entre llamadas: cada función
--- corre entera en una sola transacción de Postgres, o no corre.
--- Aplicar en Supabase: SQL Editor → pegar → Run.
+-- Pedidos mínimos por WhatsApp: el correo deja de ser obligatorio y el
+-- recargo express queda congelado en la orden.
+alter table customers alter column email drop not null;
 
--- ─────────────────────────── pedido ───────────────────────────
 create or replace function create_order(p jsonb)
 returns jsonb
 language plpgsql
@@ -22,7 +20,6 @@ declare
   v_shipping    integer := coalesce((p->>'shipping_cents')::integer, 0);
   v_ship        jsonb   := coalesce(p->'shipping', '{}'::jsonb);
 begin
-  -- Idempotencia: el mismo doble clic devuelve el pedido ya creado.
   if v_key is not null then
     select * into v_prev from orders where idempotency_key = v_key;
     if found then
@@ -34,7 +31,6 @@ begin
   begin
     for v_line in select * from jsonb_array_elements(p->'lines') loop
       if not reserve_stock(v_line->>'slug', (v_line->>'qty')::integer) then
-        -- Al salir por la excepción se deshacen también las reservas anteriores.
         raise exception 'no_stock:%', v_line->>'slug';
       end if;
     end loop;
@@ -80,7 +76,6 @@ begin
       end if;
       raise;
     when unique_violation then
-      -- Doble clic simultáneo: el otro pedido ganó la carrera por la misma clave.
       if v_key is not null then
         select * into v_prev from orders where idempotency_key = v_key;
         if found then
@@ -92,55 +87,5 @@ begin
   end;
 end $$;
 
--- Libera la reserva cuando un pedido se cancela o se rechaza.
-create or replace function release_stock(p_order_id bigint)
-returns void
-language sql
-security definer
-set search_path = public
-as $$
-  update inventory i
-     set reserved = greatest(0, i.reserved - oi.qty), updated_at = now()
-    from order_items oi
-   where oi.order_id = p_order_id
-     and i.product_slug = oi.product_slug;
-$$;
-
--- ─────────────────────────── libro de reclamaciones ───────────────────────────
--- Numeración CORRELATIVA: el D.S. 011-2011-PCM lo exige.
-create or replace function create_claim(p jsonb)
-returns jsonb
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_sheet text;
-  v_claim claims%rowtype;
-begin
-  v_sheet := 'LR-' || to_char(now() at time zone 'America/Lima', 'YYYY') || '-' ||
-             lpad(nextval('claim_seq')::text, 6, '0');
-
-  insert into claims (sheet_number, kind, name, doc_id, email, phone, address, guardian,
-                      product, order_number, amount_cents, detail, request, due_at)
-  values (v_sheet, (p->>'kind')::claim_kind, p->>'name', p->>'doc_id', p->>'email', p->>'phone',
-          p->>'address', p->>'guardian', p->>'product', p->>'order_number',
-          (p->>'amount_cents')::integer, p->>'detail', p->>'request', (p->>'due_at')::timestamptz)
-  returning * into v_claim;
-
-  insert into claim_events (claim_id, event) values (v_claim.id, 'recibido');
-
-  return jsonb_build_object('id', v_claim.id, 'sheet_number', v_claim.sheet_number,
-                            'due_at', v_claim.due_at);
-end $$;
-
--- ─────────────────────────── permisos ───────────────────────────
--- Solo el servidor (service_role) puede llamarlas; la anon key no.
-revoke execute on function create_order(jsonb)   from public, anon, authenticated;
-revoke execute on function release_stock(bigint) from public, anon, authenticated;
-revoke execute on function create_claim(jsonb)   from public, anon, authenticated;
-revoke execute on function reserve_stock(text, integer) from public, anon, authenticated;
-grant  execute on function create_order(jsonb)   to service_role;
-grant  execute on function release_stock(bigint) to service_role;
-grant  execute on function create_claim(jsonb)   to service_role;
-grant  execute on function reserve_stock(text, integer) to service_role;
+revoke execute on function create_order(jsonb) from public, anon, authenticated;
+grant execute on function create_order(jsonb) to service_role;

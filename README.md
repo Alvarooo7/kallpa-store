@@ -1,7 +1,7 @@
 # Kallpita Store — tienda en Next.js
 
 Tienda de tecnología con stock propio en Lima: delivery gratis el mismo día con
-corte a las 9 a.m., express desde S/ 10, envío gratis a provincias y pago contra
+corte a las 9 a.m., express gratis desde S/ 200 o desde S/ 10 según distrito, envío gratis a provincias y pago contra
 entrega.
 
 ```bash
@@ -54,7 +54,7 @@ los estilos están aislados en un solo archivo.
 - **`sitemap.xml` y `robots.txt`** generados desde el catálogo.
 - **Promesa de entrega en vivo**: `lib/delivery.ts` es una función pura sobre la
   hora de Lima. El contador solo corre en el cliente para no romper la hidratación.
-- Carrito con barra de express gratis, favoritos en `localStorage`, buscador que
+- Carrito con cálculo de entrega express por distrito, favoritos en `localStorage`, buscador que
   indexa toda la ficha técnica, modal de pedido que se bifurca Lima/provincia.
 - Libro de Reclamaciones con los campos del D.S. 011-2011-PCM.
 - Eventos con los nombres estándar de Meta (`lib/analytics.ts`).

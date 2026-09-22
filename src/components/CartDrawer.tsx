@@ -3,15 +3,19 @@
 import { ProductImage } from './ProductImage';
 import { waLink } from '@/lib/company';
 import { useShop } from './Providers';
-import { bySlug, FREE_EXPRESS_FROM } from '@/lib/catalog';
+import { bySlug, productLineName, productPriceKnown, productUnitPrice, variantById } from '@/lib/catalog';
 import { money } from '@/lib/format';
+import { FREE_EXPRESS_FROM } from '@/lib/shipping';
 
 export function CartDrawer() {
-  const { cart, remove, subtotal, missingForFreeExpress, ui, openUI, closeUI } = useShop();
+  const { cart, setQuantity, remove, subtotal, ui, openUI, closeUI } = useShop();
   const on = ui === 'cart';
-  const needsQuote = cart.some(l => !bySlug(l.id)?.priceKnown);
-  const hasConfirmedPrice = cart.some(l => bySlug(l.id)?.priceKnown);
-  const quoteMessage = `Hola Kallpa, quiero confirmar precio y disponibilidad de mi selección: ${cart.map(l => `${l.q} × ${bySlug(l.id)?.short}`).join(', ')}.`;
+  const needsQuote = cart.some(l => { const p = bySlug(l.id); return !p || !productPriceKnown(p, l.variantId); });
+  const hasConfirmedPrice = cart.some(l => { const p = bySlug(l.id); return Boolean(p && productPriceKnown(p, l.variantId)); });
+  const remainingForFreeExpress = Math.max(0, FREE_EXPRESS_FROM - subtotal);
+  const freeExpress = cart.length > 0 && remainingForFreeExpress === 0;
+  const progress = Math.min(100, (subtotal / FREE_EXPRESS_FROM) * 100);
+  const quoteMessage = `Hola Kallpa, quiero confirmar precio y disponibilidad de mi selección: ${cart.map(l => { const p = bySlug(l.id); return `${l.q} × ${p ? productLineName(p, l.variantId) : l.id}`; }).join(', ')}.`;
 
   return (
     <aside className={`drawer${on ? ' on' : ''}`} aria-hidden={!on}>
@@ -25,15 +29,25 @@ export function CartDrawer() {
           <div className="empty">Tu pedido está vacío.<br />Agrega un equipo y te decimos a qué hora llega.</div>
         ) : cart.map((l) => {
           const p = bySlug(l.id)!;
+          const variant = variantById(p, l.variantId);
+          const unitPrice = productUnitPrice(p, l.variantId);
+          const priceKnown = productPriceKnown(p, l.variantId);
           return (
-            <div className="li" key={l.id}>
-              <div className="t" style={{ background: p.bg }}><ProductImage p={p} /></div>
+            <div className="li" key={`${l.id}:${l.variantId ?? 'base'}`}>
+              <div className="t" style={{ background: variant?.swatch ?? p.bg }}><ProductImage p={p} /></div>
               <div>
                 <b>{p.short}</b>
-                <span className="q">{l.q} × {p.priceKnown ? money(p.price) : 'Consultar precio'}</span><br />
-                <button className="rm" onClick={() => remove(l.id)}>quitar</button>
+                {variant && <span className="q variant-line">{variant.label}</span>}
+                <span className="q">{priceKnown ? `${money(unitPrice)} c/u` : 'Consultar precio'}</span>
+                <div className="cart-quantity">
+                  <button type="button" aria-label={`Quitar una unidad de ${p.short}`} disabled={l.q <= 1} onClick={() => setQuantity(l.id, l.q - 1, l.variantId)}>−</button>
+                  <output aria-label={`Cantidad de ${p.short}`}>{l.q}</output>
+                  <button type="button" aria-label={`Agregar una unidad de ${p.short}`} disabled={l.max !== null && l.max !== undefined && l.q >= l.max} onClick={() => setQuantity(l.id, l.q + 1, l.variantId)}>+</button>
+                  {l.max !== null && l.max !== undefined && <small>de {l.max}</small>}
+                </div>
+                <button className="rm" onClick={() => remove(l.id, l.variantId)}>quitar</button>
               </div>
-              <span style={{ fontWeight: 700, fontFamily: 'Outfit, sans-serif' }}>{p.priceKnown ? money(p.price * l.q) : 'Por confirmar'}</span>
+              <span style={{ fontWeight: 700, fontFamily: 'Outfit, sans-serif' }}>{priceKnown ? money(unitPrice * l.q) : 'Por confirmar'}</span>
             </div>
           );
         })}
@@ -42,14 +56,11 @@ export function CartDrawer() {
       <div className="df">
         {cart.length > 0 && (
           <>
-            {!needsQuote && <div>
-              <div className="bar"><i style={{ width: `${Math.min(100, (subtotal / FREE_EXPRESS_FROM) * 100)}%` }} /></div>
-              <span style={{ fontSize: '.79rem', color: 'var(--t2)' }}>
-                {missingForFreeExpress > 0
-                  ? <>Te faltan <b style={{ color: 'var(--t)' }}>{money(missingForFreeExpress)}</b> para el express gratis</>
-                  : <>Este pedido lleva <b style={{ color: 'var(--t)' }}>express gratis</b></>}
-              </span>
-            </div>}
+            <div className={`express-goal${freeExpress ? ' reached' : ''}`} role="status" aria-live="polite">
+              <div><b>{freeExpress ? '¡Express gratis desbloqueado!' : `Te faltan ${money(remainingForFreeExpress)}`}</b><span>{freeExpress ? 'Tu pedido superó la meta de S/ 200.' : 'para obtener envío express gratis'}</span></div>
+              <strong>{Math.round(progress)}%</strong>
+              <div className="express-goal-bar"><i style={{ width: `${progress}%` }} /></div>
+            </div>
             <div className="tot"><span>{needsQuote && hasConfirmedPrice ? 'Subtotal confirmado' : 'Total'}</span><span>{needsQuote && !hasConfirmedPrice ? 'Por confirmar' : money(subtotal)}</span></div>
             {needsQuote && <p style={{ fontSize: '.8rem', color: 'var(--t2)' }}>Tu selección incluye productos por cotizar. Confirmaremos sus precios y el total antes de tomar el pedido.</p>}
           </>
@@ -58,7 +69,7 @@ export function CartDrawer() {
           Continuar con mi pedido
         </button>}
         <span style={{ fontSize: '.76rem', color: 'var(--t2)', textAlign: 'center' }}>
-          Delivery gratis de 12 a 7 p.m. · express desde S/ 10 · pagas al recibir
+          Programada gratis · express gratis desde S/ 200
         </span>
       </div>
     </aside>

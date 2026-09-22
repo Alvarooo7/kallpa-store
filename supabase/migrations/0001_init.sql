@@ -10,7 +10,7 @@ create sequence if not exists claim_seq start 1;
 -- ─────────────────────────── clientes ───────────────────────────
 create table if not exists customers (
   id           bigserial primary key,
-  email        text not null unique,
+  email        text unique,
   phone_e164   text not null,
   name         text not null,
   marketing_ok boolean not null default false,

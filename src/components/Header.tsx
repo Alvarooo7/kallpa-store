@@ -9,6 +9,7 @@ import { PRODUCTS } from '@/lib/catalog';
 import { COMPANY, waLink } from '@/lib/company';
 import { money } from '@/lib/format';
 import { track } from '@/lib/analytics';
+import type { MouseEvent } from 'react';
 
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 
@@ -22,6 +23,14 @@ export function Header() {
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState('');
+
+  const goToHomeSection = (event: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    setMenu(false);
+    if (window.location.pathname !== '/') return;
+    event.preventDefault();
+    window.history.pushState(null, '', `/#${sectionId}`);
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const hits = useMemo(() => {
     const n = norm(q);
@@ -57,8 +66,8 @@ export function Header() {
           <nav className="main">
             <Link href="/">Inicio</Link>
             <Link href="/catalogo">Catálogo</Link>
-            <Link href="/#usos">Por uso</Link>
-            <Link href="/#combo">Smartwatches</Link>
+            <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
+            <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>
             <Link href="/envios">Envíos</Link>
           </nav>
           <div className="tools">
@@ -115,12 +124,11 @@ export function Header() {
           <div className="mnav on">
             <div className="wrap">
               <Link href="/catalogo" onClick={() => setMenu(false)}>Catálogo</Link>
-              <Link href="/#usos" onClick={() => setMenu(false)}>Por uso</Link>
-              <Link href="/#diagnostico" onClick={() => setMenu(false)}>¿Qué quieres resolver?</Link>
-              <Link href="/#combo" onClick={() => setMenu(false)}>Smartwatches</Link>
+              <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
+              <Link href="/#diagnostico" onClick={(event) => goToHomeSection(event, 'diagnostico')}>¿Qué quieres resolver?</Link>
+              <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>
               <Link href="/envios" onClick={() => setMenu(false)}>Envíos y pagos</Link>
               <div className="foot">
-                <a className="btn sm" style={{ background: '#25D366' }} href={waLink('Hola Kallpa')} target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
                 <button className="btn sm out" onClick={() => { setMenu(false); openUI('lead'); }}>Mi 10% de descuento</button>
               </div>
             </div>

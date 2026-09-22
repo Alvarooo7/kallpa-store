@@ -64,7 +64,7 @@ export function deliveryPromise(t: LimaTime = limaNow()): Promise_ {
   return {
     open: false, headline: FREE_LINE, cut,
     big: `Gratis, ${next} entre 12 y 7 p.m.`,
-    small: '¿No puedes esperar? Te mandamos un express hoy mismo desde S/ 10 — escríbenos.',
+    small: '¿No puedes esperar? Express hoy mismo: gratis desde S/ 200 o desde S/ 10 según distrito.',
     clock: countdown, clockCap: `para el corte de ${t.dow === 6 ? 'lunes' : 'mañana'} a las 9 a.m.`,
   };
 }
@@ -76,4 +76,4 @@ export const PROVINCE_PROMISE = {
 };
 
 export const LIMA_FINE =
-  'En la ventana de 12 a 7 p.m. el delivery es <b>gratis</b>. ¿Lo quieres antes? Express <b>desde S/ 10</b>.';
+  'En la ventana de 12 a 7 p.m. el delivery es <b>gratis</b>. Express también es gratis desde <b>S/ 200</b>.';

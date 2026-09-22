@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Envios } from '@/components/home/Sections';
+import { EXPRESS_TIERS } from '@/lib/shipping';
+import { money } from '@/lib/format';
 
 export const metadata: Metadata = {
   title: 'Envíos y pagos — delivery gratis en Lima, express desde S/ 10',
@@ -16,10 +18,31 @@ export default function EnviosPage() {
         Dos velocidades. Tú eliges.
       </h1>
       <p style={{ color: 'var(--t2)', maxWidth: '58ch' }}>
-        Si puedes esperar la ventana del día, no pagas nada. Si lo quieres en horas, cuesta lo que cuesta mover una moto
-        extra. Nada más, y sin letra chica.
+        Si puedes esperar la ventana del día, no pagas nada. Si lo quieres en horas, el express es gratis desde S/ 200;
+        antes de esa meta se aplica el rango de tu distrito.
       </p>
       <Envios heading={false} />
+      <section className="shipping-ranges" aria-labelledby="shipping-ranges-title">
+        <span className="eb">Express desde Pueblo Libre</span>
+        <h2 id="shipping-ranges-title">Cinco rangos, un precio visible</h2>
+        <p>
+          El express es gratis desde S/ 200. Para compras menores calculamos el recargo según la distancia aproximada al
+          centro del distrito. Antes de confirmar verás el monto exacto; luego coordinamos disponibilidad y hora por WhatsApp.
+        </p>
+        <div className="shipping-range-grid">
+          {EXPRESS_TIERS.map(tier => (
+            <article key={tier.fee}>
+              <b>{money(tier.fee)}</b>
+              <span>{tier.distance}</span>
+              <small>{tier.districts.join(' · ')}</small>
+            </article>
+          ))}
+        </div>
+        <p className="shipping-method">
+          Los rangos toman como referencia el costo de una moto por distancia y tiempo. La tarifa mostrada es el recargo
+          de Kallpa para tu distrito; el operador disponible puede ser inDrive, Uber, Cabify u otro servicio equivalente.
+        </p>
+      </section>
     </div>
   );
 }

@@ -1,11 +1,16 @@
 import { db } from './index';
 
-export type NewOrderLine = { slug: string; name: string; qty: number; unitCents: number };
+export type NewOrderLine = {
+  slug: string; name: string; qty: number; unitCents: number;
+  variantId?: string; variantSku?: string; variantLabel?: string;
+  variantAttributes: Record<string, string>;
+};
 
 export type NewOrder = {
-  customer: { name: string; email: string; phoneE164: string };
+  customer: { name: string; phoneE164: string; email: string; marketingOk: boolean };
   zone: 'lima' | 'prov';
   isExpress: boolean;
+  shippingCents: number;
   payMethod: 'cod' | 'yape' | 'transfer' | 'card';
   lines: NewOrderLine[];
   shipping: {
@@ -42,14 +47,29 @@ export async function createOrder(input: NewOrder): Promise<OrderResult> {
 
   const { data, error } = await db.rpc('create_order', {
     p: {
-      customer: { name: input.customer.name, email: input.customer.email, phone_e164: input.customer.phoneE164 },
+      customer: {
+        name: input.customer.name,
+        phone_e164: input.customer.phoneE164,
+        email: input.customer.email,
+        marketing_ok: input.customer.marketingOk,
+      },
       zone: input.zone,
       is_express: input.isExpress,
       pay_method: input.payMethod,
       subtotal_cents: subtotalCents,
+      shipping_cents: input.shippingCents,
       igv_cents: igvCents,
       idempotency_key: input.idempotencyKey ?? null,
-      lines: input.lines.map((l) => ({ slug: l.slug, name: l.name, qty: l.qty, unit_cents: l.unitCents })),
+      lines: input.lines.map((l) => ({
+        slug: l.slug,
+        name: l.name,
+        qty: l.qty,
+        unit_cents: l.unitCents,
+        variant_id: l.variantId ?? null,
+        variant_sku: l.variantSku ?? null,
+        variant_label: l.variantLabel ?? null,
+        variant_attributes: l.variantAttributes,
+      })),
       shipping: input.shipping,
     },
   });

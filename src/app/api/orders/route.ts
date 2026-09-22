@@ -1,8 +1,9 @@
 import { NextResponse, after } from 'next/server';
-import { bySlug } from '@/lib/catalog';
+import { bySlug, productLineName, productPriceKnown, productUnitPrice, variantById } from '@/lib/catalog';
 import { hasDb } from '@/lib/db';
 import { createOrder } from '@/lib/db/orders';
-import { clampQty, clean, isEmail, maskEmail, toE164Pe } from '@/lib/validation';
+import { clampQty, clean, isEmail, toE164Pe } from '@/lib/validation';
+import { FREE_EXPRESS_FROM, expressFeeForDistrict } from '@/lib/shipping';
 import { COMPANY } from '@/lib/company';
 import { sendMail } from '@/lib/mail/client';
 import { orderConfirmation, orderInternal } from '@/lib/mail/templates';
@@ -12,10 +13,10 @@ export const runtime = 'nodejs';
 type Body = {
   zone?: 'lima' | 'prov';
   isExpress?: boolean;
-  customer?: { name?: string; phone?: string; email?: string };
+  customer?: { name?: string; phone?: string; email?: string; marketingOk?: boolean };
   shipping?: Record<string, string>;
   coupon?: string;
-  items?: { id: string; q: number }[];
+  items?: { id: string; q: number; variantId?: string }[];
   idempotencyKey?: string;
 };
 
@@ -34,11 +35,12 @@ export async function POST(req: Request) {
 
   // ── contacto ──
   const name = clean(body.customer?.name, 120);
-  const email = clean(body.customer?.email, 254).toLowerCase();
   const phoneE164 = toE164Pe(body.customer?.phone);
+  const email = clean(body.customer?.email, 254).toLowerCase();
+  const marketingOk = body.customer?.marketingOk === true;
   if (name.length < 3) return bad('Escribe tu nombre completo.');
-  if (!isEmail(email)) return bad('Ese correo no parece válido.');
   if (!phoneE164) return bad('El celular debe ser un número peruano de 9 dígitos que empiece en 9.');
+  if (!isEmail(email)) return bad('Escribe un correo electrónico válido.');
 
   // ── items ──
   const items = Array.isArray(body.items) ? body.items : [];
@@ -48,16 +50,37 @@ export async function POST(req: Request) {
   const unknown = items.filter((l) => !bySlug(l?.id));
   if (unknown.length) return bad('Hay un producto que ya no está disponible. Vuelve a armar tu pedido.');
 
-  const sinPrecio = items.filter((l) => !bySlug(l.id)!.priceKnown);
+  const invalidVariant = items.find((l) => {
+    const p = bySlug(l.id)!;
+    return p.variants?.length && (!l.variantId || !variantById(p, l.variantId));
+  });
+  if (invalidVariant) return bad('Elige una opción disponible para cada producto.');
+
+  const sinPrecio = items.filter((l) => !productPriceKnown(bySlug(l.id)!, l.variantId));
   if (sinPrecio.length) {
     return bad('Consulta el precio y la disponibilidad de estos productos antes de pedir.');
   }
 
   const lines = items.map((l) => {
     const p = bySlug(l.id)!;
+    const variant = variantById(p, l.variantId);
     const qty = clampQty(l.q);
     // El precio se toma SIEMPRE del catálogo del servidor, nunca del cliente.
-    return { slug: p.id, name: p.short, qty, unitCents: Math.round(p.price * 100) };
+    return {
+      slug: p.id,
+      name: productLineName(p, l.variantId),
+      qty,
+      unitCents: Math.round(productUnitPrice(p, l.variantId) * 100),
+      variantId: variant?.id,
+      variantSku: variant?.sku,
+      variantLabel: variant?.label,
+      variantAttributes: variant ? {
+        ...(variant.color ? { color: variant.color } : {}),
+        ...(variant.flavor ? { flavor: variant.flavor } : {}),
+        ...(variant.size ? { size: variant.size } : {}),
+        ...(variant.presentation ? { presentation: variant.presentation } : {}),
+      } : {},
+    };
   });
 
   // ── envío ──
@@ -73,6 +96,14 @@ export async function POST(req: Request) {
   if (zone === 'prov' && (!shipping.city || !shipping.dni)) {
     return bad('Para provincia necesitamos tu ciudad y tu DNI: la agencia lo pide para entregar.');
   }
+  const merchandiseCents = lines.reduce((sum, line) => sum + line.unitCents * line.qty, 0);
+  const districtExpressFee = zone === 'lima' && isExpress ? expressFeeForDistrict(shipping.district) : 0;
+  if (zone === 'lima' && isExpress && districtExpressFee === null) {
+    return bad('No pudimos calcular el express para ese distrito. Escríbenos por WhatsApp.');
+  }
+  const freeExpress = merchandiseCents >= FREE_EXPRESS_FROM * 100;
+  const expressFee = freeExpress ? 0 : districtExpressFee;
+  const shippingCents = (expressFee ?? 0) * 100;
 
   // ── sin base no se finge un pedido ──
   if (!hasDb) {
@@ -88,9 +119,10 @@ export async function POST(req: Request) {
 
   try {
     const result = await createOrder({
-      customer: { name, email, phoneE164 },
+      customer: { name, phoneE164, email, marketingOk },
       zone,
       isExpress,
+      shippingCents,
       payMethod: zone === 'lima' && !isExpress ? 'cod' : 'yape',
       lines,
       shipping,
@@ -105,15 +137,14 @@ export async function POST(req: Request) {
     // Nunca PII en los logs: el número de pedido basta para rastrear.
     console.info('[pedido]', { number: result.number, zone, items: lines.length, reused: result.reused });
 
-    // El correo sale DESPUÉS de responder, con `after`: en Vercel una promesa
-    // suelta se corta al devolver la respuesta. Y si falla, el pedido ya está
-    // guardado — queda registrado en la tabla `emails` para reintentarlo.
+    // Los correos salen después de responder: un fallo del proveedor no puede
+    // deshacer un pedido que ya quedó guardado.
     if (!result.reused) {
       const mailLines = lines.map((l) => ({ name: l.name, qty: l.qty, unitCents: l.unitCents }));
       after(async () => {
         await sendMail(orderConfirmation({
-          to: email, name, number: result.number, lines: mailLines,
-          totalCents: result.totalCents, zone, isExpress,
+          to: email, name, number: result.number, lines: mailLines, totalCents: result.totalCents,
+          zone, isExpress,
         }));
         const internal = process.env.MAIL_INTERNAL;
         if (internal) {
@@ -134,9 +165,10 @@ export async function POST(req: Request) {
       totalCents: result.totalCents,
       igvCents: result.igvCents,
       payment: zone === 'lima' && !isExpress ? 'contraentrega' : 'anticipado',
+      shippingCents,
     });
   } catch (err) {
-    console.error('[pedido] fallo al guardar', { customer: maskEmail(email), err: String(err) });
+    console.error('[pedido] fallo al guardar', { err: String(err) });
     return NextResponse.json(
       { error: 'Algo falló de nuestro lado. Escríbenos por WhatsApp y cerramos tu pedido ahí mismo.', whatsapp: `https://wa.me/${COMPANY.whatsapp}` },
       { status: 500 },

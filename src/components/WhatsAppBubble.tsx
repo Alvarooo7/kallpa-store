@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useShop } from './Providers';
-import { bySlug } from '@/lib/catalog';
+import { bySlug, productLineName } from '@/lib/catalog';
 import { waLink } from '@/lib/company';
 import { track } from '@/lib/analytics';
 
@@ -12,7 +12,7 @@ export function WhatsAppBubble() {
   if (hidden) return null;
 
   const items = cart.length
-    ? cart.map((l) => `${l.q}× ${bySlug(l.id)?.short}`).join(', ')
+    ? cart.map((l) => { const p = bySlug(l.id); return `${l.q}× ${p ? productLineName(p, l.variantId) : l.id}`; }).join(', ')
     : 'información';
 
   return (

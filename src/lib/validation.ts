@@ -20,7 +20,7 @@ export function toE164Pe(raw: unknown): string | null {
 export const clean = (v: unknown, max = 200): string =>
   typeof v === 'string' ? v.trim().slice(0, max) : '';
 
-export const clampQty = (n: unknown, max = 10): number => {
+export const clampQty = (n: unknown, max = 99): number => {
   const q = Math.floor(Number(n));
   return Number.isFinite(q) ? Math.max(1, Math.min(max, q)) : 1;
 };

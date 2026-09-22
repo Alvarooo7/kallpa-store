@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ProductImage } from '../ProductImage';
 import { ProductPrice } from '../ProductPrice';
-import { ProductCard } from '../ProductCard';
 import { CutoffClock } from '../DeliveryPromise';
 import { PRODUCTS, PAINS, USES, bySlug } from '@/lib/catalog';
 import { HeroProducts } from './HeroProducts';
@@ -15,7 +14,7 @@ export function Hero() {
       <div className="wrap">
         <div className="hero-copy">
           <div className="hero-banner">
-          <div className="hero-mobile-photo"><Image src="/hero/luchito-mobile-v3.webp" alt="Luchito de tres cuartos, con brazos cruzados y mirada directa, polo blanco Kallpa y shorts deportivos negros" fill quality={95} sizes="(max-width: 760px) 280px, 1px" /></div>
+          <div className="hero-mobile-photo"><Image src="/hero/luchito-mobile-v5.png" alt="Luchito sosteniendo un paquete Kallpa, con polo blanco de la marca y ropa deportiva" fill quality={90} sizes="(max-width: 760px) 290px, 1px" /></div>
           <span className="eb">Delivery gratis el mismo día</span>
           <h1>Hoy lo pides. Hoy lo tienes.</h1>
           <p className="hsub">
@@ -34,7 +33,7 @@ export function Hero() {
             </div>
           </div>
           <div className="ctas">
-            <Link className="btn" href="#catalogo">Ver catálogo</Link>
+            <Link className="btn" href="/catalogo">Ver catálogo</Link>
             <Link className="tl" href="/envios">Cómo llega</Link>
           </div>
           </div>
@@ -102,24 +101,10 @@ export function Anchor() {
             </div>
             <div className="row" style={{ marginTop: 14 }}>
               <Link className="btn acc" href={`/p/${p.id}`}>Ver el XT80</Link>
-              <Link className="tl" href="#catalogo">Ver los otros {PRODUCTS.length - 1}</Link>
+              <Link className="tl" href="/catalogo">Ver los otros {PRODUCTS.length - 1}</Link>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-export function Catalogo() {
-  return (
-    <section id="catalogo">
-      <div className="wrap">
-        <div className="shead">
-          <div><span className="eb">Sale hoy mismo</span><h2>Elige tu próximo equipo</h2></div>
-          <span className="vall">{PRODUCTS.length} equipos</span>
-        </div>
-        <div className="grid">{PRODUCTS.map((p) => <ProductCard key={p.id} p={p} />)}</div>
       </div>
     </section>
   );
@@ -141,14 +126,14 @@ export function Diagnostico() {
     <section id="diagnostico" style={{ paddingTop: 28 }}>
       <div className="wrap">
         <div className="shead">
-          <div><span className="eb">Dinos qué quieres hacer</span><h2>¿Qué quieres resolver?</h2></div>
+          <div><span className="eb">Preguntas frecuentes de compra</span><h2>¿Qué estás buscando?</h2></div>
           <p style={{ fontSize: '.92rem', color: 'var(--t2)', maxWidth: '32ch', margin: 0 }}>
-            Nadie se levanta queriendo comprar un gadget. Se levanta queriendo hacer algo.
+            Elige la pregunta que más se parece a la tuya y te mostramos una opción concreta.
           </p>
         </div>
         <div className="diag">
           {PAINS.map((d) => (
-            <Link key={d.pain} href={`/p/${d.to}`} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 18, alignItems: 'center', borderBottom: '1px solid var(--line)', padding: '19px 4px' }}>
+            <Link key={d.pain} href={`/p/${d.to}`}>
               <span className="pain">“{d.pain}”</span>
               <span className="fix">
                 <span>{d.fix}</span>
@@ -205,9 +190,9 @@ export function Envios({ heading = true }: { heading?: boolean }) {
           </div>
           <div className="sh">
             <h3>Lima, para ya — express</h3>
-            <p>Ya pasó el corte, o simplemente no puedes esperar a la tarde. Te mandamos una moto directa y llega en cuestión de horas. Lo coordinamos por WhatsApp según tu distrito, y este sí se paga por adelantado.</p>
-            <div className="val">S/ 10+</div>
-            <span className="cap2">gratis en pedidos desde S/ 199</span>
+            <p>Ya pasó el corte, o simplemente no puedes esperar a la tarde. Te mandamos una moto directa y llega en cuestión de horas. Lo coordinamos por WhatsApp según tu distrito. El pago anticipado es obligatorio antes del despacho.</p>
+            <div className="val">Gratis desde S/ 200</div>
+            <span className="cap2">Antes de la meta: S/ 10 a S/ 30 según distrito</span>
           </div>
           <div className="sh">
             <h3>Provincias — gratis</h3>
@@ -225,7 +210,7 @@ export const FAQ_ITEMS = [
   ['¿Cómo confirmo el modelo del producto?', 'Consulta el modelo exacto, la versión y los accesorios disponibles antes de comprar. Las fichas muestran las fuentes y señalan las características pendientes de verificar.'],
   ['¿De verdad puedo pagar al recibir?', 'En Lima sí, en el delivery del día: pagas al motorizado en efectivo, Yape o Plin cuando ya lo tienes en la mano. Hay dos casos donde el pago va por adelantado: el envío a provincias, porque el flete por agencia sale de nuestra cuenta, y el express, porque mandamos una moto directa solo por tu pedido.'],
   ['¿A qué hora llega si pido ahora?', 'Antes de las 9:00 a.m. de lunes a sábado, llega ese mismo día entre 12 y 7 p.m., y el delivery es gratis. Después del corte, al día siguiente en la misma ventana. Domingos no despachamos.'],
-  ['¿Cuánto cuesta el delivery?', 'Nada, si esperas la ventana del día: el delivery entre 12 y 7 p.m. en Lima es gratis, y a provincias también. Lo único que cuesta es el express, cuando lo necesitas en horas: desde S/ 10 según tu distrito, y gratis en pedidos desde S/ 199.'],
+  ['¿Cuánto cuesta el delivery?', 'La entrega programada entre 12 y 7 p.m. en Lima es gratis, y a provincias también. El express es gratis desde S/ 200 de compra. Antes de esa meta tiene un recargo de S/ 10, S/ 15, S/ 20, S/ 25 o S/ 30 según la distancia desde Pueblo Libre.'],
   ['¿Llega a mi ciudad?', 'A todo el Perú por Shalom u Olva, con envío gratis y 2 a 5 días hábiles. Recoges en agencia con tu DNI.'],
   ['¿Funciona con iPhone?', 'La compatibilidad depende del modelo, la versión de tu teléfono y la app requerida. Consulta la ficha y confirma los requisitos antes de comprar.'],
   ['¿Qué pasa si no me gusta?', 'Cambio dentro de 7 días si llega con falla de fábrica, con caja y accesorios completos. Por cambio de opinión no devolvemos el dinero, y preferimos decírtelo antes de que compres.'],

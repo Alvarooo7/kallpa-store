@@ -228,5 +228,59 @@
       "height": 1177,
       "alt": "Imagen promocional Microwear W AI 3 en uso"
     }
+  ],
+  "proteina-deportiva": [
+    {
+      "src": "/products/proteina-deportiva/01.webp",
+      "width": 566,
+      "height": 987,
+      "alt": "Proteína Universe Nutrition ISO Whey 90 sabor vainilla de 1.2 kg"
+    },
+    {
+      "src": "/products/proteina-deportiva/02.webp",
+      "width": 573,
+      "height": 983,
+      "alt": "Proteína Universe Nutrition ISO Whey 90 sabor cookies de 1.2 kg"
+    },
+    {
+      "src": "/products/proteina-deportiva/03.webp",
+      "width": 973,
+      "height": 1000,
+      "alt": "Información nutricional de Universe Nutrition ISO Whey 90"
+    }
+  ],
+  "creatina-monohidratada": [
+    {
+      "src": "/products/creatina-monohidratada/01.webp",
+      "width": 795,
+      "height": 975,
+      "alt": "Creatina monohidratada Universe Nutrition de 250 g"
+    },
+    {
+      "src": "/products/creatina-monohidratada/02.webp",
+      "width": 999,
+      "height": 1200,
+      "alt": "Creatina monohidratada Universe Nutrition de 500 g"
+    },
+    {
+      "src": "/products/creatina-monohidratada/03.webp",
+      "width": 600,
+      "height": 600,
+      "alt": "Información del fabricante de creatina Universe Nutrition"
+    }
+  ],
+  "lentes-torneo": [
+    {
+      "src": "/products/lentes-torneo/01.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Lentes de natación Torneo Competition verdes con estuche"
+    },
+    {
+      "src": "/products/lentes-torneo/02.webp",
+      "width": 960,
+      "height": 720,
+      "alt": "Lentes de natación Torneo Competition en varios colores"
+    }
   ]
 }

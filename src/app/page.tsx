@@ -1,4 +1,4 @@
-import { Hero, Usos, Anchor, Catalogo, Combo, Diagnostico, PorQue, Envios, Faq, FAQ_ITEMS } from '@/components/home/Sections';
+import { Hero, Usos, Anchor, Combo, Diagnostico, PorQue, Envios, Faq, FAQ_ITEMS } from '@/components/home/Sections';
 import { JsonLd } from '@/lib/seo';
 import { PRODUCTS } from '@/lib/catalog';
 import { SITE_URL } from '@/lib/company';
@@ -28,7 +28,6 @@ export default function Home() {
       <Hero />
       <Usos />
       <Anchor />
-      <Catalogo />
       <Combo />
       <Diagnostico />
       <PorQue />

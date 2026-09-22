@@ -51,7 +51,7 @@ const DOCS = {
       <li><b>Por adelantado</b> en dos casos: envíos a provincia y servicio express. Yape, Plin, transferencia o tarjeta.</li>
     </ul>
     <h4>Entregas</h4>
-    <p>Los pedidos hechos antes de las <b>9:00 a.m.</b> de lunes a sábado se entregan ese mismo día entre 12 y 7 p.m. en Lima, sin costo. Después del corte, al día siguiente hábil. El express tiene costo desde S/ 10 según distrito y se paga por adelantado. A provincias enviamos por Shalom u Olva, sin costo, con entrega estimada de 2 a 5 días hábiles; ese plazo depende de la agencia y no es una garantía nuestra.</p>
+    <p>Los pedidos hechos antes de las <b>9:00 a.m.</b> de lunes a sábado se entregan ese mismo día entre 12 y 7 p.m. en Lima, sin costo. Después del corte, al día siguiente hábil. El express es gratis desde S/ 200 de compra; para importes menores tiene un costo desde S/ 10 según distrito. El pedido express se paga por adelantado. A provincias enviamos por Shalom u Olva, sin costo, con entrega estimada de 2 a 5 días hábiles; ese plazo depende de la agencia y no es una garantía nuestra.</p>
     <p>Si nadie recibe el pedido en la dirección indicada, coordinamos una segunda visita. A partir de la tercera visita fallida, el pedido se cancela.</p>
     <h4>Comprobante</h4>
     <p>Emitimos boleta electrónica por cada venta. Si necesitas factura, indícanoslo antes de confirmar el pedido con el RUC y la razón social.</p>

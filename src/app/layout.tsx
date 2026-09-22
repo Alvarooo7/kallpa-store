@@ -7,6 +7,7 @@ import { CartDrawer, FavsDrawer } from '@/components/CartDrawer';
 import { OrderModal } from '@/components/OrderModal';
 import { LeadModal } from '@/components/LeadModal';
 import { WhatsAppBubble } from '@/components/WhatsAppBubble';
+import { FreeExpressCelebration } from '@/components/FreeExpressCelebration';
 import { JsonLd, storeJsonLd, DEFAULT_TITLE, DEFAULT_DESC } from '@/lib/seo';
 import { SITE_URL, COMPANY } from '@/lib/company';
 
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LeadModal />
           <WhatsAppBubble />
           <Scrim />
+          <FreeExpressCelebration />
         </Providers>
       </body>
     </html>
