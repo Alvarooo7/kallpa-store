@@ -62,7 +62,7 @@ export function Usos() {
           <div className="cats">
             {USES.map((u) => (
               <Link key={u.t} className="cat" href={u.href}>
-                <div className="tile use-photo"><Image src={u.image} alt={u.alt} fill quality={90} sizes="(max-width: 620px) 90vw, (max-width: 960px) 45vw, 400px" /></div>
+                <div className="tile use-photo"><Image src={u.image} alt={u.alt} fill quality={90} unoptimized={u.image === '/uses/lucho-espiar.png'} sizes="(max-width: 620px) 90vw, (max-width: 960px) 45vw, 400px" /></div>
                 <div className="row">
                   <div><b>{u.t}</b><span>{u.n}</span></div>
                   <span className="circ">

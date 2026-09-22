@@ -25,7 +25,7 @@ export const PAINS: Pain[] = [
 export const USES: Use[] = [
   {t:'Entrenar',image:'/uses/lucho-entrenar.webp',alt:'Lucho corriendo junto al mar con un smartwatch',n:'9 productos relacionados',href:'/catalogo?uso=entrenar'},
   {t:'Escuchar',image:'/uses/lucho-escuchar.webp',alt:'Lucho disfrutando música con audífonos deportivos XT80',n:'3 audífonos',href:'/catalogo?uso=escuchar'},
-  {t:'Espiar',image:'/uses/lucho-espiar.webp',alt:'Lucho como un agente secreto con lentes inteligentes Blackview',n:'2 lentes inteligentes',href:'/catalogo?uso=espiar'},
+  {t:'Espiar',image:'/uses/lucho-espiar.png',alt:'Lucho como un agente secreto con lentes inteligentes Blackview',n:'2 lentes inteligentes',href:'/catalogo?uso=espiar'},
 ];
 export const PRODUCT_IDS_BY_USE = {
   entrenar: ['lenovo-xt80', 'acuaticos-x7', 'erazer-xf21', 'haylou-rs4-plus', 'zeblaze-stratos-2-ultra', 'proteina-deportiva', 'creatina-monohidratada', 'lentes-torneo', 'gorros-natacion'],
