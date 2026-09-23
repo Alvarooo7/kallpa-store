@@ -2,6 +2,7 @@
    Tokens + componentes. Sin Tailwind a propósito: ver README. */
 
 :root{
+  color-scheme:light;
   --w:#FFFFFF;
   --w2:#F4F4F5;
   --w3:#ECECEE;
@@ -18,9 +19,6 @@
   --r:16px;
   --rc:12px;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --w:#0C0C0D; --w2:#121214; --w3:#17171A; --t:#F2F2F3; --t2:#9A9DA3; --line:#232326; --ok:#4CC49A;
-}}
 :root[data-theme="dark"]{
   --w:#0C0C0D; --w2:#121214; --w3:#17171A; --t:#F2F2F3; --t2:#9A9DA3; --line:#232326; --ok:#4CC49A;
 }
