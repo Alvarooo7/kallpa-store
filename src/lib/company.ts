@@ -7,8 +7,10 @@ export const COMPANY = {
   city: 'Lima',
   country: 'PE',
   email: 'kallpa.contacto.peru@gmail.com',
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP ?? '51947144701',
-  whatsappPretty: '947 144 701',
+  whatsapp: '51907863118',
+  whatsappPretty: '+51 907 863 118',
+  yapePlinPhone: '947144701',
+  yapePlinHolder: 'Alvaro Pelaez',
 } as const;
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kallpita.store').replace(/\/$/, '');

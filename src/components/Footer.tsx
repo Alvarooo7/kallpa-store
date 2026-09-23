@@ -9,7 +9,7 @@ export function Footer() {
           <div>
             <div className="logo">Kallpa<i style={{ color: 'var(--acc)' }}>.</i></div>
             <p style={{ maxWidth: '33ch' }}>
-              Tecnología que llega hoy. Stock propio en Lima, envío gratis a provincias y pago contra entrega.
+              Tecnología que llega hoy. Envío gratis o express en Lima, envío gratis a provincias y pago contra entrega.
             </p>
           </div>
           <div>

@@ -4,7 +4,7 @@ import { hasDb } from '@/lib/db';
 import { createOrder } from '@/lib/db/orders';
 import { clampQty, clean, isEmail, toE164Pe } from '@/lib/validation';
 import { FREE_EXPRESS_FROM, expressFeeForDistrict } from '@/lib/shipping';
-import { COMPANY } from '@/lib/company';
+import { COMPANY, waLink } from '@/lib/company';
 import { sendMail } from '@/lib/mail/client';
 import { orderConfirmation, orderInternal } from '@/lib/mail/templates';
 
@@ -20,7 +20,7 @@ type Body = {
   idempotencyKey?: string;
 };
 
-const bad = (error: string, status = 400) => NextResponse.json({ error }, { status });
+const bad = (error: string, status = 400, field?: string) => NextResponse.json({ error, field }, { status });
 
 export async function POST(req: Request) {
   let body: Body;
@@ -38,9 +38,9 @@ export async function POST(req: Request) {
   const phoneE164 = toE164Pe(body.customer?.phone);
   const email = clean(body.customer?.email, 254).toLowerCase();
   const marketingOk = body.customer?.marketingOk === true;
-  if (name.length < 3) return bad('Escribe tu nombre completo.');
-  if (!phoneE164) return bad('El celular debe ser un número peruano de 9 dígitos que empiece en 9.');
-  if (!isEmail(email)) return bad('Escribe un correo electrónico válido.');
+  if (name.length < 3) return bad('Escribe tu nombre completo (mínimo 3 caracteres).', 400, 'name');
+  if (!phoneE164) return bad('Ingresa un celular peruano de 9 dígitos que empiece en 9.', 400, 'phone');
+  if (!isEmail(email)) return bad('Escribe un correo electrónico válido.', 400, 'email');
 
   // ── items ──
   const items = Array.isArray(body.items) ? body.items : [];
@@ -90,12 +90,10 @@ export async function POST(req: Request) {
       ? { district: clean(s.district, 80), address: clean(s.address, 200), reference: clean(s.reference, 200) }
       : { city: clean(s.city, 80), agency: clean(s.agency, 40), dni: clean(s.dni, 15) };
 
-  if (zone === 'lima' && (!shipping.district || !shipping.address)) {
-    return bad('Necesitamos tu distrito y tu dirección para llevarte el pedido.');
-  }
-  if (zone === 'prov' && (!shipping.city || !shipping.dni)) {
-    return bad('Para provincia necesitamos tu ciudad y tu DNI: la agencia lo pide para entregar.');
-  }
+  if (zone === 'lima' && !shipping.district) return bad('Elige tu distrito.', 400, 'district');
+  if (zone === 'lima' && !shipping.address) return bad('Ingresa tu dirección y referencia.', 400, 'address');
+  if (zone === 'prov' && !shipping.city) return bad('Ingresa tu ciudad.', 400, 'city');
+  if (zone === 'prov' && !shipping.dni) return bad('Ingresa el DNI para el recojo en agencia.', 400, 'dni');
   const merchandiseCents = lines.reduce((sum, line) => sum + line.unitCents * line.qty, 0);
   const districtExpressFee = zone === 'lima' && isExpress ? expressFeeForDistrict(shipping.district) : 0;
   if (zone === 'lima' && isExpress && districtExpressFee === null) {
@@ -158,7 +156,22 @@ export async function POST(req: Request) {
       });
     }
 
-    // TODO(pasarela): si es anticipado o express, generar el link de pago.
+    const deliveryLabel = zone === 'prov'
+      ? `Envío a ${shipping.city} por ${shipping.agency}`
+      : `${isExpress ? 'Express' : 'Entrega programada'} en ${shipping.district}`;
+  const paymentLabel = zone === 'lima' && !isExpress
+      ? 'Pagaré al recibir.'
+      : `Quiero coordinar el pago anticipado por Yape o Plin al ${COMPANY.yapePlinPhone} (${COMPANY.yapePlinHolder}), transferencia bancaria o tarjeta.`;
+    const whatsapp = waLink([
+      `Hola Kallpa, soy ${name}. Quiero confirmar mi pedido ${result.number}.`,
+      '',
+      ...lines.map((line) => `• ${line.qty} × ${line.name}`),
+      `Total: S/ ${(result.totalCents / 100).toFixed(2)}`,
+      `Entrega: ${deliveryLabel}.`,
+      paymentLabel,
+    ].join('\n'));
+
+    // TODO(pasarela): si se incorpora pago en línea, generar el link de pago.
 
     return NextResponse.json({
       number: result.number,
@@ -166,6 +179,7 @@ export async function POST(req: Request) {
       igvCents: result.igvCents,
       payment: zone === 'lima' && !isExpress ? 'contraentrega' : 'anticipado',
       shippingCents,
+      whatsapp,
     });
   } catch (err) {
     console.error('[pedido] fallo al guardar', { err: String(err) });

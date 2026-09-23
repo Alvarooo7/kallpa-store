@@ -17,7 +17,7 @@ const DOCS = {
     <h4>Productos digitales</h4>
     <p>Las guías y plantillas se entregan por descarga inmediata. Por su naturaleza, <b>no admiten devolución</b> una vez enviado el enlace de acceso. Esto se indica antes de la compra.</p>
     <h4>Cómo pedirlo</h4>
-    <p>Escríbenos por WhatsApp al <b>947 144 7017</b> con tu número de pedido y una foto o video de la falla. Te respondemos el mismo día hábil y coordinamos el recojo.</p>`},
+    <p>Escríbenos por WhatsApp al <b>${CO.whatsappPretty}</b> con tu número de pedido y una foto o video de la falla. Te respondemos el mismo día hábil y coordinamos el recojo.</p>`},
 
   privacidad: { t:'Política de privacidad', body:`
     <p>${EMPRESA} (en adelante, “Kallpa”) trata tus datos personales conforme a la <b>Ley 29733, Ley de Protección de Datos Personales</b>, y su reglamento.</p>
@@ -35,7 +35,7 @@ const DOCS = {
     <h4>Cuánto tiempo</h4>
     <p>Los datos de compra se conservan mientras dure la relación comercial y el plazo que exige la normativa tributaria. Los datos de marketing, hasta que pidas que los borremos.</p>
     <h4>Tus derechos</h4>
-    <p>Puedes pedir acceso, rectificación, cancelación u oposición al tratamiento de tus datos (derechos ARCO) escribiendo a <b>${CO.email}</b> o por WhatsApp al 947 144 7017. Respondemos en los plazos que fija la ley. También puedes acudir a la Autoridad Nacional de Protección de Datos Personales si consideras que no atendimos tu solicitud.</p>
+    <p>Puedes pedir acceso, rectificación, cancelación u oposición al tratamiento de tus datos (derechos ARCO) escribiendo a <b>${CO.email}</b> o por WhatsApp al ${CO.whatsappPretty}. Respondemos en los plazos que fija la ley. También puedes acudir a la Autoridad Nacional de Protección de Datos Personales si consideras que no atendimos tu solicitud.</p>
     <h4>Cookies</h4>
     <p>Usamos cookies propias para recordar tu carrito y tus favoritos, y cookies de terceros para medir el rendimiento de nuestros anuncios. Puedes bloquearlas desde tu navegador; si lo haces, el carrito puede dejar de recordar lo que agregaste.</p>`},
 

@@ -29,8 +29,23 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es-PE">
+    <html lang="es-PE" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            var params = new URLSearchParams(location.search);
+            var forced = params.get('intro');
+            var fromAd = params.has('gclid') || params.has('fbclid') || params.has('ttclid') ||
+              params.has('msclkid') || Array.from(params.keys()).some(function(key) { return key.indexOf('utm_') === 0; });
+            var reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var run = location.pathname === '/' && !reducedMotion && (forced === '1' ||
+              (forced !== '0' && !location.hash && !fromAd &&
+              (${process.env.NODE_ENV !== 'production'} || localStorage.getItem('kallpa_intro_seen_v1') !== '1')));
+            document.documentElement.dataset.intro = run ? 'run' : 'skip';
+          } catch (error) {
+            document.documentElement.dataset.intro = 'skip';
+          }
+        ` }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link

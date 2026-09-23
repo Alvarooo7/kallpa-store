@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useShop } from './Providers';
 import { DeliveryPromise } from './DeliveryPromise';
 import { money } from '@/lib/format';
 import { track } from '@/lib/analytics';
 import type { Zone } from '@/lib/types';
 import { EXPRESS_TIERS, FREE_EXPRESS_FROM, expressFeeForDistrict, expressTierForDistrict, type LimaDeliveryMode } from '@/lib/shipping';
+import { COMPANY, waLink } from '@/lib/company';
+import { isEmail, toE164Pe } from '@/lib/validation';
 
 export function OrderModal() {
   const { ui, closeUI, cart, subtotal } = useShop();
@@ -15,6 +17,10 @@ export function OrderModal() {
   const [district, setDistrict] = useState('');
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState<string | null>(null);
+  const [whatsapp, setWhatsapp] = useState('');
+  const [formError, setFormError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const formRef = useRef<HTMLFormElement>(null);
   const on = ui === 'order';
   const isExpress = zone === 'lima' && deliveryMode === 'express';
   const freeExpress = subtotal >= FREE_EXPRESS_FROM;
@@ -24,8 +30,28 @@ export function OrderModal() {
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSending(true);
+    setFormError('');
     const fd = new FormData(e.currentTarget);
+    const fieldValues = (name: string) => String(fd.get(name) ?? '').trim();
+    const errors: Record<string, string> = {};
+    if (fieldValues('name').length < 3) errors.name = 'Escribe tu nombre completo (mínimo 3 caracteres).';
+    if (!toE164Pe(fieldValues('phone'))) errors.phone = 'Ingresa un celular peruano de 9 dígitos que empiece en 9.';
+    if (!isEmail(fieldValues('email'))) errors.email = 'Escribe un correo electrónico válido.';
+    if (zone === 'lima') {
+      if (!fieldValues('district')) errors.district = 'Elige tu distrito.';
+      if (!fieldValues('address')) errors.address = 'Ingresa tu dirección y referencia.';
+    } else {
+      if (!fieldValues('city')) errors.city = 'Ingresa tu ciudad.';
+      if (!fieldValues('dni')) errors.dni = 'Ingresa el DNI para el recojo en agencia.';
+    }
+    if (isExpress && fd.get('expressConsent') !== 'yes') errors.expressConsent = 'Confirma que el pago express se coordina antes del despacho.';
+    setFieldErrors(errors);
+    const firstError = Object.keys(errors)[0];
+    if (firstError) {
+      formRef.current?.querySelector<HTMLElement>(`[name="${firstError}"]`)?.focus();
+      return;
+    }
+    setSending(true);
     const payload = {
       zone,
       isExpress,
@@ -48,11 +74,28 @@ export function OrderModal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const data = (await r.json()) as { number?: string; error?: string };
-      if (!r.ok) throw new Error(data.error ?? 'No pudimos registrar el pedido');
-      track('Purchase', { value: total, currency: 'PEN', contents: cart, shipping: expressFee });
+      const data = (await r.json()) as { number?: string; error?: string; field?: string; whatsapp?: string };
+      if (!r.ok) {
+        if (r.status === 400 || r.status === 409) {
+          const message = data.error ?? 'Revisa los datos del pedido e inténtalo nuevamente.';
+          if (data.field) {
+            setFieldErrors({ [data.field]: message });
+            formRef.current?.querySelector<HTMLElement>(`[name="${data.field}"]`)?.focus();
+          } else {
+            setFormError(message);
+          }
+          return;
+        }
+        throw new Error(data.error ?? 'No pudimos registrar el pedido');
+      }
+      track('Lead', { value: total, currency: 'PEN', contents: cart, shipping: expressFee });
       setDone(data.number ?? 'VD-0000');
+      if (data.whatsapp) {
+        setWhatsapp(data.whatsapp);
+        window.location.assign(data.whatsapp);
+      }
     } catch {
+      setWhatsapp(waLink('Hola Kallpa, intenté hacer un pedido en la web, pero no pude terminar. ¿Me ayudan a confirmarlo?'));
       setDone('error');
     } finally {
       setSending(false);
@@ -72,10 +115,10 @@ export function OrderModal() {
                 <button className="x" onClick={closeUI}>×</button>
               </div>
               {done === 'error' ? (
-                <p className="mini2">Algo falló de nuestro lado. Escríbenos por WhatsApp y lo cerramos ahí mismo, sin que pierdas el pedido.</p>
+                <p className="mini2">No se registró el pedido. Podemos ayudarte a confirmarlo por WhatsApp.</p>
               ) : (
                 <>
-                  <p className="mini2">Tu número de pedido es <b style={{ color: 'var(--t)' }}>{done}</b>. Te escribimos por WhatsApp para confirmar la entrega.</p>
+                  <p className="mini2">Tu pedido <b style={{ color: 'var(--t)' }}>{done}</b> ya está registrado. Continúa en WhatsApp para confirmar la entrega{zone === 'prov' || isExpress ? ' y coordinar el pago anticipado' : ' y pagar al recibir'}.</p>
                   {zone === 'prov' ? <DeliveryPromise zone="prov" /> : (
                     <div className="promise">
                       <div className="big">{isExpress ? 'Entrega express solicitada' : 'Entrega programada gratis'}</div>
@@ -84,14 +127,16 @@ export function OrderModal() {
                   )}
                 </>
               )}
+              {whatsapp && <a className="btn acc block" style={{ marginTop: 14 }} href={whatsapp}>Abrir WhatsApp para confirmar</a>}
               <button className="btn block" style={{ marginTop: 14 }} onClick={closeUI}>Cerrar</button>
             </>
           ) : (
             <>
               <div className="dh" style={{ padding: '0 0 15px', marginBottom: 15 }}>
-                <h3>Ingresa tus datos</h3>
+                <h3>Terminemos tu pedido</h3>
                 <button className="x" onClick={closeUI} aria-label="Cerrar">×</button>
               </div>
+              <p className="mini2">Cuéntanos dónde lo recibirás. Al confirmar, abrirás WhatsApp con el resumen listo para que te atienda una persona de Kallpa.</p>
 
               <div className="seg" role="group" aria-label="Zona de entrega">
                 <button type="button" className={zone === 'lima' ? 'on' : ''} onClick={() => setZone('lima')}>Lima</button>
@@ -111,10 +156,14 @@ export function OrderModal() {
                 </div>
               )}
 
-              <form onSubmit={submit}>
-                <div className="field"><label htmlFor="o-name">Nombre completo</label><input id="o-name" name="name" required placeholder="Como figura en tu DNI" /></div>
-                <div className="field"><label htmlFor="o-phone">Celular con WhatsApp</label><input id="o-phone" name="phone" required inputMode="numeric" placeholder="9XX XXX XXX" /></div>
-                <div className="field"><label htmlFor="o-email">Correo electrónico</label><input id="o-email" name="email" type="email" required autoComplete="email" placeholder="tucorreo@gmail.com" /></div>
+              <form ref={formRef} onSubmit={submit} noValidate onChange={(event) => {
+                const target = event.nativeEvent.target;
+                const name = target instanceof HTMLInputElement || target instanceof HTMLSelectElement ? target.name : '';
+                if (name && fieldErrors[name]) setFieldErrors((current) => { const next = { ...current }; delete next[name]; return next; });
+              }}>
+                <div className="field"><label htmlFor="o-name">Nombre completo</label><input id="o-name" name="name" required aria-invalid={!!fieldErrors.name} aria-describedby={fieldErrors.name ? 'o-name-error' : undefined} placeholder="Como figura en tu DNI" />{fieldErrors.name && <span className="field-error" id="o-name-error">{fieldErrors.name}</span>}</div>
+                <div className="field"><label htmlFor="o-phone">Celular con WhatsApp</label><input id="o-phone" name="phone" required inputMode="tel" autoComplete="tel" aria-invalid={!!fieldErrors.phone} aria-describedby={fieldErrors.phone ? 'o-phone-error' : undefined} placeholder="9XX XXX XXX" />{fieldErrors.phone && <span className="field-error" id="o-phone-error">{fieldErrors.phone}</span>}</div>
+                <div className="field"><label htmlFor="o-email">Correo electrónico</label><input id="o-email" name="email" type="email" required autoComplete="email" aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? 'o-email-error' : undefined} placeholder="tucorreo@gmail.com" />{fieldErrors.email && <span className="field-error" id="o-email-error">{fieldErrors.email}</span>}</div>
                 <label className="marketing-optin">
                   <input type="checkbox" name="marketingOk" value="yes" />
                   <span>Enviarme novedades y ofertas por correo electrónico.</span>
@@ -124,7 +173,7 @@ export function OrderModal() {
                   <>
                     <div className="field">
                       <label htmlFor="o-dist">Distrito</label>
-                      <select id="o-dist" name="district" required value={district} onChange={(event) => setDistrict(event.target.value)}>
+                      <select id="o-dist" name="district" required value={district} aria-invalid={!!fieldErrors.district} aria-describedby={fieldErrors.district ? 'o-dist-error' : undefined} onChange={(event) => setDistrict(event.target.value)}>
                         <option value="" disabled>Elige tu distrito</option>
                         {EXPRESS_TIERS.map(tier => (
                           <optgroup key={tier.fee} label={isExpress ? `${money(tier.fee)} · ${tier.distance}` : `Rango ${tier.distance}`}>
@@ -132,8 +181,9 @@ export function OrderModal() {
                           </optgroup>
                         ))}
                       </select>
+                      {fieldErrors.district && <span className="field-error" id="o-dist-error">{fieldErrors.district}</span>}
                     </div>
-                    <div className="field"><label htmlFor="o-addr">Dirección y referencia</label><input id="o-addr" name="address" required placeholder="Av. ... / al frente de ..." /></div>
+                    <div className="field"><label htmlFor="o-addr">Dirección y referencia</label><input id="o-addr" name="address" required aria-invalid={!!fieldErrors.address} aria-describedby={fieldErrors.address ? 'o-addr-error' : undefined} placeholder="Av. ... / al frente de ..." />{fieldErrors.address && <span className="field-error" id="o-addr-error">{fieldErrors.address}</span>}</div>
                     {isExpress && (
                       <div className="shipping-note" aria-live="polite">
                         {district ? <><b>Express a {district}: {freeExpress ? 'gratis' : money(expressFee)}</b><span>{freeExpress ? 'Beneficio activado por superar S/ 200. ' : `Rango ${expressTier?.distance} desde Pueblo Libre. `}El pago del pedido es anticipado; coordinamos el pago, la disponibilidad y la hora por WhatsApp antes del despacho.</span></> : <><b>Express: pago anticipado obligatorio</b><span>{freeExpress ? 'Tu envío express ya es gratis. Selecciona tu distrito.' : 'Selecciona tu distrito para ver el recargo antes de confirmar.'}</span></>}
@@ -142,12 +192,12 @@ export function OrderModal() {
                   </>
                 ) : (
                   <>
-                    <div className="field"><label htmlFor="o-city">Ciudad</label><input id="o-city" name="city" required placeholder="Arequipa, Trujillo, Cusco..." /></div>
+                    <div className="field"><label htmlFor="o-city">Ciudad</label><input id="o-city" name="city" required aria-invalid={!!fieldErrors.city} aria-describedby={fieldErrors.city ? 'o-city-error' : undefined} placeholder="Arequipa, Trujillo, Cusco..." />{fieldErrors.city && <span className="field-error" id="o-city-error">{fieldErrors.city}</span>}</div>
                     <div className="field">
                       <label htmlFor="o-ag">Agencia</label>
                       <select id="o-ag" name="agency" defaultValue="Shalom"><option>Shalom</option><option>Olva Courier</option></select>
                     </div>
-                    <div className="field"><label htmlFor="o-dni">DNI</label><input id="o-dni" name="dni" required inputMode="numeric" placeholder="La agencia lo pide para entregar" /></div>
+                    <div className="field"><label htmlFor="o-dni">DNI</label><input id="o-dni" name="dni" required inputMode="numeric" aria-invalid={!!fieldErrors.dni} aria-describedby={fieldErrors.dni ? 'o-dni-error' : undefined} placeholder="La agencia lo pide para entregar" />{fieldErrors.dni && <span className="field-error" id="o-dni-error">{fieldErrors.dni}</span>}</div>
                   </>
                 )}
 
@@ -162,15 +212,23 @@ export function OrderModal() {
                   <div className="sl t"><span>Total</span><span>{money(total)}</span></div>
                 </div>
 
+                {(zone === 'prov' || isExpress) && <div className="shipping-note" style={{ marginTop: 14 }}>
+                  <b>Opciones de pago anticipado</b>
+                  <span>Yape o Plin: {COMPANY.yapePlinPhone} · {COMPANY.yapePlinHolder}. También aceptamos transferencia bancaria o tarjeta; coordinamos los datos o el enlace por WhatsApp. Espera nuestra confirmación antes de pagar.</span>
+                </div>}
+
                 {isExpress && (
                   <label className="express-consent">
-                    <input type="checkbox" required />
+                    <input type="checkbox" name="expressConsent" value="yes" required aria-invalid={!!fieldErrors.expressConsent} />
                     <span><b>Entiendo que el envío express se paga por adelantado.</b> Kallpa me contactará por WhatsApp para coordinar el pago antes de enviar el pedido.</span>
                   </label>
                 )}
+                {fieldErrors.expressConsent && <span className="field-error">{fieldErrors.expressConsent}</span>}
+
+                {formError && <p className="order-form-error" role="alert">{formError}</p>}
 
                 <button className="btn acc block" style={{ marginTop: 14 }} disabled={sending}>
-                  {sending ? 'Registrando…' : zone === 'prov' ? 'Confirmar pedido — pago anticipado' : isExpress ? `Confirmar express · pago anticipado · ${money(total)}` : 'Confirmar — pago al recibir'}
+                  {sending ? 'Registrando…' : zone === 'prov' ? 'Confirmar y coordinar pago por WhatsApp' : isExpress ? 'Confirmar express por WhatsApp' : 'Confirmar por WhatsApp · pago al recibir'}
                 </button>
               </form>
             </>

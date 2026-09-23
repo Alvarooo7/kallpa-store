@@ -6,7 +6,7 @@ export const isEmail = (v: unknown): v is string =>
   typeof v === 'string' && v.length <= 254 && EMAIL_RE.test(v);
 
 /**
- * Celular peruano a E.164. Acepta "947 144 701", "947144701", "+51947144701".
+ * Celular peruano a E.164. Acepta "907 863 118", "907863118", "+51907863118".
  * Devuelve null si no parece un móvil peruano (9 dígitos empezando en 9).
  */
 export function toE164Pe(raw: unknown): string | null {

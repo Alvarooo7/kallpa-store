@@ -6,6 +6,7 @@ import { CutoffClock } from '../DeliveryPromise';
 import { PRODUCTS, PAINS, USES, bySlug } from '@/lib/catalog';
 import { HeroProducts } from './HeroProducts';
 import { HeroSearchPrompt } from './HeroSearchPrompt';
+import { CatalogVideo } from './CatalogVideo';
 
 export function Hero() {
   const featured = ['lenovo-xt80', 'zeblaze-stratos-2-ultra', 'blackview-bv200'].map(id => bySlug(id)!);
@@ -14,9 +15,9 @@ export function Hero() {
       <div className="wrap">
         <div className="hero-copy">
           <div className="hero-banner">
-          <div className="hero-mobile-photo"><Image src="/hero/luchito-mobile-v5.png" alt="Luchito sosteniendo un paquete Kallpa, con polo blanco de la marca y ropa deportiva" fill quality={90} sizes="(max-width: 760px) 290px, 1px" /></div>
+          <div className="hero-mobile-photo"><Image src="/hero/luchito-mobile-v5.png" alt="Luchito sosteniendo un paquete Kallpa, con polo blanco de la marca y ropa deportiva" fill loading="lazy" fetchPriority="high" quality={90} sizes="(max-width: 760px) 290px, 1px" /></div>
           <span className="eb">Delivery gratis el mismo día</span>
-          <h1>Hoy lo pides. Hoy lo tienes.</h1>
+          <h1>Hoy lo pides.<br />Hoy lo tienes.</h1>
           <p className="hsub">
             <span className="hero-summary-full">Pide antes de las <b>9 a.m.</b> Recibe de 12 a 7 p.m. y paga al recibir.</span>
             <span className="hero-summary-mobile"><HeroSearchPrompt /><br />Pagas al recibir.</span>
@@ -40,7 +41,7 @@ export function Hero() {
           <p className="hero-mobile-delivery">En Lima: pide antes de las <b>9 a.m.</b> y recibe de <b>12 a 7 p.m.</b> <Link href="/envios">Ver envíos →</Link></p>
           <div className="pills">
             <span className="pl"><i />Pagas al recibir</span>
-            <span className="pl"><i />Stock propio en Lima</span>
+            <span className="pl"><i />Envío Gratis o Express</span>
             <span className="pl"><i />Garantía 3 meses</span>
           </div>
         </div>
@@ -62,7 +63,7 @@ export function Usos() {
           <div className="cats">
             {USES.map((u) => (
               <Link key={u.t} className="cat" href={u.href}>
-                <div className="tile use-photo"><Image src={u.image} alt={u.alt} fill quality={90} unoptimized={u.image === '/uses/lucho-espiar.png'} sizes="(max-width: 620px) 90vw, (max-width: 960px) 45vw, 400px" /></div>
+                <div className="tile use-photo"><Image src={u.image} alt={u.alt} fill quality={90} unoptimized={u.image === '/uses/lucho-espiar-card.webp'} sizes="(max-width: 620px) 90vw, (max-width: 960px) 45vw, 400px" /></div>
                 <div className="row">
                   <div><b>{u.t}</b><span>{u.n}</span></div>
                   <span className="circ">
@@ -148,21 +149,14 @@ export function Diagnostico() {
 }
 
 export function PorQue() {
+  const p = bySlug('lenovo-xt80')!;
   return (
     <section style={{ paddingTop: 20 }}>
       <div className="wrap">
-        <div className="why">
-          <div className="whyfig"><ProductImage p={bySlug('acuaticos-x7')!} /></div>
-          <div>
-            <span className="eb">Por qué Kallpa</span>
-            <h2>El stock ya está acá.<br />Por eso llega hoy.</h2>
-            <p>
-              No importamos por pedido ni te hacemos esperar 20 días. Compramos, probamos y guardamos el stock en Lima.
-              Por eso podemos decirte la hora exacta a la que llega, por eso el delivery no te cuesta nada, y por eso
-              puedes pagar recién cuando lo tienes en la mano.
-            </p>
-            <Link className="btn out" href="/envios">Cómo trabajamos</Link>
-          </div>
+        <div className="catalog-video-section">
+          <span className="eb">Conoce el producto</span>
+          <h2>Mira el XT80 en acción.</h2>
+          {p.video && p.images[0] && <CatalogVideo src={p.video} poster={p.images[0].src} alt="Lenovo XT80" />}
         </div>
       </div>
     </section>

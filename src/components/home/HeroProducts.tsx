@@ -9,6 +9,7 @@ import { ProductPrice } from '../ProductPrice';
 import { useShop } from '../Providers';
 
 const bits = [1, 2, 4];
+const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 const portraits = [
   '/hero/vendemia-lucho.webp',
   '/hero/lucho-combination-1.webp',
@@ -58,14 +59,18 @@ export function HeroProducts({ products }: { products: Product[] }) {
     <div className="hero-visual">
       <div className="hero-orange-shape" aria-hidden="true" />
       <div className="hero-model-photo" data-combination={activeMask}>
-        {portraits.map((src, mask) => (mask === 0 || desktop) && <Image
-          key={src} src={src} fill priority={mask === 0} loading={mask === 0 ? undefined : 'eager'}
-          quality={95} sizes="(max-width: 1000px) 50vw, 440px"
-          className={`hero-lucho-variant${mask === activeMask ? ' visible' : ''}`}
-          aria-hidden={mask !== activeMask}
-          alt={mask === activeMask ? `Lucho${wearing.length ? ` usando ${wearing.join(', ')}` : ''}, con polo blanco Kallpa, shorts negros y zapatillas Adidas naranjas` : ''}
-          onLoad={() => setReady(previous => previous.includes(mask) ? previous : [...previous, mask])}
-        />)}
+        {portraits.map((src, mask) => (mask === 0 || (desktop && mask === requestedMask)) && <picture key={src}>
+          {mask === 0 && <source media="(max-width: 760px)" srcSet={transparentPixel} />}
+          <Image
+            src={src} fill loading={mask === 0 ? 'lazy' : 'eager'}
+            fetchPriority={mask === 0 ? 'high' : undefined}
+            quality={95} sizes="(max-width: 1000px) 50vw, 440px"
+            className={`hero-lucho-variant${mask === activeMask ? ' visible' : ''}`}
+            aria-hidden={mask !== activeMask}
+            alt={mask === activeMask ? `Lucho${wearing.length ? ` usando ${wearing.join(', ')}` : ''}, con polo blanco Kallpa, shorts negros y zapatillas Adidas naranjas` : ''}
+            onLoad={() => setReady(previous => previous.includes(mask) ? previous : [...previous, mask])}
+          />
+        </picture>)}
       </div>
       {products.map((p, i) => {
         const selected = Boolean(selectedMask & bits[i]);

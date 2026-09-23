@@ -29,6 +29,19 @@ p{margin:0 0 1em}
 a{color:inherit;text-decoration:none}
 button{font:inherit;cursor:pointer;color:inherit}
 img{display:block;max-width:100%}
+.brand-intro{display:none}
+html[data-intro="run"] body{overflow:hidden}
+html[data-intro="run"] .brand-intro{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;overflow:hidden;background:#fff;color:#101112;animation:brand-intro-exit .55s cubic-bezier(.76,0,.24,1) 2.3s forwards}
+.brand-intro-stage{position:relative;display:grid;place-items:center;width:100%;height:100%;background:#fff}
+.brand-intro-word{display:inline-flex;align-items:baseline;font-family:"Outfit",system-ui,sans-serif;font-size:clamp(2.4rem,9vw,5.4rem);font-weight:700;line-height:1;letter-spacing:-.07em;white-space:nowrap;padding-right:.16em}
+.brand-intro-letter{display:inline-block;opacity:0;transform:translateY(.55em) rotate(-9deg) scale(.72);transform-origin:center bottom;animation:brand-letter-arrive .65s cubic-bezier(.18,1.3,.45,1) forwards}
+.brand-intro-dot{display:inline-block;color:var(--acc);opacity:0;transform:translateY(-1.15em) scale(.5);transform-origin:center bottom;animation:brand-dot-land .9s ease-out 1.15s forwards}
+.brand-intro-skip{position:absolute;right:max(24px,4vw);bottom:max(24px,4vw);z-index:2;border:1px solid var(--line);border-radius:999px;padding:9px 15px;background:transparent;color:var(--t2);font-size:.78rem}
+.brand-intro-skip:hover,.brand-intro-skip:focus-visible{background:var(--t);color:#fff}
+@keyframes brand-letter-arrive{65%{opacity:1;transform:translateY(-.07em) rotate(2deg) scale(1.05)}100%{opacity:1;transform:translateY(0) rotate(0) scale(1)}}
+@keyframes brand-dot-land{0%{opacity:0;transform:translateY(-1.15em) scale(.5)}42%{opacity:1;transform:translateY(.06em) scale(1.2,.78)}62%{opacity:1;transform:translateY(-.23em) scale(.9,1.1)}82%{opacity:1;transform:translateY(.02em) scale(1.04,.94)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes brand-intro-exit{to{transform:translateY(-100%)}}
+@media(prefers-reduced-motion:reduce){html[data-intro="run"] .brand-intro{animation:none}.brand-intro-letter,.brand-intro-dot{animation:none;opacity:1;transform:none}}
 .wrap{max-width:1200px;margin:0 auto;padding:0 22px}
 h1,h2,h3,.dsp{font-family:"Outfit",system-ui,sans-serif;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.08}
 h2{font-size:clamp(1.65rem,3vw,2.3rem)}
@@ -268,6 +281,21 @@ section{padding:52px 0}
 .anchor p{color:var(--t2);max-width:48ch}
 .anchor .row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:22px}
 .anchor .price{display:flex;align-items:baseline;gap:9px}
+.catalog-video{width:min(100%,360px);margin-top:24px}
+.catalog-video-poster,.catalog-video video{display:block;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden}
+.catalog-video-poster{position:relative;border:0;background:#f4f4f2;text-align:left}
+.catalog-video-poster img{object-fit:contain}
+.catalog-video-poster:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent 55%)}
+.catalog-video-play{position:absolute;z-index:1;left:50%;top:50%;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--acc);color:#fff;transform:translate(-50%,-50%);font-size:17px;padding-left:3px}
+.catalog-video-label{position:absolute;z-index:1;left:16px;bottom:13px;color:#fff;font-size:.82rem;font-weight:700}
+.catalog-video-poster:hover .catalog-video-play,.catalog-video-poster:focus-visible .catalog-video-play{background:var(--t)}
+.catalog-video video{background:#111;object-fit:contain}
+.catalog-video-section{padding:28px 0}
+.catalog-video-section h2{margin-bottom:18px}
+.catalog-video-section .catalog-video{width:min(100%,620px);margin-top:0}
+.order-form-error{margin:14px 0 0;padding:11px 13px;border-radius:10px;background:#fff1eb;color:#a43b16;font-size:.85rem}
+.field-error{color:#a43b16;font-size:.76rem;line-height:1.35}
+.field input[aria-invalid="true"],.field select[aria-invalid="true"]{border-color:#a43b16}
 
 /* ---------- diagnóstico dolor → producto ---------- */
 #usos,#combo,#diagnostico{scroll-margin-top:82px}

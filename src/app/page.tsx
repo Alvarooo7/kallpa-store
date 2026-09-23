@@ -2,6 +2,7 @@ import { Hero, Usos, Anchor, Combo, Diagnostico, PorQue, Envios, Faq, FAQ_ITEMS 
 import { JsonLd } from '@/lib/seo';
 import { PRODUCTS } from '@/lib/catalog';
 import { SITE_URL } from '@/lib/company';
+import { BrandIntro } from '@/components/BrandIntro';
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
@@ -23,6 +24,7 @@ const listJsonLd = {
 export default function Home() {
   return (
     <>
+      <BrandIntro />
       <JsonLd data={listJsonLd} />
       <JsonLd data={faqJsonLd} />
       <Hero />
