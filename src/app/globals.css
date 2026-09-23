@@ -290,7 +290,7 @@ section{padding:52px 0}
 .catalog-video-label{position:absolute;z-index:1;left:16px;bottom:13px;color:#fff;font-size:.82rem;font-weight:700}
 .catalog-video-poster:hover .catalog-video-play,.catalog-video-poster:focus-visible .catalog-video-play{background:var(--t)}
 .catalog-video video{background:#111;object-fit:contain}
-.catalog-video-section{padding:28px 0}
+.catalog-video-section{width:min(100%,620px);margin-inline:auto;padding:28px 0;text-align:center}
 .catalog-video-section h2{margin-bottom:18px}
 .catalog-video-section .catalog-video{width:min(100%,620px);margin-top:0}
 .order-form-error{margin:14px 0 0;padding:11px 13px;border-radius:10px;background:#fff1eb;color:#a43b16;font-size:.85rem}
