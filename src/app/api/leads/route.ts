@@ -38,15 +38,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'La promoción no está activa ahora mismo.' }, { status: 503 });
     }
 
-    const { data: created, error: subError } = await db
+    // Solo una vez por correo, para que nadie use esta ruta para llenar de
+    // correos la bandeja de un tercero. No revisamos "¿ya está en
+    // subscribers?" porque esa tabla también se llena desde el checkout
+    // (marketingOk) sin que ese cliente haya recibido este cupón todavía.
+    const { data: alreadySent, error: sentError } = await db
+      .from('emails')
+      .select('id')
+      .eq('to_email', email)
+      .eq('template', 'coupon_welcome')
+      .limit(1);
+    if (sentError) throw new Error(sentError.message);
+
+    const { error: subError } = await db
       .from('subscribers')
-      .upsert({ email, source: 'popup', coupon_id: coupon.id }, { onConflict: 'email', ignoreDuplicates: true })
-      .select('id');
+      .upsert({ email, source: 'popup', coupon_id: coupon.id }, { onConflict: 'email', ignoreDuplicates: true });
     if (subError) throw new Error(subError.message);
 
-    // Solo a suscriptores nuevos: si no, cualquiera podría usar esta ruta para
-    // llenar de correos la bandeja de un tercero y gastar la cuota de envío.
-    if (created && created.length > 0) {
+    if (!alreadySent || alreadySent.length === 0) {
       after(() => sendMail(couponWelcome({ to: email, code: coupon.code, days: 7 })));
     }
 
