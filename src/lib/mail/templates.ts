@@ -22,8 +22,12 @@ const plainLines = (lines: Line[]) =>
 /** 1 · Confirmación al cliente */
 export function orderConfirmation(p: {
   to: string; name: string; number: string; lines: Line[];
-  totalCents: number; zone: 'lima' | 'prov'; isExpress: boolean;
+  totalCents: number; discountCents?: number; zone: 'lima' | 'prov'; isExpress: boolean;
 }): Mail {
+  const discountRow = p.discountCents
+    ? `<tr><td style="padding:4px 0;font-size:14px;color:#1F8A4C">Descuento</td>
+         <td style="padding:4px 0;text-align:right;font-size:14px;color:#1F8A4C">-${money(p.discountCents)}</td></tr>`
+    : '';
   const promise = deliveryPromise();
   const entrega =
     p.zone === 'prov'
@@ -44,6 +48,7 @@ export function orderConfirmation(p: {
      <p style="margin:0 0 18px;font-size:15px;line-height:1.6"><strong>${entrega}</strong><br>${pago}</p>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 6px">
        ${rows(p.lines)}
+       ${discountRow}
        <tr><td style="padding:12px 0 0;font-weight:700;font-size:16px">Total</td>
            <td style="padding:12px 0 0;text-align:right;font-weight:700;font-size:16px">${money(p.totalCents)}</td></tr>
      </table>
@@ -60,7 +65,7 @@ ${entrega}
 ${pago}
 
 ${plainLines(p.lines)}
-Total: ${money(p.totalCents)} (IGV incluido)
+${p.discountCents ? `Descuento: -${money(p.discountCents)}\n` : ''}Total: ${money(p.totalCents)} (IGV incluido)
 
 WhatsApp: ${COMPANY.whatsappPretty}
 ${SITE_URL}`;
@@ -70,7 +75,7 @@ ${SITE_URL}`;
 
 /** 2 · Aviso interno. El que hace que el negocio funcione. */
 export function orderInternal(p: {
-  to: string; number: string; lines: Line[]; totalCents: number;
+  to: string; number: string; lines: Line[]; totalCents: number; discountCents?: number;
   zone: 'lima' | 'prov'; isExpress: boolean;
   customer: { name: string; phone: string; email: string };
   shipping: Record<string, string | undefined>;
@@ -87,6 +92,7 @@ export function orderInternal(p: {
     `<p style="margin:0 0 6px;font-size:13px;color:#E85D26;font-weight:700;letter-spacing:.08em;text-transform:uppercase">${modo}</p>
      <h1 style="margin:0 0 16px;font-size:22px">Pedido ${p.number} — ${money(p.totalCents)}</h1>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7">
+       ${p.discountCents ? `<tr><td style="color:#6B7076">Cupón</td><td>-${money(p.discountCents)}</td></tr>` : ''}
        <tr><td style="color:#6B7076;width:90px">Cliente</td><td><strong>${esc(p.customer.name)}</strong></td></tr>
        <tr><td style="color:#6B7076">Celular</td><td><a href="${waLink(`Hola ${p.customer.name}, confirmamos tu pedido ${p.number}`)}">${esc(p.customer.phone)}</a></td></tr>
        <tr><td style="color:#6B7076">Correo</td><td>${esc(p.customer.email)}</td></tr>

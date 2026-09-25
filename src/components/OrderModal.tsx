@@ -17,6 +17,7 @@ export function OrderModal() {
   const [district, setDistrict] = useState('');
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState<string | null>(null);
+  const [result, setResult] = useState<{ totalCents: number; discountCents: number } | null>(null);
   const [whatsapp, setWhatsapp] = useState('');
   const [formError, setFormError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -64,7 +65,7 @@ export function OrderModal() {
       shipping: zone === 'lima'
         ? { district: String(fd.get('district') ?? ''), address: String(fd.get('address') ?? '') }
         : { city: String(fd.get('city') ?? ''), agency: String(fd.get('agency') ?? ''), dni: String(fd.get('dni') ?? '') },
-      coupon: String(fd.get('coupon') ?? ''),
+      coupon: String(fd.get('coupon') ?? '').trim() || undefined,
       items: cart.map(({ id, q, variantId }) => ({ id, q, ...(variantId ? { variantId } : {}) })),
     };
 
@@ -74,7 +75,10 @@ export function OrderModal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const data = (await r.json()) as { number?: string; error?: string; field?: string; whatsapp?: string };
+      const data = (await r.json()) as {
+        number?: string; error?: string; field?: string; whatsapp?: string;
+        totalCents?: number; discountCents?: number;
+      };
       if (!r.ok) {
         if (r.status === 400 || r.status === 409) {
           const message = data.error ?? 'Revisa los datos del pedido e inténtalo nuevamente.';
@@ -89,6 +93,7 @@ export function OrderModal() {
         throw new Error(data.error ?? 'No pudimos registrar el pedido');
       }
       track('Lead', { value: total, currency: 'PEN', contents: cart, shipping: expressFee });
+      if (data.totalCents != null) setResult({ totalCents: data.totalCents, discountCents: data.discountCents ?? 0 });
       setDone(data.number ?? 'VD-0000');
       if (data.whatsapp) {
         setWhatsapp(data.whatsapp);
@@ -119,6 +124,12 @@ export function OrderModal() {
               ) : (
                 <>
                   <p className="mini2">Tu pedido <b style={{ color: 'var(--t)' }}>{done}</b> ya está registrado. Continúa en WhatsApp para confirmar la entrega{zone === 'prov' || isExpress ? ' y coordinar el pago anticipado' : ' y pagar al recibir'}.</p>
+                  {result && (
+                    <div className="sl t" style={{ margin: '2px 0 14px' }}>
+                      <span>{result.discountCents > 0 ? 'Total con cupón aplicado' : 'Total'}</span>
+                      <span>{money(result.totalCents)}</span>
+                    </div>
+                  )}
                   {zone === 'prov' ? <DeliveryPromise zone="prov" /> : (
                     <div className="promise">
                       <div className="big">{isExpress ? 'Entrega express solicitada' : 'Entrega programada gratis'}</div>
@@ -201,10 +212,7 @@ export function OrderModal() {
                   </>
                 )}
 
-                <div className="two">
-                  <div className="field" style={{ margin: 0 }}><label htmlFor="o-cup">Cupón</label><input id="o-cup" name="coupon" placeholder="opcional" /></div>
-                  <button className="btn out sm" type="button" style={{ height: 44 }}>Aplicar</button>
-                </div>
+                <div className="field"><label htmlFor="o-cup">Cupón</label><input id="o-cup" name="coupon" placeholder="opcional" aria-invalid={!!fieldErrors.coupon} aria-describedby={fieldErrors.coupon ? 'o-cup-error' : undefined} />{fieldErrors.coupon && <span className="field-error" id="o-cup-error">{fieldErrors.coupon}</span>}</div>
 
                 <div style={{ margin: '16px 0 0' }}>
                   <div className="sl"><span>Subtotal</span><span>{money(subtotal)}</span></div>

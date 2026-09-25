@@ -17,16 +17,21 @@ export type NewOrder = {
     district?: string; address?: string; reference?: string;
     city?: string; agency?: string; dni?: string;
   };
+  couponCode?: string;
   idempotencyKey?: string;
 };
 
+export type CouponIssue = 'not_found' | 'expired' | 'min_subtotal' | 'exhausted' | 'already_used';
+
 export type OrderResult =
-  | { ok: true; number: string; id: number; totalCents: number; igvCents: number; reused: boolean }
-  | { ok: false; reason: 'no_stock'; slug: string };
+  | { ok: true; number: string; id: number; totalCents: number; igvCents: number; discountCents: number; reused: boolean }
+  | { ok: false; reason: 'no_stock'; slug: string }
+  | { ok: false; reason: 'invalid_coupon'; detail: CouponIssue; minSubtotalCents?: number };
 
 type OrderRpc =
-  | { ok: true; number: string; id: number; total_cents: number; igv_cents: number; reused: boolean }
-  | { ok: false; reason: 'no_stock'; slug: string };
+  | { ok: true; number: string; id: number; total_cents: number; igv_cents: number; discount_cents: number; reused: boolean }
+  | { ok: false; reason: 'no_stock'; slug: string }
+  | { ok: false; reason: 'invalid_coupon'; detail: CouponIssue; min_subtotal_cents?: number };
 
 const IGV_RATE = 0.18;
 
@@ -60,6 +65,7 @@ export async function createOrder(input: NewOrder): Promise<OrderResult> {
       shipping_cents: input.shippingCents,
       igv_cents: igvCents,
       idempotency_key: input.idempotencyKey ?? null,
+      coupon_code: input.couponCode ?? null,
       lines: input.lines.map((l) => ({
         slug: l.slug,
         name: l.name,
@@ -76,8 +82,14 @@ export async function createOrder(input: NewOrder): Promise<OrderResult> {
   if (error) throw new Error(error.message);
 
   const r = data as OrderRpc;
-  if (!r.ok) return r;
-  return { ok: true, id: r.id, number: r.number, totalCents: r.total_cents, igvCents: r.igv_cents, reused: r.reused };
+  if (!r.ok) {
+    if (r.reason === 'invalid_coupon') return { ...r, minSubtotalCents: r.min_subtotal_cents };
+    return r;
+  }
+  return {
+    ok: true, id: r.id, number: r.number, totalCents: r.total_cents,
+    igvCents: r.igv_cents, discountCents: r.discount_cents, reused: r.reused,
+  };
 }
 
 /** Libera la reserva cuando un pedido se cancela o se rechaza. */

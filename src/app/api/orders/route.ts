@@ -1,7 +1,7 @@
 import { NextResponse, after } from 'next/server';
 import { bySlug, productLineName, productPriceKnown, productUnitPrice, variantById } from '@/lib/catalog';
 import { hasDb } from '@/lib/db';
-import { createOrder } from '@/lib/db/orders';
+import { createOrder, type CouponIssue } from '@/lib/db/orders';
 import { clampQty, clean, isEmail, toE164Pe } from '@/lib/validation';
 import { FREE_EXPRESS_FROM, expressFeeForDistrict } from '@/lib/shipping';
 import { COMPANY, waLink } from '@/lib/company';
@@ -21,6 +21,18 @@ type Body = {
 };
 
 const bad = (error: string, status = 400, field?: string) => NextResponse.json({ error, field }, { status });
+
+const couponMessage = (detail: CouponIssue, minSubtotalCents?: number): string => {
+  switch (detail) {
+    case 'not_found': return 'Ese cupón no existe. Revisa el código.';
+    case 'expired': return 'Ese cupón ya venció.';
+    case 'min_subtotal':
+      return `Ese cupón aplica desde S/ ${((minSubtotalCents ?? 0) / 100).toFixed(2)} de compra.`;
+    case 'exhausted': return 'Ese cupón ya se agotó.';
+    case 'already_used': return 'Ya usaste ese cupón antes.';
+    default: return 'Ese cupón no es válido.';
+  }
+};
 
 export async function POST(req: Request) {
   let body: Body;
@@ -124,10 +136,14 @@ export async function POST(req: Request) {
       payMethod: zone === 'lima' && !isExpress ? 'cod' : 'yape',
       lines,
       shipping,
+      couponCode: clean(body.coupon, 40) || undefined,
       idempotencyKey: clean(body.idempotencyKey, 64) || undefined,
     });
 
     if (!result.ok) {
+      if (result.reason === 'invalid_coupon') {
+        return bad(couponMessage(result.detail, result.minSubtotalCents), 400, 'coupon');
+      }
       const p = bySlug(result.slug);
       return bad(`Nos quedamos sin stock de ${p?.short ?? 'un producto'}. Quítalo del pedido o escríbenos.`, 409);
     }
@@ -142,13 +158,13 @@ export async function POST(req: Request) {
       after(async () => {
         await sendMail(orderConfirmation({
           to: email, name, number: result.number, lines: mailLines, totalCents: result.totalCents,
-          zone, isExpress,
+          discountCents: result.discountCents, zone, isExpress,
         }));
         const internal = process.env.MAIL_INTERNAL;
         if (internal) {
           await sendMail(orderInternal({
             to: internal, number: result.number, lines: mailLines, totalCents: result.totalCents,
-            zone, isExpress,
+            discountCents: result.discountCents, zone, isExpress,
             customer: { name, phone: phoneE164, email },
             shipping,
           }));
@@ -177,6 +193,7 @@ export async function POST(req: Request) {
       number: result.number,
       totalCents: result.totalCents,
       igvCents: result.igvCents,
+      discountCents: result.discountCents,
       payment: zone === 'lima' && !isExpress ? 'contraentrega' : 'anticipado',
       shippingCents,
       whatsapp,
