@@ -1,8 +1,9 @@
-import { Hero, Usos, Anchor, Combo, Diagnostico, PorQue, Envios, Faq, FAQ_ITEMS } from '@/components/home/Sections';
+import { Hero, Usos, Anchor, Combo, Diagnostico, Envios, Faq, FAQ_ITEMS } from '@/components/home/Sections';
 import { JsonLd } from '@/lib/seo';
 import { PRODUCTS } from '@/lib/catalog';
 import { SITE_URL } from '@/lib/company';
 import { BrandIntro } from '@/components/BrandIntro';
+import { HomeCourses } from '@/components/CourseCards';
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
@@ -32,7 +33,7 @@ export default function Home() {
       <Anchor />
       <Combo />
       <Diagnostico />
-      <PorQue />
+      <HomeCourses />
       <Envios />
       <Faq />
     </>

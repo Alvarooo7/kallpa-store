@@ -3,13 +3,14 @@ import Link from 'next/link';
 import { ProductCard } from '@/components/ProductCard';
 import { PRODUCTS, PRODUCT_IDS_BY_USE } from '@/lib/catalog';
 import { getCatalogAvailability } from '@/lib/db/inventory';
+import { COURSES } from '@/lib/courses';
 
 export const dynamic = 'force-dynamic';
 
 const CATEGORIES = {
   todos: {
     label: 'Todos',
-    title: 'Todos los equipos',
+    title: 'Todos los productos',
     matches: () => true,
   },
   audifonos: {
@@ -77,6 +78,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
                 {item.label} · {visibleProducts.filter(product => item.matches(product.cat)).length}
               </Link>
             ))}
+            <Link className="catalog-tab" href="/cursos">Cursos · {COURSES.length}</Link>
           </nav>
         </div>
       </header>
@@ -95,6 +97,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
               {(Object.entries(CATEGORIES) as [CategoryKey, typeof CATEGORIES[CategoryKey]][])
                 .filter(([key]) => key !== 'todos' && key !== active)
                 .map(([key, item]) => <Link key={key} className="catalog-tab" href={`/catalogo?categoria=${key}`}>{item.label}</Link>)}
+              <Link className="catalog-tab" href="/cursos">Cursos presenciales</Link>
             </div>
           </div>
         </div>

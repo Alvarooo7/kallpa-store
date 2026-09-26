@@ -1,12 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useShop } from './Providers';
 import { TopBarPromise } from './DeliveryPromise';
 import { ProductImage } from './ProductImage';
 import { PRODUCTS } from '@/lib/catalog';
-import { COMPANY, waLink } from '@/lib/company';
+import { COURSES } from '@/lib/courses';
+import { COMPANY, COURSE_CONTACT, courseWaLink, waLink } from '@/lib/company';
 import { money } from '@/lib/format';
 import { track } from '@/lib/analytics';
 import type { MouseEvent } from 'react';
@@ -19,6 +22,7 @@ const INDEX = PRODUCTS.map((p) => ({
 }));
 
 export function Header() {
+  const isCoursePage = usePathname().startsWith('/cursos');
   const { count, favs, openUI } = useShop();
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
@@ -38,23 +42,31 @@ export function Header() {
     const words = n.split(/\s+/);
     return INDEX.filter((x) => words.every((w) => x.hay.includes(w))).map((x) => x.p);
   }, [q]);
+  const courseHits = useMemo(() => {
+    const query = norm(q);
+    if (query.length < 2) return [];
+    return COURSES.filter(course => query.split(/\s+/).every(word => norm(['cursos', course.name, course.category, course.slug, course.description].join(' ')).includes(word)));
+  }, [q]);
+  const hitCount = (hits?.length ?? 0) + courseHits.length;
 
   return (
     <>
       <div className="top">
         <div className="wrap">
           <div className="l">
-            <TopBarPromise />
+            {isCoursePage ? <span>Cursos presenciales en Jesús María · Inscripciones por WhatsApp</span> : <TopBarPromise />}
+            {!isCoursePage && <>
             <span className="sep hide-sm" />
             <Link href="/envios" className="hide-sm">Envíos</Link>
             <span className="sep hide-sm" />
             <Link href="/legal/cambios" className="hide-sm">Garantía</Link>
+            </>}
           </div>
           <div className="r">
-            <span className="hide-md">Lima y todo el Perú</span>
+            <span className="hide-md">{isCoursePage ? 'Entrena con Kallpa' : 'Lima y todo el Perú'}</span>
             <span className="sep" />
-            <a href={waLink('Hola Kallpa, quiero información')} target="_blank" rel="noopener noreferrer">
-              {COMPANY.whatsappPretty}
+            <a href={isCoursePage ? courseWaLink('Hola Kallpa, quiero información de cursos') : waLink('Hola Kallpa, quiero información')} target="_blank" rel="noopener noreferrer">
+              {isCoursePage ? COURSE_CONTACT.whatsappPretty : COMPANY.whatsappPretty}
             </a>
           </div>
         </div>
@@ -66,6 +78,7 @@ export function Header() {
           <nav className="main">
             <Link href="/">Inicio</Link>
             <Link href="/catalogo">Catálogo</Link>
+            <Link href="/cursos">Cursos</Link>
             <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
             <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>
             <Link href="/envios">Envíos</Link>
@@ -101,12 +114,17 @@ export function Header() {
               </div>
               <div className="hint">
                 {hits === null
-                  ? <>Prueba con <b>nadar</b>, <b>batería</b>, <b>GPS</b> o <b>traducir</b>.</>
-                  : hits.length
-                    ? `${hits.length} ${hits.length === 1 ? 'resultado' : 'resultados'}`
+                  ? <>Prueba con <b>natación</b>, <b>cursos</b>, <b>GPS</b> o <b>traducir</b>.</>
+                  : hitCount
+                    ? `${hitCount} ${hitCount === 1 ? 'resultado' : 'resultados'}`
                     : 'Nada con esas palabras. Escríbenos por WhatsApp y te decimos si lo conseguimos.'}
               </div>
               <div className="sres">
+                {courseHits.map(course => <Link className="course-search-result" key={course.slug} href={`/cursos/${course.slug}`} onClick={() => { setSearch(false); setQ(''); }}>
+                  <Image src={course.image} alt={course.imageAlt} width={48} height={48} />
+                  <div><b>{course.name}</b><span>Curso presencial · {course.category}</span></div>
+                  <span className="pz">Desde {money(Math.min(...course.plans.map(plan => plan.price)))}</span>
+                </Link>)}
                 {hits?.map((p) => (
                   <Link key={p.id} href={`/p/${p.id}`} onClick={() => { setSearch(false); setQ(''); }}
                     style={{ display: 'grid', gridTemplateColumns: '48px 1fr auto', gap: 13, alignItems: 'center', borderTop: '1px solid var(--line)', padding: '11px 4px' }}>
@@ -124,6 +142,7 @@ export function Header() {
           <div className="mnav on">
             <div className="wrap">
               <Link href="/catalogo" onClick={() => setMenu(false)}>Catálogo</Link>
+              <Link href="/cursos" onClick={() => setMenu(false)}>Cursos</Link>
               <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
               <Link href="/#diagnostico" onClick={(event) => goToHomeSection(event, 'diagnostico')}>¿Qué quieres resolver?</Link>
               <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>

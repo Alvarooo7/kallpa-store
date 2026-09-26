@@ -23,6 +23,7 @@ export function ProductDetail({ p, recs, availability }: { p: Product; recs: Pro
   const selectedStock = selectedAvailability(availability, variantId);
   const stockMessage = stockLabel(selectedStock);
   const purchasable = canAddToCart(selectedStock);
+  const isNutrition = p.art === 'supplement';
 
   const selectVariant = (nextVariantId: string) => {
     setVariantId(nextVariantId);
@@ -97,6 +98,11 @@ export function ProductDetail({ p, recs, availability }: { p: Product; recs: Pro
             <ul className="ben">{p.ben.map((b) => <li key={b}>{b}</li>)}</ul>
 
             <div className="product-disclosures">
+              {isNutrition ? <>
+                <details open><summary>Sobre el producto</summary><div className="disclosure-content"><p>{p.description}</p></div></details>
+                <details><summary>Antes de consumir</summary><div className="disclosure-content"><p>{p.compat}</p></div></details>
+                <details><summary>Cambios y devoluciones</summary><div className="disclosure-content"><p>{p.warr}{' '}<Link href="/legal/cambios">Ver la política completa</Link></p></div></details>
+              </> : <>
               <details>
                 <summary><span aria-hidden="true">🔗</span> Compatibilidad</summary>
                 <div className="disclosure-content"><p>{p.compat}</p></div>
@@ -116,6 +122,7 @@ export function ProductDetail({ p, recs, availability }: { p: Product; recs: Pro
                   <p>{p.warr}{' '}<Link href="/legal/cambios">Ver la política completa</Link></p>
                 </div>
               </details>
+              </>}
             </div>
           </div>
         </div>

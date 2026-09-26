@@ -2,11 +2,14 @@ import type { MetadataRoute } from 'next';
 import { PRODUCTS } from '@/lib/catalog';
 import { LEGAL_SLUGS } from '@/lib/legal';
 import { SITE_URL } from '@/lib/company';
+import { COURSES } from '@/lib/courses';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [
     { url: SITE_URL, lastModified: now, changeFrequency: 'daily', priority: 1 },
+    { url: `${SITE_URL}/cursos`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    ...COURSES.map(course => ({ url: `${SITE_URL}/cursos/${course.slug}`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.8 })),
     { url: `${SITE_URL}/envios`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${SITE_URL}/libro-de-reclamaciones`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     ...PRODUCTS.map((p) => ({

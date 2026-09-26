@@ -17,3 +17,7 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kallpita.s
 
 export const waLink = (text: string) =>
   `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(text)}`;
+
+export const COURSE_CONTACT = { whatsapp: '51955882306', whatsappPretty: '+51 955 882 306' } as const;
+export const courseWaLink = (text: string) =>
+  `https://wa.me/${COURSE_CONTACT.whatsapp}?text=${encodeURIComponent(text)}`;

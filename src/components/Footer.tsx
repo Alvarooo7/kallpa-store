@@ -1,7 +1,11 @@
+'use client';
+
 import Link from 'next/link';
-import { COMPANY } from '@/lib/company';
+import { usePathname } from 'next/navigation';
+import { COMPANY, COURSE_CONTACT } from '@/lib/company';
 
 export function Footer() {
+  const contact = usePathname().startsWith('/cursos') ? COURSE_CONTACT : COMPANY;
   return (
     <footer>
       <div className="wrap">
@@ -16,6 +20,7 @@ export function Footer() {
             <h4>Tienda</h4>
             <ul>
               <li><Link href="/catalogo">Catálogo</Link></li>
+              <li><Link href="/cursos">Cursos presenciales</Link></li>
               <li><a href="/#usos">¿Para qué lo necesitas?</a></li>
               <li><Link href="/#combo">Smartwatches</Link></li>
               <li><Link href="/#diagnostico">¿Qué quieres resolver?</Link></li>
@@ -24,7 +29,7 @@ export function Footer() {
           <div>
             <h4>Ayuda</h4>
             <ul>
-              <li><a href={`https://wa.me/${COMPANY.whatsapp}`} target="_blank" rel="noopener noreferrer"><b style={{ color: '#fff', fontWeight: 500 }}>WhatsApp {COMPANY.whatsappPretty}</b></a></li>
+              <li><a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer"><b style={{ color: '#fff', fontWeight: 500 }}>WhatsApp {contact.whatsappPretty}</b></a></li>
               <li><a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></li>
               <li><Link href="/envios">Envíos y pagos</Link></li>
               <li><Link href="/legal/cambios">Garantía y cambios</Link></li>

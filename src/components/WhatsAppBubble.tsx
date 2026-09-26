@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { useShop } from './Providers';
 import { bySlug, productLineName } from '@/lib/catalog';
-import { waLink } from '@/lib/company';
+import { courseWaLink, waLink } from '@/lib/company';
+import { usePathname } from 'next/navigation';
 import { track } from '@/lib/analytics';
 
 export function WhatsAppBubble() {
+  const isCoursePage = usePathname().startsWith('/cursos');
   const { cart } = useShop();
   const [hidden, setHidden] = useState(false);
   if (hidden) return null;
@@ -21,7 +23,7 @@ export function WhatsAppBubble() {
       <div style={{ position: 'relative' }}>
         <a
           className="btn2"
-          href={waLink(`Hola Kallpa, quiero ${items}`)}
+          href={isCoursePage ? courseWaLink('Hola Kallpa, quiero información de cursos y cupos') : waLink(`Hola Kallpa, quiero ${items}`)}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Escríbenos por WhatsApp"
