@@ -22,15 +22,16 @@ export type NewOrder = {
   idempotencyKey?: string;
 };
 
-export type CouponIssue = 'not_found' | 'expired' | 'min_subtotal' | 'exhausted' | 'already_used' | 'account_required';
+export type CouponIssue = 'not_found' | 'expired' | 'min_subtotal' | 'exhausted' | 'already_used' | 'account_required' | 'not_stackable';
+export type OrderReward = { id: string; label: string; kind: string };
 
 export type OrderResult =
-  | { ok: true; number: string; id: number; totalCents: number; igvCents: number; discountCents: number; reused: boolean }
+  | { ok: true; number: string; id: number; totalCents: number; igvCents: number; discountCents: number; reused: boolean; reward?: OrderReward }
   | { ok: false; reason: 'no_stock'; slug: string }
   | { ok: false; reason: 'invalid_coupon'; detail: CouponIssue; minSubtotalCents?: number };
 
 type OrderRpc =
-  | { ok: true; number: string; id: number; total_cents: number; igv_cents: number; discount_cents: number; reused: boolean }
+  | { ok: true; number: string; id: number; total_cents: number; igv_cents: number; discount_cents: number; reused: boolean; reward?: OrderReward }
   | { ok: false; reason: 'no_stock'; slug: string }
   | { ok: false; reason: 'invalid_coupon'; detail: CouponIssue; min_subtotal_cents?: number };
 
@@ -90,7 +91,7 @@ export async function createOrder(input: NewOrder): Promise<OrderResult> {
   }
   return {
     ok: true, id: r.id, number: r.number, totalCents: r.total_cents,
-    igvCents: r.igv_cents, discountCents: r.discount_cents, reused: r.reused,
+    igvCents: r.igv_cents, discountCents: r.discount_cents, reused: r.reused, reward: r.reward,
   };
 }
 

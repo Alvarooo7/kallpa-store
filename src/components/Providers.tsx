@@ -35,14 +35,29 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [favs, setFavs] = useState<string[]>([]);
   const [ui, setUi] = useState<UI>(null);
+  const [cartReady, setCartReady] = useState(false);
 
   // localStorage solo después de montar: evita desajustes de hidratación.
   useEffect(() => {
     try {
+      const savedCart = JSON.parse(sessionStorage.getItem('kallpa_cart') ?? 'null');
+      if (savedCart && Date.now() - savedCart.savedAt < 30 * 60 * 1000 && Array.isArray(savedCart.lines)) {
+        setCart(savedCart.lines.filter((line: CartLine) => bySlug(line.id) && Number.isInteger(line.q) && line.q > 0 && line.q <= 99));
+      }
+      const draft = JSON.parse(sessionStorage.getItem('kallpa_checkout_resume') ?? 'null');
+      if (draft && Date.now() - draft.savedAt < 30 * 60 * 1000 && Array.isArray(draft.cart) && new URLSearchParams(window.location.search).get('checkout') === 'resume') {
+        setCart(draft.cart.filter((line: CartLine) => bySlug(line.id) && Number.isInteger(line.q) && line.q > 0 && line.q <= 99));
+        setUi('order');
+      }
       const raw = localStorage.getItem(FAV_KEY);
       if (raw) setFavs((JSON.parse(raw) as string[]).filter(id => bySlug(id)));
     } catch { /* navegador sin storage: seguimos sin favoritos */ }
+    finally { setCartReady(true); }
   }, []);
+  useEffect(() => {
+    if (!cartReady) return;
+    try { sessionStorage.setItem('kallpa_cart', JSON.stringify({ savedAt: Date.now(), lines: cart })); } catch { /* optional storage */ }
+  }, [cart, cartReady]);
 
   const persistFavs = (next: string[]) => {
     setFavs(next);

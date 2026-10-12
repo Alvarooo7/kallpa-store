@@ -33,4 +33,5 @@ export function rewardForRoll(tier: RewardTier, roll: number) {
 }
 export function prizeLabel(prize: Prize, family: RewardFamily) { return family === 'practical' ? prize.practicalLabel ?? prize.label : prize.label; }
 export type RewardOrder = { id: number; number: string; status: string; net: number; phone: string | null };
+export type WelcomeReward = { id?: string; state: 'eligible' | 'blocked' | 'unavailable' | 'won' | 'used' | 'review' | 'expired'; prize?: string; label?: string; kind?: string; code?: string; minimum?: number; expiresAt?: string; name?: string; phone?: string };
 export type RewardResult = { state: 'eligible' | 'pending' | 'blocked' | 'unavailable' | 'won' | 'reserved' | 'review' | 'expired' | 'used'; tier?: RewardTier; label?: string; kind?: string; code?: string; minimum?: number; expiresAt?: string; error?: string; orders?: RewardOrder[] };

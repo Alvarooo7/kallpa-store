@@ -146,11 +146,10 @@ export function Header() {
               <Link href="/cursos" onClick={() => setMenu(false)}>Cursos</Link>
               <Link href="/mi-premio" onClick={() => setMenu(false)}>Mi premio</Link>
               <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
-              <Link href="/#diagnostico" onClick={(event) => goToHomeSection(event, 'diagnostico')}>¿Qué quieres resolver?</Link>
               <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>
               <Link href="/envios" onClick={() => setMenu(false)}>Envíos y pagos</Link>
               <div className="foot">
-                <button className="btn sm out" onClick={() => { setMenu(false); openUI('lead'); }}>Mi 10% de descuento</button>
+                <button className="btn sm out" onClick={() => { setMenu(false); openUI('lead'); }}>Jugar por mi premio</button>
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { hasDb } from '@/lib/db';
 import { createOrder, type CouponIssue } from '@/lib/db/orders';
 import { clampQty, clean, isEmail, toE164Pe } from '@/lib/validation';
 import { FREE_EXPRESS_FROM, expressFeeForDistrict } from '@/lib/shipping';
-import { COMPANY, waLink } from '@/lib/company';
+import { COMPANY, SITE_URL, waLink } from '@/lib/company';
 import { sendMail } from '@/lib/mail/client';
 import { orderConfirmation, orderInternal } from '@/lib/mail/templates';
 import { verifiedAccount } from '@/lib/reward-auth';
@@ -12,6 +12,7 @@ import { verifiedAccount } from '@/lib/reward-auth';
 export const runtime = 'nodejs';
 
 type Body = {
+  claimReward?: boolean;
   zone?: 'lima' | 'prov';
   isExpress?: boolean;
   customer?: { name?: string; phone?: string; email?: string; marketingOk?: boolean };
@@ -25,7 +26,8 @@ const bad = (error: string, status = 400, field?: string) => NextResponse.json({
 
 const couponMessage = (detail: CouponIssue, minSubtotalCents?: number): string => {
   switch (detail) {
-    case 'account_required': return 'Ingresa a Mi premio y verifica el correo del titular antes de usar este cupón.';
+    case 'not_stackable': return 'Tu premio ya incluye un descuento. Retira el otro cupón para usarlo.';
+    case 'account_required': return 'Ingresa en este formulario con la cuenta del titular antes de usar este cupón.';
     case 'not_found': return 'Ese cupón no existe. Revisa el código.';
     case 'expired': return 'Ese cupón ya venció.';
     case 'min_subtotal':
@@ -131,6 +133,8 @@ export async function POST(req: Request) {
 
   try {
     const account = await verifiedAccount(req);
+    if (body.claimReward && !account) return bad('Ingresa con tu cuenta para reclamar el regalo o continúa sin regalo.');
+    if (body.claimReward && account?.email?.toLowerCase() !== email) return bad('Usa el correo de tu cuenta para vincular el regalo.', 400, 'email');
     const result = await createOrder({
       verifiedUserId: account?.id,
       customer: { name, phoneE164, email, marketingOk },
@@ -169,7 +173,7 @@ export async function POST(req: Request) {
           await sendMail(orderInternal({
             to: internal, number: result.number, lines: mailLines, totalCents: result.totalCents,
             discountCents: result.discountCents, zone, isExpress,
-            customer: { name, phone: phoneE164, email },
+            customer: { name, phone: phoneE164, email }, reward: result.reward,
             shipping,
           }));
         }
@@ -184,10 +188,14 @@ export async function POST(req: Request) {
       : `Quiero coordinar el pago anticipado por Yape o Plin al ${COMPANY.yapePlinPhone} (${COMPANY.yapePlinHolder}), transferencia bancaria o tarjeta.`;
     const whatsapp = waLink([
       `Hola Kallpa, soy ${name}. Quiero confirmar mi pedido ${result.number}.`,
+      `Correo: ${email}. Celular: ${phoneE164}.`,
       '',
       ...lines.map((line) => `• ${line.qty} × ${line.name}`),
       `Total: S/ ${(result.totalCents / 100).toFixed(2)}`,
+      ...(result.discountCents ? [`Descuento aplicado: S/ ${(result.discountCents / 100).toFixed(2)}.`] : []),
+      result.reward ? `Premio: ${result.reward.label}. Código de referencia: ${result.reward.id}. ${result.reward.kind === 'physical' ? 'Incluir en el paquete.' : 'Descuento incluido en este total.'}` : `Sin premio aplicado. Juego: ${SITE_URL}/mi-premio`,
       `Entrega: ${deliveryLabel}.`,
+      zone === 'lima' ? `Dirección: ${shipping.address}.` : `Agencia: ${shipping.agency}. DNI de recojo: ${shipping.dni}.`,
       paymentLabel,
     ].join('\n'));
 
@@ -201,6 +209,7 @@ export async function POST(req: Request) {
       payment: zone === 'lima' && !isExpress ? 'contraentrega' : 'anticipado',
       shippingCents,
       whatsapp,
+      reward: result.reward,
     });
   } catch (err) {
     console.error('[pedido] fallo al guardar', { err: String(err) });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useShop } from './Providers';
 import { DeliveryPromise } from './DeliveryPromise';
 import { money } from '@/lib/format';
@@ -11,6 +11,8 @@ import { COMPANY, waLink } from '@/lib/company';
 import { isEmail, toE164Pe } from '@/lib/validation';
 import { accountHeaders } from '@/lib/auth-browser';
 import Link from 'next/link';
+import { RewardGame } from './RewardGame';
+import type { WelcomeReward } from '@/lib/rewards';
 
 export function OrderModal() {
   const { ui, closeUI, cart, subtotal } = useShop();
@@ -24,7 +26,40 @@ export function OrderModal() {
   const [formError, setFormError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const formRef = useRef<HTMLFormElement>(null);
+  const [claimReward, setClaimReward] = useState(false);
+  const [accountEmail, setAccountEmail] = useState('');
+  const [checkoutEmail, setCheckoutEmail] = useState('');
+  const [welcomeReward, setWelcomeReward] = useState<WelcomeReward | null>(null);
+  const [draftFields, setDraftFields] = useState<Record<string, string>>({});
   const on = ui === 'order';
+  useEffect(() => {
+    if (!on) return;
+    if (new URLSearchParams(window.location.search).has('error')) setFormError('No se completó el acceso. Intenta nuevamente con Google o correo y contraseña.');
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('kallpa_checkout_resume') ?? 'null');
+      if (!draft || Date.now() - draft.savedAt >= 30 * 60 * 1000) { sessionStorage.removeItem('kallpa_checkout_resume'); return; }
+      setZone(draft.zone === 'prov' ? 'prov' : 'lima');
+      setDeliveryMode(draft.deliveryMode === 'express' ? 'express' : 'scheduled');
+      setDistrict(draft.district ?? ''); setCheckoutEmail(draft.fields?.email ?? '');
+      setDraftFields(draft.fields ?? {}); setClaimReward(true);
+      sessionStorage.removeItem('kallpa_checkout_resume');
+    } catch { /* storage unavailable: checkout still works */ }
+  }, [on]);
+  useEffect(() => {
+    for (const [name, value] of Object.entries(draftFields)) {
+      const input = formRef.current?.elements.namedItem(name);
+      if (input instanceof HTMLSelectElement && name === 'agency') input.value = value;
+      if (input instanceof HTMLInputElement && input.type !== 'password' && name !== 'email') {
+        if (input.type === 'checkbox') input.checked = value === 'yes'; else input.value = value;
+      }
+    }
+  }, [draftFields]);
+  function saveDraft() {
+    const fields: Record<string, string> = {};
+    if (formRef.current) new FormData(formRef.current).forEach((value, key) => { if (typeof value === 'string') fields[key] = value; });
+    // Account credentials have no name and are deliberately never persisted.
+    sessionStorage.setItem('kallpa_checkout_resume', JSON.stringify({ savedAt: Date.now(), cart, fields, zone, deliveryMode, district }));
+  }
   const isExpress = zone === 'lima' && deliveryMode === 'express';
   const freeExpress = subtotal >= FREE_EXPRESS_FROM;
   const expressFee = isExpress && !freeExpress ? expressFeeForDistrict(district) ?? 0 : 0;
@@ -37,6 +72,7 @@ export function OrderModal() {
     const fd = new FormData(e.currentTarget);
     const fieldValues = (name: string) => String(fd.get(name) ?? '').trim();
     const errors: Record<string, string> = {};
+    if (claimReward && !accountEmail) { setFormError('Ingresa con Google o correo y contraseña para reclamar tu regalo, o continúa sin regalo.'); return; }
     if (fieldValues('name').length < 3) errors.name = 'Escribe tu nombre completo (mínimo 3 caracteres).';
     if (!toE164Pe(fieldValues('phone'))) errors.phone = 'Ingresa un celular peruano de 9 dígitos que empiece en 9.';
     if (!isEmail(fieldValues('email'))) errors.email = 'Escribe un correo electrónico válido.';
@@ -56,6 +92,7 @@ export function OrderModal() {
     }
     setSending(true);
     const payload = {
+      claimReward,
       zone,
       isExpress,
       customer: {
@@ -99,8 +136,9 @@ export function OrderModal() {
       setDone(data.number ?? 'VD-0000');
       if (data.whatsapp) {
         setWhatsapp(data.whatsapp);
-        window.location.assign(data.whatsapp);
+        if (!claimReward) window.location.assign(data.whatsapp);
       }
+      sessionStorage.removeItem('kallpa_checkout_resume');
     } catch {
       setWhatsapp(waLink('Hola Kallpa, intenté hacer un pedido en la web, pero no pude terminar. ¿Me ayudan a confirmarlo?'));
       setDone('error');
@@ -141,7 +179,7 @@ export function OrderModal() {
                 </>
               )}
               {whatsapp && <a className="btn acc block" style={{ marginTop: 14 }} href={whatsapp}>Abrir WhatsApp para confirmar</a>}
-              {done !== 'error' && <p className="mini2"><Link href="/mi-premio" onClick={closeUI}>Descubre el regalo de tu pedido</Link>. Desde S/ 60 después de descuentos, con pedido confirmado y antes del despacho. Usa el mismo correo de tu compra. En contraentrega recibes el regalo al pagar.</p>}
+              {done !== 'error' && <p className="mini2">¿Todavía no jugaste? <Link href="/mi-premio" onClick={closeUI}>Abre la ruleta</Link> y guarda tu regalo para tu siguiente pedido. No necesitas confirmar ni pagar para jugar.</p>}
               <button className="btn block" style={{ marginTop: 14 }} onClick={closeUI}>Cerrar</button>
             </>
           ) : (
@@ -175,9 +213,12 @@ export function OrderModal() {
                 const name = target instanceof HTMLInputElement || target instanceof HTMLSelectElement ? target.name : '';
                 if (name && fieldErrors[name]) setFieldErrors((current) => { const next = { ...current }; delete next[name]; return next; });
               }}>
+                <label className="marketing-optin"><input type="checkbox" checked={claimReward} onChange={e => setClaimReward(e.target.checked)} /><span>Quiero reclamar mi regalo · compras desde S/ 60 después de descuentos.</span></label>
+                <p className="mini2">Puedes comprar sin crear cuenta. Para el regalo, ingresa aquí y usaremos el correo de tu cuenta para el pedido. <Link href="/reglas-premios" target="_blank" rel="noopener noreferrer">Ver reglas y premios</Link>.</p>
+                {claimReward && <RewardGame embedded beforeRedirect={saveDraft} onAccount={email => { setAccountEmail(email); if (email) setCheckoutEmail(email); else setWelcomeReward(null); }} onReward={reward => { setWelcomeReward(reward); if (reward.name && formRef.current) { const input = formRef.current.elements.namedItem('name'); if (input instanceof HTMLInputElement && !input.value) input.value = reward.name; } if (reward.phone && formRef.current) { const input = formRef.current.elements.namedItem('phone'); if (input instanceof HTMLInputElement && !input.value) input.value = reward.phone; } }} />}
                 <div className="field"><label htmlFor="o-name">Nombre completo</label><input id="o-name" name="name" required aria-invalid={!!fieldErrors.name} aria-describedby={fieldErrors.name ? 'o-name-error' : undefined} placeholder="Como figura en tu DNI" />{fieldErrors.name && <span className="field-error" id="o-name-error">{fieldErrors.name}</span>}</div>
                 <div className="field"><label htmlFor="o-phone">Celular con WhatsApp</label><input id="o-phone" name="phone" required inputMode="tel" autoComplete="tel" aria-invalid={!!fieldErrors.phone} aria-describedby={fieldErrors.phone ? 'o-phone-error' : undefined} placeholder="9XX XXX XXX" />{fieldErrors.phone && <span className="field-error" id="o-phone-error">{fieldErrors.phone}</span>}</div>
-                <div className="field"><label htmlFor="o-email">Correo electrónico</label><input id="o-email" name="email" type="email" required autoComplete="email" aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? 'o-email-error' : undefined} placeholder="tucorreo@gmail.com" />{fieldErrors.email && <span className="field-error" id="o-email-error">{fieldErrors.email}</span>}</div>
+                <div className="field"><label htmlFor="o-email">Correo electrónico</label><input id="o-email" name="email" type="email" required autoComplete="email" value={checkoutEmail} readOnly={claimReward && !!accountEmail} onChange={e => setCheckoutEmail(e.target.value)} aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? 'o-email-error' : undefined} placeholder="tucorreo@gmail.com" />{fieldErrors.email && <span className="field-error" id="o-email-error">{fieldErrors.email}</span>}</div>
                 <label className="marketing-optin">
                   <input type="checkbox" name="marketingOk" value="yes" />
                   <span>Enviarme novedades y ofertas por correo electrónico.</span>
@@ -219,6 +260,7 @@ export function OrderModal() {
 
                 <div style={{ margin: '16px 0 0' }}>
                   <div className="sl"><span>Subtotal</span><span>{money(subtotal)}</span></div>
+                  {claimReward && welcomeReward?.state === 'won' && <p className="mini2">Premio: <b>{welcomeReward.label}</b>. {subtotal >= 60 ? 'Se aplicará al registrar el pedido si cumple las condiciones. El total definitivo aparecerá en la confirmación.' : 'Completa S/ 60 en productos para usarlo.'}</p>}
                   <div className="sl"><span>{zone === 'prov' ? 'Envío a provincia' : isExpress ? 'Envío express' : 'Entrega programada'}</span><span>{isExpress ? district ? freeExpress ? 'Gratis' : money(expressFee) : 'Elige distrito' : 'Gratis'}</span></div>
                   <div className="sl t"><span>Total</span><span>{money(total)}</span></div>
                 </div>

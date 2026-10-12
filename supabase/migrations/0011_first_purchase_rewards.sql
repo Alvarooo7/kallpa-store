@@ -1,6 +1,6 @@
 begin;
 -- Immutable checkout email: do NOT infer historic ownership from mutable customers.
-alter table orders add column checkout_email text;
+alter table orders add column if not exists checkout_email text;
 create table first_purchase_rewards (
   user_id uuid primary key references auth.users(id),
   email text not null unique,

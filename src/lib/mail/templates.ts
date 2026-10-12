@@ -75,6 +75,7 @@ ${SITE_URL}`;
 
 /** 2 · Aviso interno. El que hace que el negocio funcione. */
 export function orderInternal(p: {
+  reward?: { id: string; label: string; kind: string };
   to: string; number: string; lines: Line[]; totalCents: number; discountCents?: number;
   zone: 'lima' | 'prov'; isExpress: boolean;
   customer: { name: string; phone: string; email: string };
@@ -93,6 +94,7 @@ export function orderInternal(p: {
      <h1 style="margin:0 0 16px;font-size:22px">Pedido ${p.number} — ${money(p.totalCents)}</h1>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7">
        ${p.discountCents ? `<tr><td style="color:#6B7076">Cupón</td><td>-${money(p.discountCents)}</td></tr>` : ''}
+       ${p.reward ? `<tr><td>Premio</td><td>${esc(p.reward.label)} · ${esc(p.reward.id)} · ${p.reward.kind === 'physical' ? 'Incluir en el paquete' : 'Descuento aplicado'}</td></tr>` : ''}
        <tr><td style="color:#6B7076;width:90px">Cliente</td><td><strong>${esc(p.customer.name)}</strong></td></tr>
        <tr><td style="color:#6B7076">Celular</td><td><a href="${waLink(`Hola ${p.customer.name}, confirmamos tu pedido ${p.number}`)}">${esc(p.customer.phone)}</a></td></tr>
        <tr><td style="color:#6B7076">Correo</td><td>${esc(p.customer.email)}</td></tr>
@@ -107,6 +109,7 @@ export function orderInternal(p: {
 
 ${p.customer.name} · ${p.customer.phone} · ${p.customer.email}
 Destino: ${destino}
+Premio: ${p.reward ? `${p.reward.label} · ${p.reward.id}` : 'Sin premio aplicado'}
 
 ${plainLines(p.lines)}`;
 
