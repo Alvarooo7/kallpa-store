@@ -6,6 +6,7 @@ import { useShop } from './Providers';
 import { bySlug, productLineName, productPriceKnown, productUnitPrice, variantById } from '@/lib/catalog';
 import { money } from '@/lib/format';
 import { FREE_EXPRESS_FROM } from '@/lib/shipping';
+import { RewardProgress } from './RewardProgress';
 
 export function CartDrawer() {
   const { cart, setQuantity, remove, subtotal, ui, openUI, closeUI } = useShop();
@@ -56,6 +57,7 @@ export function CartDrawer() {
       </div>
 
       <div className="df">
+        {cart.length>0 && !needsQuote && <RewardProgress subtotal={subtotal} />}
         {cart.length > 0 && (
           <>
             <div className={`express-goal${freeExpress ? ' reached' : ''}`} role="status" aria-live="polite">

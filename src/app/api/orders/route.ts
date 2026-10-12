@@ -7,6 +7,7 @@ import { FREE_EXPRESS_FROM, expressFeeForDistrict } from '@/lib/shipping';
 import { COMPANY, waLink } from '@/lib/company';
 import { sendMail } from '@/lib/mail/client';
 import { orderConfirmation, orderInternal } from '@/lib/mail/templates';
+import { verifiedAccount } from '@/lib/reward-auth';
 
 export const runtime = 'nodejs';
 
@@ -24,6 +25,7 @@ const bad = (error: string, status = 400, field?: string) => NextResponse.json({
 
 const couponMessage = (detail: CouponIssue, minSubtotalCents?: number): string => {
   switch (detail) {
+    case 'account_required': return 'Ingresa a Mi premio y verifica el correo del titular antes de usar este cupón.';
     case 'not_found': return 'Ese cupón no existe. Revisa el código.';
     case 'expired': return 'Ese cupón ya venció.';
     case 'min_subtotal':
@@ -128,7 +130,9 @@ export async function POST(req: Request) {
   }
 
   try {
+    const account = await verifiedAccount(req);
     const result = await createOrder({
+      verifiedUserId: account?.id,
       customer: { name, phoneE164, email, marketingOk },
       zone,
       isExpress,

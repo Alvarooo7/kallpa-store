@@ -9,6 +9,8 @@ import type { Zone } from '@/lib/types';
 import { EXPRESS_TIERS, FREE_EXPRESS_FROM, expressFeeForDistrict, expressTierForDistrict, type LimaDeliveryMode } from '@/lib/shipping';
 import { COMPANY, waLink } from '@/lib/company';
 import { isEmail, toE164Pe } from '@/lib/validation';
+import { accountHeaders } from '@/lib/auth-browser';
+import Link from 'next/link';
 
 export function OrderModal() {
   const { ui, closeUI, cart, subtotal } = useShop();
@@ -72,7 +74,7 @@ export function OrderModal() {
     try {
       const r = await fetch('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...await accountHeaders() },
         body: JSON.stringify(payload),
       });
       const data = (await r.json()) as {
@@ -139,6 +141,7 @@ export function OrderModal() {
                 </>
               )}
               {whatsapp && <a className="btn acc block" style={{ marginTop: 14 }} href={whatsapp}>Abrir WhatsApp para confirmar</a>}
+              {done !== 'error' && <p className="mini2"><Link href="/mi-premio" onClick={closeUI}>Descubre el regalo de tu pedido</Link>. Desde S/ 60 después de descuentos, con pedido confirmado y antes del despacho. Usa el mismo correo de tu compra. En contraentrega recibes el regalo al pagar.</p>}
               <button className="btn block" style={{ marginTop: 14 }} onClick={closeUI}>Cerrar</button>
             </>
           ) : (

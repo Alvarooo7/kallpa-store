@@ -2,6 +2,39 @@
    Tokens + componentes. Sin Tailwind a propósito: ver README. */
 
 /* Cursos presenciales: planes e inscripción, separados de productos físicos. */
+.reward-page{max-width:820px!important;padding-block:40px!important;min-height:70vh}
+.reward-page h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;max-width:16ch}
+.reward-page>p{max-width:65ch;margin-block:18px;color:var(--t2)}
+.reward-login{display:grid;gap:12px;max-width:420px;margin-block:24px}
+.reward-login input{border:1px solid var(--line);padding:14px;border-radius:10px;width:100%;font:inherit}
+.reward-login small{color:var(--t2)}
+.reward-deck{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:24px 8px;margin-block:16px}
+.reward-card{flex:0 0 190px;scroll-snap-align:center;min-height:240px;background:#141414;color:white;border:2px solid #f65b1b;border-radius:24px;padding:24px 18px;display:flex;flex-direction:column;justify-content:center;gap:18px;text-align:center}
+.reward-card strong{font-size:2.8rem;color:#ff7035}.reward-card small{color:#eee}
+.spinning .reward-card{animation:reward-shuffle .32s ease-in-out infinite alternate}
+.reward-winner{background:#fff5ee;border:1px solid #f65b1b;border-radius:24px;padding:24px;margin-block:24px;overflow-wrap:anywhere}
+.reward-winner h2{font-size:clamp(1.6rem,5vw,2.5rem);margin-block:14px}
+.reward-winner code{display:block;background:white;padding:14px;border-radius:10px;user-select:all;font-size:.9rem}
+.reward-rules{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;font-size:.85rem}.reward-rules ul{padding-left:20px}
+.reward-note{padding:16px;background:var(--w2);border-radius:12px}
+.reward-order{display:grid;gap:10px;margin:20px 0}.reward-order select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:white;font:inherit}.reward-order small{color:var(--t2)}
+.gift-stage{isolation:isolate;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#493126,#171614 65%);color:#fff6e9;border-radius:28px;padding:26px 16px 22px;margin:22px 0;text-align:center}
+.gift-orbit{font-size:34px;color:#ff9149}.gift-eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.16em;color:#e1bfa0}.gift-stage h2{font-size:clamp(1.2rem,4vw,1.7rem);max-width:22ch;margin:12px auto}
+.gift-carousel{height:325px;position:relative;perspective:900px;touch-action:pan-y;outline-offset:-4px;cursor:grab}
+.gift-card{position:absolute;top:18px;left:50%;width:205px;min-height:270px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(145deg,#ffeccf,#d6b882);color:#25180e;border-radius:16px;border:1px solid #ffe8bb;box-shadow:0 18px 35px #0007;transition:transform .35s,opacity .35s;pointer-events:none}
+.gift-card.focused{background:linear-gradient(145deg,#ff763d,#b93e12);color:white;border-color:#ffb28b}
+.gift-card-brand{font-weight:800;font-size:18px}.gift-card-brand>span{color:#3b2313}.gift-card-symbol{font-size:32px}.gift-card strong{font-size:24px;line-height:1.1}.gift-card small{font-size:.7rem}.gift-card-odds{font-size:.67rem;border-top:1px solid currentColor;padding-top:9px}
+.gift-controls{display:flex;justify-content:center;gap:22px;align-items:center;margin-bottom:16px;font-size:.8rem}.gift-controls button{border:1px solid #bda28a;border-radius:50%;width:44px;height:44px;background:transparent;color:white}
+.gift-play{width:min(100%,350px);min-height:48px}.gift-stage .gift-disclaimer{max-width:45ch;margin:14px auto 0;font-size:.73rem;color:#d5c1b4;line-height:1.5}
+.gift-family{display:flex;flex-wrap:wrap;gap:14px;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:.85rem}.gift-family legend{padding-inline:6px}.gift-family label{display:flex;gap:8px;align-items:center;min-height:44px}
+.gift-levels{margin:30px 0}.gift-levels h2{font-size:1.5rem}.gift-levels>div[role=group]{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.gift-levels button[aria-pressed=true]{background:var(--k);color:white}.gift-levels ul{list-style:none;padding:0}.gift-levels li{padding:10px 0;border-bottom:1px solid var(--line);font-size:.85rem}.gift-levels li b{margin-left:10px;color:var(--acc)}.gift-levels>p{font-size:.78rem;color:var(--t2)}
+.gift-reveal{position:relative;overflow:hidden;animation:gift-reveal .5s ease-out}.gift-confetti{position:absolute;inset:0;pointer-events:none}.gift-confetti i{position:absolute;top:-12px;width:7px;height:11px;background:#f65b1b;animation:gift-confetti 1.6s ease-out both}.gift-confetti i:nth-child(even){background:#d9b65d}
+@keyframes gift-reveal{from{opacity:0;transform:rotateY(35deg) scale(.94)}to{opacity:1;transform:none}}
+@keyframes gift-confetti{to{transform:translateY(350px) rotate(270deg);opacity:0}}
+@media(max-width:500px){.gift-stage{margin-inline:-6px;padding-inline:10px}.reward-page{padding-top:26px!important}.gift-levels .btn{padding:10px;font-size:.78rem}}
+@media(prefers-reduced-motion:reduce){.gift-card{transition:none}.gift-reveal,.gift-confetti i{animation:none}.gift-confetti{display:none}}
+@keyframes reward-shuffle{to{transform:translateY(-10px) rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){.spinning .reward-card{animation:none}}
 #cursos .wrap{max-width:840px}
 #cursos .shead h2{font-size:clamp(1.6rem,3vw,2.1rem)}
 #cursos .course-card-photo{aspect-ratio:16/10;max-height:240px}

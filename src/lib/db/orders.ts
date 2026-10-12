@@ -7,6 +7,7 @@ export type NewOrderLine = {
 };
 
 export type NewOrder = {
+  verifiedUserId?: string;
   customer: { name: string; phoneE164: string; email: string; marketingOk: boolean };
   zone: 'lima' | 'prov';
   isExpress: boolean;
@@ -21,7 +22,7 @@ export type NewOrder = {
   idempotencyKey?: string;
 };
 
-export type CouponIssue = 'not_found' | 'expired' | 'min_subtotal' | 'exhausted' | 'already_used';
+export type CouponIssue = 'not_found' | 'expired' | 'min_subtotal' | 'exhausted' | 'already_used' | 'account_required';
 
 export type OrderResult =
   | { ok: true; number: string; id: number; totalCents: number; igvCents: number; discountCents: number; reused: boolean }
@@ -66,6 +67,7 @@ export async function createOrder(input: NewOrder): Promise<OrderResult> {
       igv_cents: igvCents,
       idempotency_key: input.idempotencyKey ?? null,
       coupon_code: input.couponCode ?? null,
+      verified_user_id: input.verifiedUserId ?? null,
       lines: input.lines.map((l) => ({
         slug: l.slug,
         name: l.name,

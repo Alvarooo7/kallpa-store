@@ -78,6 +78,7 @@ export function Header() {
           <nav className="main">
             <Link href="/">Inicio</Link>
             <Link href="/catalogo">Catálogo</Link>
+            <Link href="/mi-premio">Mi premio</Link>
             <Link href="/cursos">Cursos</Link>
             <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
             <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>
@@ -143,6 +144,7 @@ export function Header() {
             <div className="wrap">
               <Link href="/catalogo" onClick={() => setMenu(false)}>Catálogo</Link>
               <Link href="/cursos" onClick={() => setMenu(false)}>Cursos</Link>
+              <Link href="/mi-premio" onClick={() => setMenu(false)}>Mi premio</Link>
               <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
               <Link href="/#diagnostico" onClick={(event) => goToHomeSection(event, 'diagnostico')}>¿Qué quieres resolver?</Link>
               <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>

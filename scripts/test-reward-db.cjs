@@ -1,0 +1,67 @@
+// Temporary embedded PostgreSQL only. Never points to a remote database.
+const { PGlite } = require(process.env.PGLITE_MODULE || '@electric-sql/pglite');
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+(async()=>{
+ const db = new PGlite();
+ await db.exec("create role anon; create role authenticated; create role service_role; create schema auth; create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz);");
+ for(const name of fs.readdirSync('supabase/migrations').filter(n=>n.endsWith('.sql')).sort()){
+  await db.exec(fs.readFileSync('supabase/migrations/'+name,'utf8'));
+ }
+ await db.exec("update reward_stock set available=20; insert into inventory(product_slug,on_hand,reserved) values('test-reward-product',100,0);");
+ let n=0;
+ async function user(){n++;const id=`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;const email=`test${n}@example.test`;await db.query('insert into auth.users values($1,$2,now())',[id,email]);return {id,email,phone:`+519${String(n).padStart(8,'0')}`};}
+ async function order(u,cents=6000,status='confirmed',phone=u.phone){
+  const payload={customer:{email:u.email,name:'Test customer',phone_e164:phone},subtotal_cents:cents,igv_cents:0,shipping_cents:0,zone:'lima',is_express:false,pay_method:'cod',lines:[{slug:'test-reward-product',name:'Test',qty:1,unit_cents:cents}],shipping:{}};
+  const r=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify(payload)])).rows[0].data;
+  assert.equal(r.ok,true);await db.query('update orders set status=$1 where id=$2',[status,r.id]);return r.id;
+ }
+ async function spin(u,id,roll=0,family='style',play=true){return (await db.query('select order_reward_game($1,$2,$3,$4,$5) as data',[u.id,id,play,roll,family])).rows[0].data;}
+ const a=await user(); const aid=await order(a);
+ const credit=await spin(a,aid);assert.equal(credit.state,'reserved');assert.equal(credit.kind,'credit');assert.equal(credit.code,null);
+ assert.deepEqual(await spin(a,aid,99),credit,'repeat uses original prize');
+ await db.query("update orders set status='paid' where id=$1",[aid]);
+ const paid=await spin(a,aid);assert.equal(paid.state,'won');assert.ok(paid.code);assert.ok(paid.expiresAt);
+ const hours=(await db.query('select extract(epoch from (c.ends_at-c.starts_at))/3600 as hours from coupons c join order_rewards r on r.coupon_id=c.id where r.order_id=$1',[aid])).rows[0].hours;assert.equal(Number(hours),720);
+ const b=await user();const bid=await order(b,6000,'confirmed',a.phone);assert.equal((await spin(b,bid)).state,'blocked');
+ assert.equal((await spin(b,aid)).state,'pending','no cross-account access');
+ assert.equal((await spin(a,await order(a,12000,'confirmed','+51999999999'))).state,'blocked','account remains blocked despite alternate phone');
+ const c=await user();const cid=await order(c,12000);const gift=await spin(c,cid,50);assert.equal(gift.kind,'physical');assert.equal(gift.label,'Collar sorpresa');
+ await db.query("update orders set status='cancelled' where id=$1",[cid]);assert.equal((await spin(c,cid)).state,'review');assert.equal((await spin(c,await order(c))).state,'blocked');
+ const d=await user();const did=await order(d,5999);assert.equal((await spin(d,did)).state,'pending');
+ const e=await user();const eid=await order(e,23000);assert.equal((await spin(e,eid,99,'practical')).label,'Crédito S/ 30');
+ await db.query('update orders set subtotal_cents=6000 where id=$1',[eid]);assert.equal((await spin(e,eid)).state,'review');
+ const f=await user();const fid=await order(f,6000,'pending');assert.equal((await spin(f,fid)).state,'pending');
+ await db.query("update orders set status='confirmed' where id=$1",[fid]);
+ await db.exec("update reward_stock set available=0 where sku='ring:style'");assert.equal((await spin(f,fid)).state,'unavailable');
+ assert.equal((await db.query('select count(*)::int as n from order_rewards where order_id=$1',[fid])).rows[0].n,0);
+ await assert.rejects(db.query("update orders set checkout_phone='+51911111111' where id=$1",[aid]));
+ // Real checkout wrapper refuses a valid credit on an unverified/different account.
+ const bad=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify({coupon_code:paid.code,customer:{email:b.email},verified_user_id:b.id})])).rows[0].data;
+ assert.equal(bad.detail,'account_required');
+ // A paid customer can participate again, but splitting yesterday's orders does not.
+ const recurring=await user();const first=await order(recurring,6000,'paid');await spin(recurring,first);
+ await db.query("update order_rewards set created_at=now()-interval '49 hours' where order_id=$1",[first]);
+ await db.query("update orders set created_at=now()-interval '49 hours' where id=$1",[first]);
+ const second=await order(recurring,12000,'confirmed');
+ assert.equal((await spin(recurring,second,0,'practical')).state,'reserved');
+ const split=await user();const split1=await order(split,6000,'paid');await spin(split,split1,0,'practical');
+ const split2=await order(split,6000,'confirmed');
+ await db.query("update orders set created_at=now()-interval '49 hours' where id in ($1,$2)",[split1,split2]);
+ await db.query("update order_rewards set created_at=now()-interval '49 hours' where order_id=$1",[split1]);
+ assert.equal((await spin(split,split2,0,'practical')).state,'blocked','waiting does not bypass order creation window');
+ // Retry does not reserve extra inventory.
+ const repeat=await user();const repeatId=await order(repeat,12000);
+ const before=(await db.query("select available from reward_stock where sku='necklace:practical'")).rows[0].available;
+ const responses=await Promise.all([spin(repeat,repeatId,40,'practical'),spin(repeat,repeatId,99,'style')]);
+ assert.deepEqual(responses[0],responses[1]);
+ assert.equal((await db.query("select available from reward_stock where sku='necklace:practical'")).rows[0].available,before-1);
+ // Coupon redemption uses the real checkout function and remains single-use.
+ const redemption={customer:{email:a.email,name:'Test',phone_e164:a.phone},verified_user_id:a.id,coupon_code:paid.code,subtotal_cents:6000,igv_cents:0,shipping_cents:0,zone:'lima',is_express:false,pay_method:'cod',lines:[{slug:'test-reward-product',name:'Test',qty:1,unit_cents:6000}],shipping:{}};
+ const redeemed=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify(redemption)])).rows[0].data;
+ assert.equal(redeemed.ok,true);assert.equal(redeemed.discount_cents,500);
+ const again=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify(redemption)])).rows[0].data;
+ assert.equal(again.detail,'exhausted');
+ await db.exec("set role anon");await assert.rejects(db.query('select order_reward_game($1,$2,false,0,\'style\')',[a.id,aid]));await db.exec('reset role');
+ await db.close();console.log('PASS: all migrations + COD reservation, payment activation, 30-day expiry, idempotency, phone/account duplicates, ownership, cancellation, minimums, stock, immutable phone, RPC permissions.');
+})().catch(e=>{console.error(e.message);process.exitCode=1;});
