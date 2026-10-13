@@ -198,7 +198,8 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .game-auth-dialog p[role=status] { font-size:12px; line-height:1.5; color:#666; margin:14px 0 0; }
 .game-auth-dialog fieldset { padding:18px 0 0; }
 .game-auth-dialog fieldset legend { font-size:14px; font-weight:600; }
-.game-account-link { display:block; margin:12px auto 0; background:none; border:0; color:#ead9a3; text-decoration:underline; padding:10px; cursor:pointer; }
+.welcome-game .game-account-note { margin:12px 0 0; font-size:.75rem; color:#cbbf9c; text-align:center; overflow-wrap:anywhere; }
+.game-account-note b { color:#ead9a3; font-weight:600; }
 @media(max-width:420px) { .game-auth-dialog .game-account-area { padding:20px; } }
 .reward-page{max-width:820px!important;padding-block:40px!important;min-height:70vh}
 .reward-page h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;max-width:16ch}

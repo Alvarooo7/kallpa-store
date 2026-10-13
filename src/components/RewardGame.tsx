@@ -119,7 +119,7 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
       {result?.label && <button type="button" className="btn acc block" onClick={() => setShowAccount(false)}>Ver mi premio</button>}
       <p role="status" className="game-auth-message">{showAccount ? message : ''}</p>
     </div></dialog>
-    {email && <button type="button" className="game-account-link" onClick={() => setShowAccount(true)}>Mi cuenta</button>}
+    {email && <p className="game-account-note">Jugando con <b>{email}</b></p>}
     {result?.state === 'blocked' && <p role="alert">Ya hay una participación vinculada a tu cuenta o celular. Si compartes número, escríbenos para revisarlo.</p>}
     {result?.state === 'unavailable' && <p role="status">Estamos reponiendo regalos. Tu carta no se consumió.</p>}
     {!showAccount && message && <p role="status" className="game-message">{message}</p>}
