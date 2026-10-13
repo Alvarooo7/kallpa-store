@@ -1083,3 +1083,57 @@ ul.ben li{margin-bottom:.34em}
 .checkout-account p, .checkout-reward p { overflow-wrap: anywhere; }
 .checkout-reward { margin-top: 24px; }
 .checkout-reward h1 { font-size: 1.6rem; }
+
+/* Cuenta: botón del header, menú y página /mi-cuenta. */
+.account-menu{position:relative}
+.account-btn{width:34px;height:34px}
+.account-avatar{display:grid;place-items:center;flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--k);color:#fff;font:700 .85rem/1 "Outfit",sans-serif;object-fit:cover}
+.account-avatar.ghost{background:var(--w2)}
+.account-dropdown{position:absolute;top:calc(100% + 10px);right:-8px;z-index:60;width:min(270px,calc(100vw - 24px));padding:8px;border:1px solid var(--line);border-radius:16px;background:var(--w);box-shadow:0 18px 50px rgba(0,0,0,.14);animation:catalog-drop .18s ease-out}
+.account-dropdown-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:8px 8px 12px;border-bottom:1px solid var(--line)}
+.account-dropdown-head div{display:grid;min-width:0}
+.account-dropdown-head b{font-family:"Outfit",sans-serif;font-size:.92rem}
+.account-dropdown-head span{overflow:hidden;font-size:.76rem;color:var(--t2);text-overflow:ellipsis;white-space:nowrap}
+.account-dropdown a,.account-dropdown button{display:flex;align-items:center;width:100%;min-height:42px;padding:0 10px;border:0;border-radius:10px;background:none;color:var(--t);font:500 .88rem/1 inherit;text-align:left;cursor:pointer}
+.account-dropdown a:hover,.account-dropdown button:hover{background:var(--w2)}
+.account-dropdown .account-signout{margin-top:6px;border-top:1px solid var(--line);border-radius:0 0 10px 10px;color:#b3261e}
+.account-page{max-width:820px!important;padding-block:32px 72px!important}
+.account-loading{padding:40px 0;color:var(--t2)}
+.account-signin{max-width:420px;margin:24px auto}
+.account-signin h1{font-size:clamp(1.8rem,4vw,2.4rem)}
+.account-signin>p{margin:10px 0 20px;color:var(--t2)}
+.account-hero{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.account-hero>div{display:grid;flex:1;gap:2px;min-width:0}
+.account-hero h1{font-size:clamp(1.5rem,4vw,2rem)}
+.account-hero span{overflow-wrap:anywhere;font-size:.86rem;color:var(--t2)}
+.account-section{scroll-margin-top:90px;padding-top:28px}
+.account-section h2{margin-bottom:14px;font-size:1.3rem}
+.account-reward{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:16px}
+.account-reward.won{border-color:var(--acc);background:#fff5ee}
+.account-reward-icon{font-size:26px;text-align:center}
+.account-reward b{display:block;font-family:"Outfit",sans-serif;font-size:1rem}
+.account-reward small{display:block;font-size:.8rem;line-height:1.45;color:var(--t2)}
+.account-reward em,.account-order-head em{padding:4px 10px;border-radius:999px;background:var(--w2);font-size:.7rem;font-style:normal;font-weight:700;white-space:nowrap}
+.account-reward.won em{background:var(--acc);color:#fff}
+.account-reward .btn{grid-column:2/-1;justify-self:start}
+.account-empty{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:18px;border:1px dashed var(--line);border-radius:16px;color:var(--t2);font-size:.9rem}
+.account-error{color:#b3261e}
+.account-orders{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.account-orders>li{padding:16px;border:1px solid var(--line);border-radius:16px}
+.account-order-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.account-order-head b{font-family:"Outfit",sans-serif;font-size:1rem}
+.account-order-head span{flex:1;font-size:.8rem;color:var(--t2)}
+.account-order-head .status-delivered,.account-order-head .status-paid{background:#e6f4ea;color:#1e6b34}
+.account-order-head .status-shipped,.account-order-head .status-confirmed{background:#e8f0fe;color:#1a4fa0}
+.account-order-head .status-cancelled,.account-order-head .status-rejected{background:#fdecea;color:#b3261e}
+.account-orders ul{margin:10px 0;padding:0;list-style:none;font-size:.86rem;color:var(--t2)}
+.account-orders ul li{padding:2px 0}
+.account-order-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding-top:10px;border-top:1px solid var(--line);font-size:.86rem}
+.account-order-foot small{color:#1e6b34}
+.account-order-foot a{color:var(--acc);font-weight:600}
+@media(max-width:600px){
+  .account-page{padding-block:22px 56px!important}
+  .account-hero .btn{width:100%}
+  .account-reward{grid-template-columns:30px minmax(0,1fr)}
+  .account-reward em{grid-column:2;justify-self:start}
+}

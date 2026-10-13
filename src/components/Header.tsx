@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useShop } from './Providers';
+import { AccountMenu } from './AccountMenu';
 import { TopBarPromise } from './DeliveryPromise';
 import { ProductImage } from './ProductImage';
 import { PRODUCTS } from '@/lib/catalog';
@@ -89,6 +90,7 @@ export function Header() {
               onClick={() => { setSearch((v) => !v); setMenu(false); }}>
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
             </button>
+            <AccountMenu />
             <button className="ib" aria-label="Favoritos" onClick={() => openUI('favs')}>
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20s-7-4.6-7-9.3A4 4 0 0 1 12 8a4 4 0 0 1 7 2.7C19 15.4 12 20 12 20z" /></svg>
               {favs.length > 0 && <span className="bdg">{favs.length}</span>}

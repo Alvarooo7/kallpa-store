@@ -182,7 +182,7 @@ export function OrderModal() {
                   {result && (
                     <div className="sl t" style={{ margin: '2px 0 14px' }}>
                       <span>{result.discountCents > 0 ? 'Total con cupón aplicado' : 'Total'}</span>
-                      <span>{money(result.totalCents)}</span>
+                      <span>{money(result.totalCents / 100)}</span>
                     </div>
                   )}
                   {zone === 'prov' ? <DeliveryPromise zone="prov" /> : (

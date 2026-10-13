@@ -6,8 +6,11 @@ import type { CartLine } from '@/lib/types';
 import { track } from '@/lib/analytics';
 import { accountHeaders, browserAuth } from '@/lib/auth-browser';
 import type { WelcomeReward } from '@/lib/rewards';
+import type { User } from '@supabase/supabase-js';
 
 type UI = 'cart' | 'favs' | 'order' | 'lead' | null;
+/** Cuenta con correo verificado; null sin sesión, undefined mientras se consulta. */
+export type Account = { email: string; name: string; avatar: string | null } | null | undefined;
 
 type Shop = {
   cart: CartLine[];
@@ -25,6 +28,8 @@ type Shop = {
   /** Premio de bienvenida de la cuenta conectada; el carrito y el checkout lo aplican solos. */
   reward: WelcomeReward | null;
   setReward: (reward: WelcomeReward | null) => void;
+  account: Account;
+  signOut: () => Promise<void>;
 };
 
 const Ctx = createContext<Shop | null>(null);
@@ -42,6 +47,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [ui, setUi] = useState<UI>(null);
   const [cartReady, setCartReady] = useState(false);
   const [reward, setReward] = useState<WelcomeReward | null>(null);
+  const [account, setAccount] = useState<Account>(undefined);
 
   // localStorage solo después de montar: evita desajustes de hidratación.
   useEffect(() => {
@@ -65,23 +71,29 @@ export function Providers({ children }: { children: React.ReactNode }) {
     try { sessionStorage.setItem('kallpa_cart', JSON.stringify({ savedAt: Date.now(), lines: cart })); } catch { /* optional storage */ }
   }, [cart, cartReady]);
 
-  // Con sesión iniciada, el premio ya ganado acompaña al carrito en cualquier página.
+  // Sesión de la cuenta y, con ella, el premio ya ganado (acompaña al carrito en cualquier página).
   useEffect(() => {
     const auth = browserAuth();
-    if (!auth || process.env.NEXT_PUBLIC_REWARDS_ENABLED !== 'true') return;
+    if (!auth) { setAccount(null); return; }
     let version = 0;
-    const load = async (signedIn: boolean) => {
+    const load = async (user?: User) => {
       const current = ++version;
-      if (!signedIn) { setReward(null); return; }
+      const signedIn = Boolean(user?.email_confirmed_at && user.email);
+      setAccount(signedIn ? {
+        email: user!.email!,
+        name: String(user!.user_metadata?.full_name ?? user!.user_metadata?.name ?? '').trim(),
+        avatar: typeof user!.user_metadata?.avatar_url === 'string' ? user!.user_metadata.avatar_url : null,
+      } : null);
+      if (!signedIn || process.env.NEXT_PUBLIC_REWARDS_ENABLED !== 'true') { setReward(null); return; }
       try {
         const response = await fetch('/api/rewards', { headers: await accountHeaders(), cache: 'no-store' });
         const data = await response.json() as WelcomeReward;
         if (current === version) setReward(response.ok && data.label ? data : null);
       } catch { /* sin premio visible: el checkout lo valida igual en el servidor */ }
     };
-    void auth.auth.getSession().then(({ data }) => load(Boolean(data.session?.user.email_confirmed_at)));
+    void auth.auth.getSession().then(({ data }) => load(data.session?.user));
     const { data } = auth.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') void load(Boolean(session?.user.email_confirmed_at));
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') void load(session?.user);
     });
     return () => { version++; data.subscription.unsubscribe(); };
   }, []);
@@ -148,6 +160,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     favs, isFav: (id) => favs.includes(id), toggleFav,
     ui, openUI: setUi, closeUI: () => setUi(null),
     reward, setReward,
+    account,
+    signOut: async () => { await browserAuth()?.auth.signOut(); setUi(null); },
   };
 
   // Bloquea el scroll del fondo mientras hay una capa abierta.
