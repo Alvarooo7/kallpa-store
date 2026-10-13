@@ -20,7 +20,7 @@ export function Footer() {
             <h4>Tienda</h4>
             <ul>
               <li><Link href="/catalogo">Catálogo</Link></li>
-              <li><Link href="/mi-premio">¡Reclama tu Regalo!</Link></li>
+              <li><Link href="/reclama-tu-premio">¡Reclama tu Regalo!</Link></li>
               <li><Link href="/cursos">Cursos presenciales</Link></li>
               <li><a href="/#usos">¿Para qué lo necesitas?</a></li>
               <li><Link href="/#combo">Smartwatches</Link></li>

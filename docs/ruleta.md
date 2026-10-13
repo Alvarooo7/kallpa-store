@@ -9,13 +9,13 @@ Para confirmar cuentas nuevas dentro del popup, añadir `{{ .Token }}` a la plan
 **La migración 0013 reemplaza el flujo de giros por pedido de abajo.** Aplicar una vez después de 0012. No repetir 0011/0012. Nunca se ejecutó remotamente desde esta tarea.
 
 - Invitación al juego reemplaza la captación del 10%; el endpoint de cupones anterior no se usa en esta invitación.
-- `/mi-premio` muestra solo el juego y acceso a reglas. Tarjetas en abanico, exploración por swipe/flechas/teclado, botón circular, giro y resultado. No hay selector de niveles: solo Sorpresa. Tablas Plus/Premium conservadas para históricos, no ofrecidas.
+- `/reclama-tu-premio` muestra solo el juego y acceso a reglas. Tarjetas en abanico, exploración por swipe/flechas/teclado, botón circular, giro y resultado. No hay selector de niveles: solo Sorpresa. Tablas Plus/Premium conservadas para históricos, no ofrecidas.
 - Sin pedido, confirmación ni pago previo. Para el giro definitivo se requiere cuenta verificada, nombre y celular; esta implementación pide esos datos ANTES del sorteo para evitar premios anónimos repetidos. No SMS. Registro no da consentimiento publicitario.
 - `welcome_rewards` guarda un resultado por cuenta/correo/celular; incluye los filtros históricos. Cupón personal activo inmediatamente, 30 días desde el giro. Se aplica automáticamente en esa MISMA compra, mínimo S/60 de productos ANTES del descuento de la ruleta. No acumulable con otros cupones. Físico: S/60 después de descuentos, sin envío.
 - Regalos físicos de bienvenida ilimitados (0014): el giro no consulta ni descuenta `reward_stock`, nunca devuelve `unavailable` por existencias. No hay redibujo ni giro nuevo por vencer/cancelar.
 - Al checkout, cuenta/correo/celular deben coincidir. La transacción aplica descuento o vincula regalo y devuelve referencia, que se agrega a WhatsApp y al correo interno del pedido. El juego por sí solo no envía correo interno; el resultado queda en base de datos. WhatsApp no envía automáticamente: el cliente envía el mensaje preparado.
 - Sin premio usado en ese pedido, WhatsApp y confirmación incluyen enlace al juego para un pedido posterior. No se alteran retroactivamente pedidos registrados.
-- Autorizaciones de retorno de Google/confirmación: `/mi-premio` y `/?checkout=resume` en producción y localhost. Configurar **Confirm signup** con ConfirmationURL y Google, y probar login real antes de activar. Carrito temporal conservado en sessionStorage (30 min), nunca contraseñas.
+- Autorizaciones de retorno de Google/confirmación: `/reclama-tu-premio` y `/?checkout=resume` en producción y localhost. Configurar **Confirm signup** con ConfirmationURL y Google, y probar login real antes de activar. Carrito temporal conservado en sessionStorage (30 min), nunca contraseñas.
 - Conservar ambos flags apagados hasta aplicar 0013 y 0014 y probar. No se cambió ningún flag ni inventario remoto.
 
 ## Historial: esquema previo (no usar para las reglas actuales)
@@ -35,7 +35,7 @@ Para confirmar cuentas nuevas dentro del popup, añadir `{{ .Token }}` a la plan
 
 ### Acceso integrado en la compra
 
-El formulario permite optar por reclamar regalo e ingresar con Google o correo/contraseña. El servidor exige cuenta verificada y correo coincidente cuando se solicita el regalo. Comprar sin cuenta sigue disponible. Tras registrar el pedido se muestra el juego en el mismo modal, pendiente de confirmación por Kallpa; no se confirma un pedido automáticamente. `/mi-premio` permanece para consultar premios anteriores; las condiciones están en `/reglas-premios`.
+El formulario permite optar por reclamar regalo e ingresar con Google o correo/contraseña. El servidor exige cuenta verificada y correo coincidente cuando se solicita el regalo. Comprar sin cuenta sigue disponible. Tras registrar el pedido se muestra el juego en el mismo modal, pendiente de confirmación por Kallpa; no se confirma un pedido automáticamente. `/reclama-tu-premio` permanece para consultar premios anteriores; las condiciones están en `/reglas-premios`.
 
 Autorizar en Supabase Redirect URLs `https://kallpita.store/?checkout=resume` y `http://localhost:3000/?checkout=resume`. El callback de Google Cloud sigue siendo el de Supabase. Para nuevas cuentas con contraseña, habilitar confirmación de correo y conservar `{{ .ConfirmationURL }}` en **Confirm signup** (no confundir con la plantilla Magic Link/OTP). El retorno recupera formulario y carrito en la misma pestaña, guardados temporalmente en sessionStorage por 30 minutos; nunca guarda contraseñas. Si se abre la confirmación en otro dispositivo, volver al checkout original e ingresar.
 

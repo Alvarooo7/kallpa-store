@@ -61,7 +61,7 @@ export function Header() {
             <span className="sep hide-sm" />
             <Link href="/legal/cambios" className="hide-sm">Garantía</Link>
             <span className="sep hide-sm" />
-            <Link href="/mi-premio" className="hide-sm top-gift">🎁 ¡Reclama tu Regalo!</Link>
+            <Link href="/reclama-tu-premio" className="hide-sm top-gift">🎁 ¡Reclama tu Regalo!</Link>
             </>}
           </div>
           <div className="r">

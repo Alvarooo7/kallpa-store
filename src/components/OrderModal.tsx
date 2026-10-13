@@ -194,7 +194,7 @@ export function OrderModal() {
                 </>
               )}
               {whatsapp && <a className="btn acc block" style={{ marginTop: 14 }} href={whatsapp}>Abrir WhatsApp para confirmar</a>}
-              {done !== 'error' && !reward && <p className="mini2">¿Todavía no jugaste? <Link href="/mi-premio" onClick={closeUI}>Abre la ruleta</Link> y guarda tu regalo para tu siguiente pedido. No necesitas confirmar ni pagar para jugar.</p>}
+              {done !== 'error' && !reward && <p className="mini2">¿Todavía no jugaste? <Link href="/reclama-tu-premio" onClick={closeUI}>Abre la ruleta</Link> y guarda tu regalo para tu siguiente pedido. No necesitas confirmar ni pagar para jugar.</p>}
               <button className="btn block" style={{ marginTop: 14 }} onClick={closeUI}>Cerrar</button>
             </>
           ) : (

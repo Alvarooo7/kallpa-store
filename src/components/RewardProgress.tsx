@@ -16,7 +16,7 @@ export function RewardProgress({ subtotal }: { subtotal: number }) {
     </div>;
   }
   if (reward) return null;
-  return <div className="reward-note"><b>🎁 Tu compra puede venir con regalo</b><p>{subtotal < REWARD_MINIMUM ? `Te faltan S/ ${(REWARD_MINIMUM - subtotal).toFixed(2)} para la compra mínima. ` : ''}Juega antes de comprar: el descuento se usa en esta compra y el accesorio va en tu paquete.</p><Link href="/mi-premio" onClick={closeUI}>Explorar premios y girar →</Link></div>;
+  return <div className="reward-note"><b>🎁 Tu compra puede venir con regalo</b><p>{subtotal < REWARD_MINIMUM ? `Te faltan S/ ${(REWARD_MINIMUM - subtotal).toFixed(2)} para la compra mínima. ` : ''}Juega antes de comprar: el descuento se usa en esta compra y el accesorio va en tu paquete.</p><Link href="/reclama-tu-premio" onClick={closeUI}>Explorar premios y girar →</Link></div>;
 }
 /** Descuento del premio que el servidor aplicará a este subtotal (en soles). */
 export function useRewardDiscount(subtotal: number) {

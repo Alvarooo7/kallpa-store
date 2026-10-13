@@ -7,6 +7,10 @@ const config: NextConfig = {
     // Cuando subas fotos a un CDN, agrégalo acá.
     remotePatterns: [],
   },
+  async redirects() {
+    // Enlaces ya enviados por correo/WhatsApp apuntan a la ruta anterior del juego.
+    return [{ source: '/mi-premio', destination: '/reclama-tu-premio', permanent: true }];
+  },
   async headers() {
     return [
       {

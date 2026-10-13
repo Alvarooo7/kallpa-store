@@ -125,7 +125,7 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
     <div className="game-account-area">
       <div className="game-auth-heading"><div><span>UN PASO MÁS</span><h2 id="game-auth-title">Guarda tu premio</h2></div><button type="button" className="x" aria-label="Cerrar acceso" onClick={() => setShowAccount(false)}>×</button></div>
       <p className="game-auth-intro">Ingresa o crea tu cuenta y tu carta se activa aquí mismo. Tus datos de entrega los completas al hacer tu pedido.</p>
-      <CheckoutAccount popup onAccount={accountChanged} beforeRedirect={beforeRedirect ?? (() => {})} returnPath={embedded ? '/?checkout=resume' : '/mi-premio'} />
+      <CheckoutAccount popup onAccount={accountChanged} beforeRedirect={beforeRedirect ?? (() => {})} returnPath={embedded ? '/?checkout=resume' : '/reclama-tu-premio'} />
       {result?.label && <button type="button" className="btn acc block" onClick={() => setShowAccount(false)}>Ver mi premio</button>}
       <p role="status" className="game-auth-message">{showAccount ? message : ''}</p>
     </div></dialog>

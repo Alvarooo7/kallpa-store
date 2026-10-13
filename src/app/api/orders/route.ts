@@ -195,7 +195,7 @@ export async function POST(req: Request) {
       ...lines.map((line) => `• ${line.qty} × ${line.name}`),
       `Total: S/ ${(result.totalCents / 100).toFixed(2)}`,
       ...(result.discountCents ? [`Descuento aplicado: S/ ${(result.discountCents / 100).toFixed(2)}.`] : []),
-      result.reward ? `Premio: ${result.reward.label}. Código de referencia: ${result.reward.id}. ${result.reward.kind === 'physical' ? 'Incluir en el paquete.' : 'Descuento incluido en este total.'}` : `Sin premio aplicado. Juego: ${SITE_URL}/mi-premio`,
+      result.reward ? `Premio: ${result.reward.label}. Código de referencia: ${result.reward.id}. ${result.reward.kind === 'physical' ? 'Incluir en el paquete.' : 'Descuento incluido en este total.'}` : `Sin premio aplicado. Juego: ${SITE_URL}/reclama-tu-premio`,
       `Entrega: ${deliveryLabel}.`,
       zone === 'lima' ? `Dirección: ${shipping.address}.` : `Agencia: ${shipping.agency}. DNI de recojo: ${shipping.dni}.`,
       paymentLabel,

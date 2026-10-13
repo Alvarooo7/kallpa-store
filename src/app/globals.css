@@ -132,7 +132,7 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .checkout-reward-card label { display:flex; align-items:center; gap:6px; min-height:44px; font-size:.8rem; cursor:pointer; }
 .sl.reward-line { color:var(--acc); font-weight:600; }
 
-/* /mi-premio: info a la izquierda y juego a la derecha en escritorio; juego primero en móvil. */
+/* /reclama-tu-premio: info a la izquierda y juego a la derecha en escritorio; juego primero en móvil. */
 .premio-page { padding:0 0 40px; color:#fff9e4; background:radial-gradient(ellipse 70% 55% at 72% 35%, #2f2a13, #17190f 72%) #17190f; }
 .premio-bar { max-width:1180px; margin:0 auto; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .premio-bar .gift-card-brand { font-family:"Outfit",sans-serif; font-size:22px; letter-spacing:-.04em; color:#fff9e4; }

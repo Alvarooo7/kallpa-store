@@ -2,7 +2,7 @@
 
 > Esquema anterior. La implementación actual por pedido, filtros de celular sin SMS, regalos físicos y crédito hasta S/30 está documentada en **docs/ruleta.md**. Conservar esta guía solo como referencia de configuración OTP/Google; las reglas económicas de abajo fueron reemplazadas.
 
-Implementación local en `/mi-premio`. No activada en producción por defecto.
+Implementación local en `/reclama-tu-premio`. No activada en producción por defecto.
 
 ## Activación pendiente
 
@@ -16,14 +16,14 @@ Implementación local en `/mi-premio`. No activada en producción por defecto.
 
 ## Acceso con Google
 
-El botón usa Supabase OAuth con PKCE y regresa a `/mi-premio`. El SDK intercambia automáticamente el código y guarda la sesión en el navegador; las APIs siguen verificando al usuario mediante getUser. No se solicita acceso a Drive, Gmail ni contactos. Usar el mismo correo del pedido.
+El botón usa Supabase OAuth con PKCE y regresa a `/reclama-tu-premio`. El SDK intercambia automáticamente el código y guarda la sesión en el navegador; las APIs siguen verificando al usuario mediante getUser. No se solicita acceso a Drive, Gmail ni contactos. Usar el mismo correo del pedido.
 
 Pendiente de configuración externa (consulta pública confirmó google=false):
 
 1. Google Cloud / Google Auth Platform: configurar marca y audiencia externa; crear cliente OAuth de tipo aplicación web. Para clientes reales, publicar la audiencia en producción, no limitarla a test users.
 2. URI de redirección autorizado en Google: `https://epwpptziswltoumcztpo.supabase.co/auth/v1/callback`.
 3. Supabase Authentication → Sign In / Providers → Google: habilitar y guardar Client ID y Client Secret. El secreto va solo en Supabase, nunca en NEXT_PUBLIC ni en el repositorio.
-4. Supabase URL Configuration: Site URL `https://kallpita.store`; Redirect URLs exactas `https://kallpita.store/mi-premio` y, para desarrollo, `http://localhost:3000/mi-premio`.
+4. Supabase URL Configuration: Site URL `https://kallpita.store`; Redirect URLs exactas `https://kallpita.store/reclama-tu-premio` y, para desarrollo, `http://localhost:3000/reclama-tu-premio`.
 5. Probar selección de cuenta, cancelación, retorno, sesión persistida y logout. En móviles, usar navegador externo si el navegador embebido de WhatsApp bloquea Google. No se verificó un login real en esta tarea.
 
 Referencia: https://supabase.com/docs/guides/auth/social-login/auth-google
