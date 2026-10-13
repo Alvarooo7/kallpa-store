@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { REWARD_MINIMUM, TIERS } from '@/lib/rewards';
+import { REWARD_MINIMUM, TIERS, odds } from '@/lib/rewards';
 import { PICK_BOOST, prizeName } from './RewardDeck';
 
 /** TyC del juego en versión breve; el detalle legal completo vive en /reglas-premios. */
@@ -23,7 +23,7 @@ export function RewardTerms({ open, onClose }: { open: boolean; onClose: () => v
         <li><b>Guárdalo.</b> Ingresa con Google o tu correo; tu premio queda en tu cuenta.</li>
       </ol>
       <h3>Premios</h3>
-      <ul className="reward-terms-odds">{TIERS[0].prizes.map(prize => <li key={prize.id}><span>{prizeName(prize)}</span><b>{prize.probability}%</b></li>)}</ul>
+      <ul className="reward-terms-odds">{TIERS[0].prizes.map(prize => <li key={prize.id}><span>{prizeName(prize)}</span><b>{odds(prize.probability)}</b></li>)}</ul>
       <h3>Cómo usarlo</h3>
       <ul>
         <li>Se suma solo a tu carrito y vale <b>30 días</b>.</li>

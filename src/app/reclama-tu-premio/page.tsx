@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { RewardGame } from '@/components/RewardGame';
-import { TIERS, prizeLabel } from '@/lib/rewards';
+import { TIERS, odds, prizeLabel } from '@/lib/rewards';
 export const metadata = { title: '¡Reclama tu Regalo!', robots: { index: false } };
 const STEPS = [
   ['Dale poder a una carta', 'Arrastra al brillo el premio que más quieras: se ilumina y gana +2% de probabilidad.'],
@@ -23,7 +23,7 @@ export default function RewardPage() {
           <p>La carta con poder suma +2% a su premio; los demás bajan en proporción.</p>
           <ul>{PRIZES.map(prize => <li key={prize.id}>
             <span>{prize.amount ? `S/ ${prize.amount} de descuento` : prizeLabel(prize, 'style')}</span>
-            <b>{prize.probability}%</b>
+            <b>{odds(prize.probability)}</b>
             <i aria-hidden="true" style={{ width: `${prize.probability / TOP_ODDS * 100}%` }} />
           </li>)}</ul>
         </section>

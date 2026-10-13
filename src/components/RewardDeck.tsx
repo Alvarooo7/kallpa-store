@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
-import { prizeLabel, type Prize } from '@/lib/rewards';
+import { odds, prizeLabel, type Prize } from '@/lib/rewards';
 
 /** Distancia (px) que hay que bajar la carta para cargarle poder. */
 const ARM = 110;
@@ -107,7 +107,7 @@ export function RewardDeck({ prizes, spinning, target, disabled, onSpin, onLande
   return <div className={`pull-deck${spinning ? ' spinning' : ''}${armed ? ' armed' : ''}${auraOn ? ' powered' : ''}${dragging ? ' dragging' : ''}${stopped ? ' stopped' : ''}`}>
     <button type="button" className="pull-terms" onClick={onTerms}>TyC</button>
     <div className="pull-head"><span className="pull-gift" aria-hidden="true">🎁</span><h2 aria-live="polite">{title}</h2></div>
-    <div className="pull-stage" role="group" aria-roledescription="carrusel" aria-label={`Premio ${active + 1} de ${count}: ${prizeName(prizes[active])}, ${prizes[active].probability}%${focusedPowered ? `, con poder +${PICK_BOOST}%` : ''}`} tabIndex={0}
+    <div className="pull-stage" role="group" aria-roledescription="carrusel" aria-label={`Premio ${active + 1} de ${count}: ${prizeName(prizes[active])}, ${odds(prizes[active].probability)}${focusedPowered ? `, con poder +${PICK_BOOST}%` : ''}`} tabIndex={0}
       onKeyDown={event => {
         if (locked) return;
         if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); moveTo(position.current + (event.key === 'ArrowRight' ? 1 : -1)); }
@@ -137,7 +137,7 @@ export function RewardDeck({ prizes, spinning, target, disabled, onSpin, onLande
           <span className="pull-card-brand">Kallpa<i>.</i></span>
           <span className="pull-card-mark" aria-hidden="true">✧</span>
           <span className="pull-card-label">{prize.amount ? <><b>S/ {prize.amount}</b> de descuento</> : prizeLabel(prize, 'style')}</span>
-          <small className={`pull-card-odds${hasPower ? ' boosted' : ''}`}>{hasPower ? prize.probability + PICK_BOOST : prize.probability}% de probabilidad</small>
+          <small className={`pull-card-odds${hasPower ? ' boosted' : ''}`}>{odds(hasPower ? prize.probability + PICK_BOOST : prize.probability)} de probabilidad</small>
         </div>;
       })}
       <div className="pull-chevrons" aria-hidden="true"><i /><i /></div>

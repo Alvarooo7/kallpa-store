@@ -2,15 +2,18 @@ export type RewardTier = 'sorpresa' | 'plus' | 'premium';
 export type RewardFamily = 'style' | 'practical';
 /** delivery 'whatsapp': no va en el paquete, se coordina por WhatsApp (p. ej. una clase). */
 export type Prize = { id: string; label: string; practicalLabel?: string; probability: number; amount?: number; minimum?: number; delivery?: 'whatsapp' };
+/** Probabilidad en texto, sin ceros de más ni restos de coma flotante: 9.55% o 65%. */
+export const odds = (value: number) => `${Number(value.toFixed(2))}%`;
 export const TIERS: { id: RewardTier; label: string; minimum: number; prizes: Prize[] }[] = [
   { id: 'sorpresa', label: 'Sorpresa', minimum: 60, prizes: [
-    // Mismo orden y pesos que reward_pool (0016): el sorteo del servidor manda.
+    // Mismo orden y pesos que reward_pool (0018): el sorteo del servidor manda. El 35% que no es
+    // crédito mantiene la proporción 3:3:2:2:1 con dos decimales.
     { id: 'credit5', label: 'Crédito S/ 5', probability: 65, amount: 5, minimum: 60 },
-    { id: 'bracelet', label: 'Pulsera sorpresa', probability: 10 },
-    { id: 'necklace', label: 'Collar sorpresa', probability: 10 },
-    { id: 'ring', label: 'Anillo sorpresa', probability: 6 },
-    { id: 'perfume', label: 'Perfume decant sorpresa', probability: 6 },
-    { id: 'gymbox', label: 'Clase gratis en GymBox', probability: 3, delivery: 'whatsapp' },
+    { id: 'bracelet', label: 'Pulsera sorpresa', probability: 9.55 },
+    { id: 'necklace', label: 'Collar sorpresa', probability: 9.55 },
+    { id: 'ring', label: 'Anillo sorpresa', probability: 6.36 },
+    { id: 'perfume', label: 'Perfume decant sorpresa', probability: 6.36 },
+    { id: 'gymbox', label: 'Clase gratis en GymBox', probability: 3.18, delivery: 'whatsapp' },
   ] },
   { id: 'plus', label: 'Plus', minimum: 120, prizes: [
     { id: 'credit10', label: 'Crédito S/ 10', probability: 30, amount: 10, minimum: 100 },

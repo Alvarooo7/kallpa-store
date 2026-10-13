@@ -16,8 +16,8 @@ async function handle(req: Request, spin: boolean) {
   const family = body.family ?? 'style';
   const pick = TIERS[0].prizes.find(prize => prize.id === body.pick)?.id ?? null;
   if (spin && !['style', 'practical'].includes(family)) return reply({ error: 'Elige el tipo de regalo.' }, 400);
-  // La carta arrastrada suma 2 puntos a su premio; el servidor sortea sobre 10 000 (centésimas de punto).
-  const { data, error } = await db.rpc('welcome_reward', { p_user: user.id, p_name: null, p_phone: null, p_spin: spin, p_roll: spin ? randomInt(pick ? 10000 : 100) : 0, p_family: family, p_pick: spin ? pick : null });
+  // El servidor sortea sobre 10 000 (centésimas de punto); la carta con poder suma 2 puntos a su premio.
+  const { data, error } = await db.rpc('welcome_reward', { p_user: user.id, p_name: null, p_phone: null, p_spin: spin, p_roll: spin ? randomInt(10000) : 0, p_family: family, p_pick: spin ? pick : null });
   if (error) return reply({ error: 'No pudimos consultar tu regalo. Inténtalo nuevamente.' }, 503);
   return reply(data);
 }
