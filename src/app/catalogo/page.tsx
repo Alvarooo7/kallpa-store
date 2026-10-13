@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ProductCard } from '@/components/ProductCard';
+import { CatalogBrowser } from '@/components/CatalogBrowser';
 import { PRODUCTS, PRODUCT_IDS_BY_USE } from '@/lib/catalog';
 import { getCatalogAvailability } from '@/lib/db/inventory';
 
@@ -67,28 +67,20 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
     : visibleProducts.filter(product => category.matches(product.cat));
   const title = activeUse ? USE_LABELS[activeUse] : category.title;
 
+  const filters = (Object.entries(CATEGORIES) as [CategoryKey, typeof CATEGORIES[CategoryKey]][]).map(([key, item]) => ({
+    key,
+    label: item.label,
+    count: visibleProducts.filter(product => item.matches(product.cat)).length,
+    href: key === 'todos' ? '/catalogo' : `/catalogo?categoria=${key}`,
+    on: !activeUse && active === key,
+  }));
+  const activeLabel = activeUse ? USE_LABELS[activeUse] : active === 'todos' ? undefined : category.label;
+
   return (
     <>
-      <header className="catalog-head">
+      <CatalogBrowser title={title} ids={products.map(product => product.id)} availability={availability} filters={filters} activeLabel={activeLabel} invite={!activeLabel} />
+      <section className="catalog-more">
         <div className="wrap">
-          <nav className="catalog-tabs catalog-filter-tabs" aria-label="Filtrar catálogo por categoría">
-            {(Object.entries(CATEGORIES) as [CategoryKey, typeof CATEGORIES[CategoryKey]][]).map(([key, item]) => (
-              <Link key={key} className={`catalog-tab${!activeUse && active === key ? ' on' : ''}`} href={key === 'todos' ? '/catalogo' : `/catalogo?categoria=${key}`} aria-current={!activeUse && active === key ? 'page' : undefined}>
-                {item.label} · {visibleProducts.filter(product => item.matches(product.cat)).length}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </header>
-
-      <section className="catalog-results">
-        <div className="wrap">
-          <div className="catalog-summary">
-            <h1>{title}</h1>
-            <span>{products.length} {products.length === 1 ? 'producto' : 'productos'}</span>
-          </div>
-          <div className="grid">{products.map(product => <ProductCard key={product.id} p={product} availability={availability[product.id]} />)}</div>
-
           <div className="catalog-related">
             <h2>Explora otras categorías</h2>
             <div className="catalog-tabs">
