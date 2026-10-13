@@ -30,7 +30,7 @@ export type Product = {
   specs: Record<string, string>;
   compat: string;
   warr: string;
-  images: { src: string; width: number; height: number; alt: string }[];
+  images: { src: string; mobileSrc?: string; thumbSrc?: string; width: number; height: number; alt: string }[];
   description: string;
   priceKnown: boolean;
   sources: { title: string; url: string }[];

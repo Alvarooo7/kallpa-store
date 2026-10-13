@@ -1,84 +1,54 @@
 {
   "lenovo-xt80": [
     {
-      "src": "/products/lenovo-xt80/studio.webp",
-      "width": 828,
-      "height": 828,
-      "alt": "Lenovo XT80 negros con ganchos deportivos y estuche thinkplus"
+      "src": "/products/generated-professional/lenovo-xt80/hero-web.webp",
+      "mobileSrc": "/products/generated-professional/lenovo-xt80/hero-mobile.webp",
+      "thumbSrc": "/products/generated-professional/lenovo-xt80/hero-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Lenovo XT80 negros con ganchos deportivos y estuche de carga abierto"
     },
     {
-      "src": "/products/lenovo-xt80/01.webp",
-      "width": 800,
-      "height": 800,
-      "alt": "Lenovo XT80 con ganchos y estuche abierto"
+      "src": "/products/generated-professional/lenovo-xt80/detail-web.webp",
+      "mobileSrc": "/products/generated-professional/lenovo-xt80/detail-mobile.webp",
+      "thumbSrc": "/products/generated-professional/lenovo-xt80/detail-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Detalle cercano de los audífonos Lenovo XT80 y sus componentes"
     },
     {
-      "src": "/products/lenovo-xt80/02.webp",
-      "width": 824,
-      "height": 847,
-      "alt": "XT80 y caja del producto"
-    },
-    {
-      "src": "/products/lenovo-xt80/03.webp",
-      "width": 900,
-      "height": 900,
-      "alt": "XT80 con estuche y accesorios"
-    },
-    {
-      "src": "/products/lenovo-xt80/04.webp",
-      "width": 800,
-      "height": 800,
-      "alt": "Imagen promocional del Lenovo XT80"
-    },
-    {
-      "src": "/products/lenovo-xt80/05.webp",
-      "width": 893,
-      "height": 1600,
-      "alt": "Uso deportivo de audífonos"
+      "src": "/products/generated-professional/lenovo-xt80/lifestyle-web.webp",
+      "mobileSrc": "/products/generated-professional/lenovo-xt80/lifestyle-mobile.webp",
+      "thumbSrc": "/products/generated-professional/lenovo-xt80/lifestyle-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Corredora usando los audífonos Lenovo XT80 en un parque"
     }
   ],
   "acuaticos-x7": [
     {
-      "src": "/products/acuaticos-x7/studio.webp",
-      "width": 1910,
-      "height": 1000,
-      "alt": "Audífonos acuáticos POLVCDG X7 de conducción ósea en negro y rojo"
+      "src": "/products/generated-professional/acuaticos-x7/hero-web.webp",
+      "mobileSrc": "/products/generated-professional/acuaticos-x7/hero-mobile.webp",
+      "thumbSrc": "/products/generated-professional/acuaticos-x7/hero-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Audífonos acuáticos POLVCDG X7 negros y rojos en perspectiva"
     },
     {
-      "src": "/products/acuaticos-x7/01.webp",
-      "width": 384,
-      "height": 510,
-      "alt": "Audífonos X7 de banda trasera en mano"
+      "src": "/products/generated-professional/acuaticos-x7/detail-web.webp",
+      "mobileSrc": "/products/generated-professional/acuaticos-x7/detail-mobile.webp",
+      "thumbSrc": "/products/generated-professional/acuaticos-x7/detail-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Detalle de materiales, controles y componentes del POLVCDG X7"
     },
     {
-      "src": "/products/acuaticos-x7/02.webp",
-      "width": 384,
-      "height": 512,
-      "alt": "Detalle de los controles del X7"
-    },
-    {
-      "src": "/products/acuaticos-x7/03.webp",
-      "width": 383,
-      "height": 510,
-      "alt": "X7 junto a su caja abierta"
-    },
-    {
-      "src": "/products/acuaticos-x7/04.webp",
-      "width": 400,
-      "height": 800,
-      "alt": "Ajuste del X7 alrededor de la oreja"
-    },
-    {
-      "src": "/products/acuaticos-x7/05.webp",
-      "width": 1600,
-      "height": 992,
-      "alt": "Caja del X7 y material del proveedor"
-    },
-    {
-      "src": "/products/acuaticos-x7/06.webp",
-      "width": 1200,
-      "height": 1600,
-      "alt": "Uso de audífonos X7 en piscina"
+      "src": "/products/generated-professional/acuaticos-x7/lifestyle-web.webp",
+      "mobileSrc": "/products/generated-professional/acuaticos-x7/lifestyle-mobile.webp",
+      "thumbSrc": "/products/generated-professional/acuaticos-x7/lifestyle-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Nadador usando audífonos acuáticos POLVCDG X7 en piscina"
     }
   ],
   "erazer-xf21": [
@@ -271,16 +241,28 @@
   ],
   "lentes-torneo": [
     {
-      "src": "/products/lentes-torneo/01.webp",
-      "width": 960,
-      "height": 540,
-      "alt": "Lentes de natación Torneo Competition verdes con estuche"
+      "src": "/products/generated-professional/lentes-torneo/hero-web.webp",
+      "mobileSrc": "/products/generated-professional/lentes-torneo/hero-mobile.webp",
+      "thumbSrc": "/products/generated-professional/lentes-torneo/hero-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Lentes de natación Torneo Competition verdes en perspectiva"
     },
     {
-      "src": "/products/lentes-torneo/02.webp",
-      "width": 960,
-      "height": 720,
-      "alt": "Lentes de natación Torneo Competition en varios colores"
+      "src": "/products/generated-professional/lentes-torneo/detail-web.webp",
+      "mobileSrc": "/products/generated-professional/lentes-torneo/detail-mobile.webp",
+      "thumbSrc": "/products/generated-professional/lentes-torneo/detail-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Detalle del lente espejado, marco y correa de los lentes Torneo Competition"
+    },
+    {
+      "src": "/products/generated-professional/lentes-torneo/lifestyle-web.webp",
+      "mobileSrc": "/products/generated-professional/lentes-torneo/lifestyle-mobile.webp",
+      "thumbSrc": "/products/generated-professional/lentes-torneo/lifestyle-web-thumb.webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "Nadador usando lentes Torneo Competition verdes en una piscina"
     }
   ]
 }

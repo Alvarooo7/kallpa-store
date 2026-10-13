@@ -55,7 +55,7 @@ export function ProductDetail({ p, recs, availability }: { p: Product; recs: Pro
               <div className="th">
                 {p.images.map((photo, i) => <button key={photo.src} className={`photo-thumb${selected === i ? ' selected' : ''}`}
                   aria-label={`Ver foto ${i + 1} de ${p.short}`} aria-pressed={selected === i} onClick={() => setSelected(i)}>
-                  <img src={photo.src.replace('.webp', '-thumb.webp')} alt={photo.alt} loading="lazy" />
+                  <img src={photo.thumbSrc ?? photo.src.replace('.webp', '-thumb.webp')} alt={photo.alt} loading="lazy" />
                 </button>)}
               </div>
               <p style={{ fontSize: '.76rem', color: 'var(--t2)', margin: '11px 0 0' }}>

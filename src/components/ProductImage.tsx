@@ -4,8 +4,15 @@ import type { Product } from '@/lib/types';
 export function ProductImage({ p, index = 0, priority = false }: { p: Product; index?: number; priority?: boolean }) {
   const photo = p.images[index] ?? p.images[0];
   if (!photo) return <ProductPlaceholder p={p} />;
-  return <Image className="product-photo" src={photo.src} alt={photo.alt} width={photo.width} height={photo.height}
+  const image = <Image className="product-photo" src={photo.src} alt={photo.alt} width={photo.width} height={photo.height}
     sizes="(max-width: 620px) 90vw, (max-width: 1000px) 45vw, 500px" priority={priority} />;
+
+  if (!photo.mobileSrc) return image;
+
+  return <picture style={{ display: 'contents' }}>
+    <source media="(max-width: 620px)" srcSet={photo.mobileSrc} />
+    {image}
+  </picture>;
 }
 
 function ProductPlaceholder({ p }: { p: Product }) {
