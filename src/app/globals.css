@@ -13,7 +13,6 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .game-account-area[hidden] { display:none; }
 .game-account-area fieldset { border:0; padding:8px; min-width:0; }
 .game-account-area select { max-width:100%; padding:10px; }
-.welcome-game .game-terms { font-size:.7rem; opacity:.8; line-height:1.6; margin-top:16px; }
 .welcome-game > p[role=status], .welcome-game > p[role=alert] { font-size:.85rem; margin-top:14px; }
 
 /* Carta de bienvenida: se elige una carta boca abajo y se arrastra a la ranura para activarla. */
@@ -46,11 +45,42 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .pull-card-label b { display:block; font:700 30px/1.05 "Outfit",sans-serif; letter-spacing:-.02em; }
 .pull-card-odds { padding-top:8px; border-top:1px solid currentColor; }
 .pull-card-odds.boosted { font-weight:700; font-size:.78rem; opacity:1; }
-.pull-card-odds em { margin-left:4px; padding:1px 6px; border-radius:999px; background:#ffd25e; color:#2a2008; font-style:normal; }
-.pull-family { display:inline-flex; gap:4px; margin-top:14px; padding:4px; border:1px solid #e5c76c40; border-radius:999px; }
-.pull-family button { min-height:36px; padding:0 16px; border:0; border-radius:999px; background:none; color:#cbbf9c; font:600 .78rem/1 inherit; cursor:pointer; }
-.pull-family button[aria-checked=true] { background:#e5c76c; color:#1d1a0c; }
-.pull-family button:disabled { cursor:default; }
+/* Poder +2%: la carta elegida se ilumina (aura giratoria, chispas y brillo). */
+.pull-deck { position:relative; }
+.pull-terms { position:absolute; top:0; right:0; z-index:20; min-height:32px; padding:0 12px; border:1px solid #e5c76c55; border-radius:999px; background:#00000033; color:#f3e5b4; font:600 .72rem/1 inherit; letter-spacing:.04em; cursor:pointer; }
+.pull-terms:hover { border-color:#e5c76c; background:#e5c76c18; }
+.pull-aura { position:absolute; top:-23px; left:50%; z-index:9; width:300px; height:320px; opacity:0; pointer-events:none; transition:opacity .4s, transform .45s cubic-bezier(.2,.8,.2,1); }
+.pull-deck.dragging .pull-aura { transition:opacity .4s; }
+.pull-deck.powered .pull-aura { opacity:1; }
+.pull-aura-rays { position:absolute; inset:0; border-radius:50%; background:repeating-conic-gradient(from 0deg,#ffd25e00 0deg 9deg,#ffd25e66 12deg,#ffd25e00 15deg 30deg); -webkit-mask-image:radial-gradient(circle,#000 22%,transparent 68%); mask-image:radial-gradient(circle,#000 22%,transparent 68%); animation:pull-rays 9s linear infinite; }
+.pull-aura-glow { position:absolute; inset:16% 20%; border-radius:30px; background:radial-gradient(ellipse,#ffd25e99,#ff9b3a3d 55%,transparent 75%); filter:blur(18px); animation:pull-pulse 1.6s ease-in-out infinite alternate; }
+.pull-aura b { position:absolute; top:50%; left:50%; width:6px; height:6px; margin:-3px; border-radius:50%; background:#fff6c8; box-shadow:0 0 8px 2px #ffd25e; transform:rotate(calc(var(--spark) * 45deg + 22deg)) translateY(-140px); animation:pull-spark 1.8s ease-in-out infinite; animation-delay:calc(var(--spark) * -.22s); }
+.pull-card.lit { box-shadow:0 0 0 3px #fff2b0, 0 0 40px 6px #ffd25ecc, 0 0 90px #ffb43c66, 0 18px 36px #0009; }
+.pull-card.lit::after { background:linear-gradient(115deg,transparent 30%,#ffffff8c 48%,transparent 66%); background-size:250% 100%; animation:pull-sheen 1.8s ease-in-out infinite; }
+.pull-power { position:absolute; top:8px; right:8px; z-index:2; padding:3px 8px; border-radius:999px; background:#ffd25e; color:#2a2008; font:700 .7rem/1.2 "Outfit",sans-serif; box-shadow:0 0 12px #ffd25e; animation:pull-power-in .45s cubic-bezier(.2,.9,.3,1.4) both; }
+.pull-deck.spinning .pull-card { transition:transform .14s linear, opacity .14s; }
+.pull-spin { display:inline-flex; align-items:center; gap:8px; min-height:50px; margin-top:16px; padding:0 34px; border:0; border-radius:999px; background:linear-gradient(140deg,#ffe78b,#dfb43d); color:#28220c; font:700 1rem/1 "Outfit",sans-serif; box-shadow:0 0 28px #ecb32344; cursor:pointer; }
+.pull-spin span { display:inline-block; font-size:1.3rem; }
+.pull-spin:hover:not(:disabled) { box-shadow:0 0 36px #ecb32377; }
+.pull-spin:disabled { opacity:.65; cursor:wait; }
+.pull-deck.spinning .pull-spin span { animation:pull-turn .6s linear infinite; }
+@keyframes pull-rays { to { transform:rotate(360deg); } }
+@keyframes pull-pulse { to { opacity:.6; transform:scale(1.08); } }
+@keyframes pull-spark { 0%,100% { opacity:0; scale:.4; } 50% { opacity:1; scale:1; } }
+@keyframes pull-sheen { from { background-position:130% 0; } to { background-position:-30% 0; } }
+@keyframes pull-power-in { from { transform:scale(.3); opacity:0; } }
+@keyframes pull-turn { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) {
+  .pull-aura-rays, .pull-aura-glow, .pull-aura b, .pull-card.lit::after, .pull-power, .pull-deck.spinning .pull-spin span { animation:none; }
+  .pull-aura b { opacity:1; }
+}
+/* TyC del juego. */
+.reward-terms h3 { margin:18px 0 8px; font-size:.95rem; }
+.reward-terms ol, .reward-terms ul { display:grid; gap:6px; margin:0; padding-left:18px; font-size:.84rem; line-height:1.45; color:#3d3d3d; }
+.reward-terms .reward-terms-odds { gap:0; padding:0; list-style:none; }
+.reward-terms-odds li { display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid #eee; }
+.reward-terms-odds b { color:#c4441a; font-variant-numeric:tabular-nums; }
+.reward-terms-more { display:block; margin:18px 0 12px; font-size:.82rem; color:#a84217; text-decoration:underline; }
 .premio-odds > p { margin:0 0 6px; font-size:.78rem; color:#bfb592; }
 .pull-chevrons { position:absolute; top:274px; left:50%; display:grid; transform:translateX(-50%); transition:opacity .3s; }
 .pull-chevrons i { width:13px; height:13px; margin-top:-5px; border-right:2px solid #e9d48a; border-bottom:2px solid #e9d48a; transform:rotate(45deg); animation:pull-chevron 1.4s ease-in-out infinite; }
@@ -63,10 +93,6 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .pull-dots { display:flex; justify-content:center; gap:6px; }
 .pull-dots i { width:6px; height:6px; border-radius:3px; background:#ffffff38; transition:width .25s, background .25s; }
 .pull-dots i.on { width:18px; background:#ffd25e; }
-.pull-alt { display:block; min-height:44px; margin:14px auto 0; padding:10px 20px; border:1px solid #e5c76c66; border-radius:999px; background:none; color:#f3e5b4; font:600 .8rem/1 inherit; cursor:pointer; }
-.pull-alt:hover:not(:disabled) { background:#e5c76c18; border-color:#e5c76c; }
-.pull-alt:disabled { opacity:.5; cursor:wait; }
-.pull-deck .gift-disclaimer { max-width:40ch; margin:12px auto 0; font-size:.72rem; line-height:1.5; color:#cbbf9c; }
 @keyframes pull-chevron { 0%,100% { opacity:.2; } 50% { opacity:1; } }
 @keyframes pull-mouth { to { transform:translateX(-50%) scale(1.45); opacity:1; } }
 @keyframes pull-bounce { to { transform:translateY(-6px) scale(1.08); } }
@@ -87,13 +113,6 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .pull-reveal-id { display:block; margin-top:12px; font-size:.65rem; opacity:.55; }
 @keyframes pull-rise { from { transform:translateY(140px) scale(.55); opacity:0; } to { transform:none; opacity:1; } }
 .welcome-game .game-message { color:#ffd25e; font-weight:600; text-align:center; }
-.game-family { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:2px 0 16px; }
-.game-family label { position:relative; display:grid; gap:2px; padding:12px 14px; border:1px solid #ddd; border-radius:12px; text-align:left; cursor:pointer; }
-.game-family label.on { border-color:#f65b1b; background:#fff5ee; box-shadow:0 0 0 1px #f65b1b; }
-.game-family label:has(input:focus-visible) { outline:2px solid #f65b1b; outline-offset:2px; }
-.game-family input { position:absolute; opacity:0; pointer-events:none; }
-.game-family b { font-size:14px; }
-.game-family span { font-size:12px; color:#666; }
 @media(prefers-reduced-motion:reduce) {
   .pull-card, .pull-mouth, .pull-dots i { transition:none; }
   .pull-chevrons i, .pull-deck.activating .pull-mouth, .pull-deck.activating .pull-gift, .pull-prize { animation:none; }

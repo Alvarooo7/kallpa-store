@@ -2,9 +2,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { accountHeaders } from '@/lib/auth-browser';
-import { REWARD_MINIMUM, TIERS, type RewardFamily, type WelcomeReward } from '@/lib/rewards';
+import { REWARD_MINIMUM, TIERS, type WelcomeReward } from '@/lib/rewards';
 import { RewardDeck } from './RewardDeck';
 import { CheckoutAccount } from './CheckoutAccount';
+import { RewardTerms } from './RewardTerms';
 import { useShop } from './Providers';
 
 const PRIZES = TIERS[0].prizes;
@@ -13,7 +14,7 @@ const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, window.m
 export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccount }: { embedded?: boolean; beforeRedirect?: () => void; onReward?: (reward: WelcomeReward) => void; onAccount?: (email: string) => void }) {
   const { cart, openUI, setReward } = useShop();
   const [email, setEmail] = useState('');
-  const [family, setFamily] = useState<RewardFamily>('style');
+  const [showTerms, setShowTerms] = useState(false);
   const [result, setResult] = useState<WelcomeReward | null>(null);
   const [busy, setBusy] = useState(false);
   const [activating, setActivating] = useState(false);
@@ -47,7 +48,7 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
     callback.current?.(data);
   }, [setReward]);
   async function request(pick?: string) {
-    const response = await fetch('/api/rewards', { method: pick ? 'POST' : 'GET', headers: { ...await accountHeaders(), 'Content-Type': 'application/json' }, cache: 'no-store', ...(pick ? { body: JSON.stringify({ family, pick }) } : {}) });
+    const response = await fetch('/api/rewards', { method: pick ? 'POST' : 'GET', headers: { ...await accountHeaders(), 'Content-Type': 'application/json' }, cache: 'no-store', ...(pick ? { body: JSON.stringify({ family: 'style', pick }) } : {}) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error ?? 'No pudimos consultar tu regalo.');
     return data as WelcomeReward;
@@ -88,8 +89,8 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
   const credit = result?.kind === 'credit';
   const expires = result?.expiresAt ? new Date(result.expiresAt).toLocaleDateString('es-PE', { timeZone: 'America/Lima', day: 'numeric', month: 'long' }) : '';
   return <div className="welcome-game">
-    <div className="welcome-game-top"><Link href="/" className="gift-card-brand">Kallpa<span>.</span></Link><Link href="/reglas-premios" target="_blank" rel="noopener noreferrer">Reglas ↗</Link></div>
-    {!result?.label && <RewardDeck prizes={PRIZES} family={family} onFamily={setFamily} activating={activating} ready={ready} disabled={busy || result?.state === 'blocked'} onActivate={pick => void play(pick)} />}
+    <div className="welcome-game-top"><Link href="/" className="gift-card-brand">Kallpa<span>.</span></Link></div>
+    {!result?.label && <RewardDeck prizes={PRIZES} onTerms={() => setShowTerms(true)} activating={activating} ready={ready} disabled={busy || result?.state === 'blocked'} onActivate={pick => void play(pick)} />}
     {result?.label && <div className="pull-reveal" aria-live="polite">
       {result.state === 'won' && <div className="gift-confetti" aria-hidden="true">{Array.from({ length: 16 }, (_, i) => <i key={i} style={{ left: `${(i * 6.3) % 100}%`, animationDelay: `${(i % 6) * .12}s` }} />)}</div>}
       <p className="pull-reveal-eyebrow">{result.state === 'used' ? 'Ya incluido en tu pedido' : result.state === 'expired' ? 'Tu premio venció' : result.state === 'review' ? 'Premio en revisión' : '¡Este regalo es tuyo!'}</p>
@@ -122,6 +123,6 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
     {result?.state === 'blocked' && <p role="alert">Ya hay una participación vinculada a tu cuenta o celular. Si compartes número, escríbenos para revisarlo.</p>}
     {result?.state === 'unavailable' && <p role="status">Estamos reponiendo regalos. Tu carta no se consumió.</p>}
     {!showAccount && message && <p role="status" className="game-message">{message}</p>}
-    <p className="game-terms">Jugar no requiere compra. Una participación por cuenta; el celular se valida al usar el premio en tu pedido. Tienes 30 días para usar tu premio en una compra desde S/ {REWARD_MINIMUM}. Sin SMS. <Link href="/legal/privacidad">Privacidad</Link>.</p>
+    <RewardTerms open={showTerms} onClose={() => setShowTerms(false)} />
   </div>;
 }
