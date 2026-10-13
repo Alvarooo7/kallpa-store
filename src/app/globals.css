@@ -42,6 +42,16 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .pull-card-mark { width:74px; height:74px; display:grid; place-items:center; border:1.5px solid currentColor; border-radius:50%; background:#ffffff26; font:700 40px/1 "Outfit",sans-serif; }
 .pull-card-label { font:600 15px/1.2 "Outfit",sans-serif; }
 .pull-card small { font-size:.68rem; opacity:.75; }
+.pull-card-label { max-width:100%; text-align:center; text-wrap:balance; }
+.pull-card-label b { display:block; font:700 30px/1.05 "Outfit",sans-serif; letter-spacing:-.02em; }
+.pull-card-odds { padding-top:8px; border-top:1px solid currentColor; }
+.pull-card-odds.boosted { font-weight:700; font-size:.78rem; opacity:1; }
+.pull-card-odds em { margin-left:4px; padding:1px 6px; border-radius:999px; background:#ffd25e; color:#2a2008; font-style:normal; }
+.pull-family { display:inline-flex; gap:4px; margin-top:14px; padding:4px; border:1px solid #e5c76c40; border-radius:999px; }
+.pull-family button { min-height:36px; padding:0 16px; border:0; border-radius:999px; background:none; color:#cbbf9c; font:600 .78rem/1 inherit; cursor:pointer; }
+.pull-family button[aria-checked=true] { background:#e5c76c; color:#1d1a0c; }
+.pull-family button:disabled { cursor:default; }
+.premio-odds > p { margin:0 0 6px; font-size:.78rem; color:#bfb592; }
 .pull-chevrons { position:absolute; top:274px; left:50%; display:grid; transform:translateX(-50%); transition:opacity .3s; }
 .pull-chevrons i { width:13px; height:13px; margin-top:-5px; border-right:2px solid #e9d48a; border-bottom:2px solid #e9d48a; transform:rotate(45deg); animation:pull-chevron 1.4s ease-in-out infinite; }
 .pull-chevrons i:nth-child(2) { animation-delay:.2s; }

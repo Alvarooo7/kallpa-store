@@ -27,6 +27,7 @@ const bad = (error: string, status = 400, field?: string) => NextResponse.json({
 const couponMessage = (detail: CouponIssue, minSubtotalCents?: number): string => {
   switch (detail) {
     case 'not_stackable': return 'Tu premio ya incluye un descuento. Retira el otro cupón para usarlo.';
+    case 'phone_used': return 'Ese celular ya recibió un regalo de bienvenida. Usa tu propio número o desmarca «Usar» para seguir sin premio.';
     case 'account_required': return 'Ingresa en este formulario con la cuenta del titular antes de usar este cupón.';
     case 'not_found': return 'Ese cupón no existe. Revisa el código.';
     case 'expired': return 'Ese cupón ya venció.';
@@ -136,7 +137,8 @@ export async function POST(req: Request) {
     if (body.claimReward && !account) return bad('Ingresa con tu cuenta para reclamar el regalo o continúa sin regalo.');
     if (body.claimReward && account?.email?.toLowerCase() !== email) return bad('Usa el correo de tu cuenta para vincular el regalo.', 400, 'email');
     const result = await createOrder({
-      verifiedUserId: account?.id,
+      // Sin «reclamar» ni cupón, el pedido no toca el premio de la cuenta (queda para otra compra).
+      verifiedUserId: body.claimReward || clean(body.coupon, 40) ? account?.id : undefined,
       customer: { name, phoneE164, email, marketingOk },
       zone,
       isExpress,
@@ -150,7 +152,7 @@ export async function POST(req: Request) {
 
     if (!result.ok) {
       if (result.reason === 'invalid_coupon') {
-        return bad(couponMessage(result.detail, result.minSubtotalCents), 400, 'coupon');
+        return bad(couponMessage(result.detail, result.minSubtotalCents), 400, result.detail === 'phone_used' ? 'phone' : 'coupon');
       }
       const p = bySlug(result.slug);
       return bad(`Nos quedamos sin stock de ${p?.short ?? 'un producto'}. Quítalo del pedido o escríbenos.`, 409);

@@ -85,6 +85,22 @@ const assert = require('node:assert/strict');
  await db.query("update orders set status='cancelled' where id=$1",[physicalOrder.id]);assert.equal((await welcome(physicalUser)).state,'review');
  const expiredUser=await user();await welcome(expiredUser,70);await db.query("update welcome_rewards set expires_at=now()-interval '1 day' where user_id=$1",[expiredUser.id]);assert.equal((await welcome(expiredUser)).state,'expired');
  const noStock=await user();await db.exec("update reward_stock set available=0");const unlimited=await welcome(noStock,45);assert.equal(unlimited.state,'won','gifts are unlimited');assert.equal(unlimited.kind,'physical');assert.equal((await db.query("select available from reward_stock where sku='bracelet:style'")).rows[0].available,0,'welcome gifts do not touch stock');
+ // Carta elegida: +2 puntos a ese premio, el resto en proporción (tirada 0-9999).
+ async function pick(u,roll,prize){return (await db.query("select welcome_reward($1,null,null,true,$2,'style',$3) as data",[u.id,roll,prize])).rows[0].data;}
+ assert.equal((await pick(await user(),9296,'necklace')).prize,'stand','boosted necklace starts at 9297');
+ assert.equal((await pick(await user(),9297,'necklace')).prize,'necklace','necklace 5% -> 7.03%');
+ assert.equal((await pick(await user(),4201,'credit5')).prize,'credit5','credit5 40% -> 42.02%');
+ assert.equal((await pick(await user(),4202,'credit5')).prize,'bracelet');
+ await assert.rejects(pick(await user(),0,'not-a-prize'));
+ // Sin datos en el juego: el celular se vincula al usar el premio en el checkout.
+ const nodata=await user();const nd=await pick(nodata,0,'credit5');assert.equal(nd.state,'won');assert.equal(nd.phone,null);assert.equal(nd.name,null);
+ const ndPayload={...redemption,customer:{email:nodata.email,name:'Cliente Nuevo',phone_e164:nodata.phone},verified_user_id:nodata.id,coupon_code:null};
+ const ndOrder=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify(ndPayload)])).rows[0].data;
+ assert.equal(ndOrder.ok,true);assert.equal(ndOrder.discount_cents,500);assert.equal(ndOrder.reward.id,nd.id);
+ const bound=(await db.query('select phone,name from welcome_rewards where id=$1',[nd.id])).rows[0];assert.equal(bound.phone,nodata.phone);assert.equal(bound.name,'Cliente Nuevo');
+ const sharer=await user();await pick(sharer,0,'credit5');
+ const shared=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify({...ndPayload,customer:{...ndPayload.customer,email:sharer.email},verified_user_id:sharer.id})])).rows[0].data;
+ assert.equal(shared.detail,'phone_used','one welcome gift per phone at checkout');
  await db.exec('set role anon');await assert.rejects(db.query("select welcome_reward($1,'Test',$2,true,0,'style')",[noStock.id,noStock.phone]));await db.exec('reset role');
- await db.close();console.log('PASS: legacy and welcome rewards; no-order spin, same-purchase discount, unlimited welcome gifts, expiry, duplicates, ownership, cancellation, one redemption and RPC permissions.');
+ await db.close();console.log('PASS: legacy and welcome rewards; no-order spin, same-purchase discount, unlimited welcome gifts, +2% pick, phone bound at checkout, expiry, duplicates, ownership, cancellation, one redemption and RPC permissions.');
 })().catch(e=>{console.error(e.message);process.exitCode=1;});

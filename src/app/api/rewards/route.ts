@@ -2,19 +2,22 @@ import { NextResponse } from 'next/server';
 import { randomInt } from 'node:crypto';
 import { db } from '@/lib/db';
 import { verifiedAccount } from '@/lib/reward-auth';
-import { clean, toE164Pe } from '@/lib/validation';
+import { TIERS } from '@/lib/rewards';
 export const runtime = 'nodejs';
 async function handle(req: Request, spin: boolean) {
   const reply = (data: unknown, status = 200) => NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
   if (process.env.REWARDS_ENABLED !== 'true' || !db) return reply({ error: 'Estamos preparando los regalos. Pronto podrás jugar.' }, 503);
   const user = await verifiedAccount(req);
   if (!user) return reply({ error: 'Ingresa y confirma tu correo para guardar tu regalo.' }, 401);
-  let body: { name?: string; phone?: string; family?: string } = {};
+  let body: { family?: string; pick?: string } = {};
   if (spin) { try { body = await req.json(); } catch { return reply({ error: 'Datos inválidos.' }, 400); } }
   if (!body || typeof body !== 'object' || Array.isArray(body)) return reply({ error: 'Datos inválidos.' }, 400);
-  const name = clean(body.name, 120), phone = toE164Pe(body.phone), family = body.family ?? 'style';
-  if (spin && (name.length < 3 || !phone || !['style', 'practical'].includes(family))) return reply({ error: 'Completa tu nombre, celular peruano y tipo de regalo.' }, 400);
-  const { data, error } = await db.rpc('welcome_reward', { p_user: user.id, p_name: name, p_phone: phone, p_spin: spin, p_roll: spin ? randomInt(100) : 0, p_family: family });
+  // Nombre y celular no se piden aquí: se completan en el checkout y se vinculan al usar el premio.
+  const family = body.family ?? 'style';
+  const pick = TIERS[0].prizes.find(prize => prize.id === body.pick)?.id ?? null;
+  if (spin && !['style', 'practical'].includes(family)) return reply({ error: 'Elige el tipo de regalo.' }, 400);
+  // La carta arrastrada suma 2 puntos a su premio; el servidor sortea sobre 10 000 (centésimas de punto).
+  const { data, error } = await db.rpc('welcome_reward', { p_user: user.id, p_name: null, p_phone: null, p_spin: spin, p_roll: spin ? randomInt(pick ? 10000 : 100) : 0, p_family: family, p_pick: spin ? pick : null });
   if (error) return reply({ error: 'No pudimos consultar tu regalo. Inténtalo nuevamente.' }, 503);
   return reply(data);
 }

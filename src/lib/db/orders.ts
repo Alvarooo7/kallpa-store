@@ -22,7 +22,7 @@ export type NewOrder = {
   idempotencyKey?: string;
 };
 
-export type CouponIssue = 'not_found' | 'expired' | 'min_subtotal' | 'exhausted' | 'already_used' | 'account_required' | 'not_stackable';
+export type CouponIssue = 'not_found' | 'expired' | 'min_subtotal' | 'exhausted' | 'already_used' | 'account_required' | 'not_stackable' | 'phone_used';
 export type OrderReward = { id: string; label: string; kind: string };
 
 export type OrderResult =
