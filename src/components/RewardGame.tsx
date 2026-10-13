@@ -12,7 +12,7 @@ const PRIZES = TIERS[0].prizes;
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));
 
 export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccount }: { embedded?: boolean; beforeRedirect?: () => void; onReward?: (reward: WelcomeReward) => void; onAccount?: (email: string) => void }) {
-  const { cart, openUI, setReward } = useShop();
+  const { setReward } = useShop();
   const [email, setEmail] = useState('');
   const [showTerms, setShowTerms] = useState(false);
   const [result, setResult] = useState<WelcomeReward | null>(null);
@@ -115,9 +115,7 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
           <li>{credit ? `Ya está en tu carrito: se descuenta solo en compras desde S/ ${REWARD_MINIMUM}.` : rewardDelivery(result) === 'whatsapp' ? `Ya está en tu carrito: con tu compra desde S/ ${REWARD_MINIMUM} coordinamos tu clase por WhatsApp.` : `Ya está en tu carrito: va gratis en tu paquete en compras desde S/ ${REWARD_MINIMUM}.`}</li>
           <li>Al comprar, completa tus datos de entrega y confirma tu pedido{expires ? ` antes del ${expires}` : ''}.</li>
         </ol>
-        {!embedded && (cart.length
-          ? <button type="button" className="btn acc block pull-cta" onClick={() => openUI('cart')}>Ver mi carrito con el premio</button>
-          : <Link className="btn acc block pull-cta" href="/catalogo">Elegir mi producto</Link>)}
+        {!embedded && <Link className="btn acc block pull-cta" href="/catalogo">Hacer mi pedido</Link>}
       </>}
       <small className="pull-reveal-id">Premio {result.id}</small>
     </div>}
