@@ -60,6 +60,8 @@ export function Header() {
             <Link href="/envios" className="hide-sm">Envíos</Link>
             <span className="sep hide-sm" />
             <Link href="/legal/cambios" className="hide-sm">Garantía</Link>
+            <span className="sep hide-sm" />
+            <Link href="/mi-premio" className="hide-sm top-gift">🎁 ¡Reclama tu Regalo!</Link>
             </>}
           </div>
           <div className="r">
@@ -78,10 +80,8 @@ export function Header() {
           <nav className="main">
             <Link href="/">Inicio</Link>
             <Link href="/catalogo">Catálogo</Link>
-            <Link href="/mi-premio">Mi premio</Link>
             <Link href="/cursos">Cursos</Link>
             <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
-            <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>
             <Link href="/envios">Envíos</Link>
           </nav>
           <div className="tools">
@@ -144,12 +144,10 @@ export function Header() {
             <div className="wrap">
               <Link href="/catalogo" onClick={() => setMenu(false)}>Catálogo</Link>
               <Link href="/cursos" onClick={() => setMenu(false)}>Cursos</Link>
-              <Link href="/mi-premio" onClick={() => setMenu(false)}>Mi premio</Link>
               <Link href="/#usos" onClick={(event) => goToHomeSection(event, 'usos')}>¿Para qué lo necesitas?</Link>
-              <Link href="/#combo" onClick={(event) => goToHomeSection(event, 'combo')}>Smartwatches</Link>
               <Link href="/envios" onClick={() => setMenu(false)}>Envíos y pagos</Link>
               <div className="foot">
-                <button className="btn sm out" onClick={() => { setMenu(false); openUI('lead'); }}>Jugar por mi premio</button>
+                <button className="btn sm out" onClick={() => { setMenu(false); openUI('lead'); }}>🎁 ¡Reclama tu Regalo!</button>
               </div>
             </div>
           </div>

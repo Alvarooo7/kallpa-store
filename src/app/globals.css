@@ -350,6 +350,7 @@ h3{font-size:1.02rem;font-weight:600}
 .top b{color:#fff;font-weight:500}
 .top a{padding:2px 0}
 .top a:hover{color:#fff}
+.top .top-gift{color:#ffd25e;font-weight:600}
 #cutTop{color:var(--acc);font-weight:500}
 @media (max-width:1040px){ .top .r .hide-md{display:none} }
 @media (max-width:880px){ .top .r{display:none} .top .l .hide-sm{display:none} }

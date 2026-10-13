@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { RewardGame } from '@/components/RewardGame';
 import { TIERS, prizeLabel } from '@/lib/rewards';
-export const metadata = { title: 'Mis premios', robots: { index: false } };
+export const metadata = { title: '¡Reclama tu Regalo!', robots: { index: false } };
 const STEPS = [
-  ['Elige tu carta', 'Gira la ruleta o desliza entre los premios. Tu carta gana un poder de +2% que la ilumina.'],
-  ['Guarda tu premio', 'Solo entra con Google o tu correo. No necesitas comprar ni dejar tus datos para jugar.'],
+  ['Dale poder a una carta', 'Arrastra al brillo el premio que más quieras: se ilumina y gana +2% de probabilidad.'],
+  ['Pulsa Girar', 'La ruleta se detiene en tu premio. Solo entra con Google o tu correo; no necesitas comprar.'],
   ['Úsalo en tu pedido', 'Se suma solo a tu carrito: completas tus datos de entrega al comprar desde S/ 60. Tienes 30 días.'],
 ];
 const PRIZES = TIERS[0].prizes;

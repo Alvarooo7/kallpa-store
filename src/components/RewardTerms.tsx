@@ -18,9 +18,9 @@ export function RewardTerms({ open, onClose }: { open: boolean; onClose: () => v
       <div className="game-auth-heading"><div><span>REGALO DE BIENVENIDA</span><h2 id="reward-terms-title">Términos y condiciones</h2></div><button type="button" className="x" aria-label="Cerrar" onClick={onClose}>×</button></div>
       <h3>Cómo funciona</h3>
       <ol>
-        <li><b>Elige tu carta.</b> Gira la ruleta o desliza entre los premios.</li>
-        <li><b>Actívala.</b> Arrástrala al brillo o tócala: recibe un poder de +{PICK_BOOST}% de probabilidad y los demás premios bajan en proporción.</li>
-        <li><b>Guárdala.</b> Ingresa con Google o tu correo. El sorteo lo hace nuestro servidor.</li>
+        <li><b>Dale poder a una carta (opcional).</b> Arrástrala al brillo o tócala: su premio gana +{PICK_BOOST}% de probabilidad y los demás bajan en proporción.</li>
+        <li><b>Pulsa Girar.</b> La ruleta se detiene en tu premio. El sorteo lo hace nuestro servidor.</li>
+        <li><b>Guárdalo.</b> Ingresa con Google o tu correo; tu premio queda en tu cuenta.</li>
       </ol>
       <h3>Premios</h3>
       <ul className="reward-terms-odds">{TIERS[0].prizes.map(prize => <li key={prize.id}><span>{prizeName(prize)}</span><b>{prize.probability}%</b></li>)}</ul>

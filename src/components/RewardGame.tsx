@@ -17,17 +17,19 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
   const [showTerms, setShowTerms] = useState(false);
   const [result, setResult] = useState<WelcomeReward | null>(null);
   const [busy, setBusy] = useState(false);
-  const [activating, setActivating] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [target, setTarget] = useState<string | null>(null);
   const [showAccount, setShowAccount] = useState(false);
   const [message, setMessage] = useState('');
   const lock = useRef(false);
-  // Carta que el cliente soltó antes de ingresar: se activa sola al completar el acceso.
-  const pendingPick = useRef<string | null>(null);
+  // Giro pedido antes de ingresar (con la carta con poder, si había): arranca solo al completar el acceso.
+  const pendingSpin = useRef<{ pick: string | null } | null>(null);
+  // Premio ya sorteado que espera a que la ruleta se detenga en él.
+  const landing = useRef<WelcomeReward | null>(null);
   const epoch = useRef(0);
   const callback = useRef(onReward); callback.current = onReward;
   const accountCallback = useRef(onAccount); accountCallback.current = onAccount;
   const dialog = useRef<HTMLDialogElement>(null);
-  const ready = Boolean(email);
   useEffect(() => {
     const node = dialog.current;
     if (!node) return;
@@ -47,8 +49,8 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
     if (data.label) setReward(data);
     callback.current?.(data);
   }, [setReward]);
-  async function request(pick?: string) {
-    const response = await fetch('/api/rewards', { method: pick ? 'POST' : 'GET', headers: { ...await accountHeaders(), 'Content-Type': 'application/json' }, cache: 'no-store', ...(pick ? { body: JSON.stringify({ family: 'style', pick }) } : {}) });
+  async function request(spin = false, pick: string | null = null) {
+    const response = await fetch('/api/rewards', { method: spin ? 'POST' : 'GET', headers: { ...await accountHeaders(), 'Content-Type': 'application/json' }, cache: 'no-store', ...(spin ? { body: JSON.stringify({ family: 'style', pick }) } : {}) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error ?? 'No pudimos consultar tu regalo.');
     return data as WelcomeReward;
@@ -61,36 +63,44 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
       if (version !== epoch.current) return;
       publish(data);
       setShowAccount(false);
-      const pick = pendingPick.current;
-      pendingPick.current = null;
-      if (data.state === 'eligible' && pick) void play(pick);
-      else if (data.state === 'eligible') setMessage('¡Listo! Arrastra la carta que quieras hacia el brillo.');
+      const pending = pendingSpin.current;
+      pendingSpin.current = null;
+      if (data.state === 'eligible' && pending) void play(pending.pick);
+      else if (data.state === 'eligible') setMessage('¡Listo! Ya puedes girar.');
     }).catch(error => { if (version === epoch.current) setMessage(error.message); });
     return () => { epoch.current++; };
   }, [email]);
-  async function play(pick: string) {
+  function stop() { lock.current = false; landing.current = null; setBusy(false); setSpinning(false); setTarget(null); }
+  /** Gira la ruleta: el servidor sortea (con +2% para la carta con poder) y la ruleta se detiene en ese premio. */
+  async function play(pick: string | null) {
     if (lock.current) return;
     if (!email) {
-      pendingPick.current = pick;
+      pendingSpin.current = { pick };
       setShowAccount(true);
-      setMessage('Ingresa con Google o tu correo y tu carta se activa al instante. Jugar no requiere compra.');
+      setMessage('Ingresa con Google o tu correo y tu giro empieza al instante. Jugar no requiere compra.');
       return;
     }
-    lock.current = true; setBusy(true); setActivating(true); setMessage('');
+    lock.current = true; setBusy(true); setSpinning(true); setTarget(null); setMessage('');
     const version = epoch.current;
     try {
-      // El "activando" dura lo mismo aunque el servidor responda al instante.
-      const [data] = await Promise.all([request(pick), wait(1900)]);
-      if (version === epoch.current) publish(data);
-    } catch (error) { setMessage((error as Error).message); }
-    finally { lock.current = false; setBusy(false); setActivating(false); }
+      // La ruleta gira al menos un momento aunque el servidor responda al instante.
+      const [data] = await Promise.all([request(true, pick), wait(1200)]);
+      if (version !== epoch.current) { stop(); return; }
+      if (data.label && PRIZES.some(item => item.id === data.prize)) { landing.current = data; setTarget(data.prize!); return; }
+      publish(data); stop();
+    } catch (error) { setMessage((error as Error).message); stop(); }
+  }
+  /** La ruleta se detuvo en el premio: una pausa para verlo y luego la revelación. */
+  function landed() {
+    const data = landing.current;
+    void wait(1000).then(() => { if (data) publish(data); stop(); });
   }
   const prize = PRIZES.find(item => item.id === result?.prize);
   const credit = result?.kind === 'credit';
   const expires = result?.expiresAt ? new Date(result.expiresAt).toLocaleDateString('es-PE', { timeZone: 'America/Lima', day: 'numeric', month: 'long' }) : '';
   return <div className="welcome-game">
     <div className="welcome-game-top"><Link href="/" className="gift-card-brand">Kallpa<span>.</span></Link></div>
-    {!result?.label && <RewardDeck prizes={PRIZES} onTerms={() => setShowTerms(true)} activating={activating} ready={ready} disabled={busy || result?.state === 'blocked'} onActivate={pick => void play(pick)} />}
+    {!result?.label && <RewardDeck prizes={PRIZES} onTerms={() => setShowTerms(true)} spinning={spinning} target={target} disabled={(busy && !spinning) || result?.state === 'blocked'} onSpin={pick => void play(pick)} onLanded={landed} />}
     {result?.label && <div className="pull-reveal" aria-live="polite">
       {result.state === 'won' && <div className="gift-confetti" aria-hidden="true">{Array.from({ length: 16 }, (_, i) => <i key={i} style={{ left: `${(i * 6.3) % 100}%`, animationDelay: `${(i % 6) * .12}s` }} />)}</div>}
       <p className="pull-reveal-eyebrow">{result.state === 'used' ? 'Ya incluido en tu pedido' : result.state === 'expired' ? 'Tu premio venció' : result.state === 'review' ? 'Premio en revisión' : '¡Este regalo es tuyo!'}</p>
