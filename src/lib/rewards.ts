@@ -5,12 +5,12 @@ export type Prize = { id: string; label: string; practicalLabel?: string; probab
 export const TIERS: { id: RewardTier; label: string; minimum: number; prizes: Prize[] }[] = [
   { id: 'sorpresa', label: 'Sorpresa', minimum: 60, prizes: [
     // Mismo orden y pesos que reward_pool (0016): el sorteo del servidor manda.
-    { id: 'credit5', label: 'Crédito S/ 5', probability: 45, amount: 5, minimum: 60 },
-    { id: 'bracelet', label: 'Pulsera sorpresa', probability: 15 },
-    { id: 'necklace', label: 'Collar sorpresa', probability: 15 },
-    { id: 'ring', label: 'Anillo sorpresa', probability: 10 },
-    { id: 'perfume', label: 'Perfume decant sorpresa', probability: 10 },
-    { id: 'gymbox', label: 'Clase gratis en GymBox', probability: 5, delivery: 'whatsapp' },
+    { id: 'credit5', label: 'Crédito S/ 5', probability: 65, amount: 5, minimum: 60 },
+    { id: 'bracelet', label: 'Pulsera sorpresa', probability: 10 },
+    { id: 'necklace', label: 'Collar sorpresa', probability: 10 },
+    { id: 'ring', label: 'Anillo sorpresa', probability: 6 },
+    { id: 'perfume', label: 'Perfume decant sorpresa', probability: 6 },
+    { id: 'gymbox', label: 'Clase gratis en GymBox', probability: 3, delivery: 'whatsapp' },
   ] },
   { id: 'plus', label: 'Plus', minimum: 120, prizes: [
     { id: 'credit10', label: 'Crédito S/ 10', probability: 30, amount: 10, minimum: 100 },

@@ -78,20 +78,21 @@ const assert = require('node:assert/strict');
  const purchase2=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify(welcomePayload)])).rows[0].data;
  assert.equal(purchase2.discount_cents,0);assert.equal(purchase2.reward,undefined);
  const thief=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify({...welcomePayload,verified_user_id:duplicate.id,coupon_code:w.code})])).rows[0].data;assert.equal(thief.detail,'account_required');
- const physicalUser=await user();const physical=await welcome(physicalUser,45);assert.equal(physical.kind,'physical');
+ const physicalUser=await user();const physical=await welcome(physicalUser,70);assert.equal(physical.kind,'physical');
  const physicalPayload={...welcomePayload,customer:{email:physicalUser.email,name:'Test',phone_e164:physicalUser.phone},verified_user_id:physicalUser.id};
  const low=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify({...physicalPayload,subtotal_cents:5999})])).rows[0].data;assert.equal(low.reward,undefined);
  const physicalOrder=(await db.query('select create_order($1::jsonb) as data',[JSON.stringify(physicalPayload)])).rows[0].data;assert.equal(physicalOrder.reward.id,physical.id);
  await db.query("update orders set status='cancelled' where id=$1",[physicalOrder.id]);assert.equal((await welcome(physicalUser)).state,'review');
  const expiredUser=await user();await welcome(expiredUser,70);await db.query("update welcome_rewards set expires_at=now()-interval '1 day' where user_id=$1",[expiredUser.id]);assert.equal((await welcome(expiredUser)).state,'expired');
- const noStock=await user();await db.exec("update reward_stock set available=0");const unlimited=await welcome(noStock,45);assert.equal(unlimited.state,'won','gifts are unlimited');assert.equal(unlimited.kind,'physical');assert.equal((await db.query("select available from reward_stock where sku='bracelet:style'")).rows[0].available,0,'welcome gifts do not touch stock');
+ const noStock=await user();await db.exec("update reward_stock set available=0");const unlimited=await welcome(noStock,70);assert.equal(unlimited.state,'won','gifts are unlimited');assert.equal(unlimited.kind,'physical');assert.equal((await db.query("select available from reward_stock where sku='bracelet:style'")).rows[0].available,0,'welcome gifts do not touch stock');
  // Carta elegida: +2 puntos a ese premio, el resto en proporción (tirada 0-9999).
+ assert.equal((await welcome(await user(),64)).prize,'credit5','credit5 is 65% (0017)');
  async function pick(u,roll,prize){return (await db.query("select welcome_reward($1,null,null,true,$2,'style',$3) as data",[u.id,roll,prize])).rows[0].data;}
- assert.equal((await pick(await user(),5857,'necklace')).prize,'bracelet','boosted necklace starts at 5858');
- assert.equal((await pick(await user(),5858,'necklace')).prize,'necklace','necklace 15% -> 17.02%');
- assert.equal((await pick(await user(),4702,'credit5')).prize,'credit5','credit5 45% -> 47.03%');
- assert.equal((await pick(await user(),4703,'credit5')).prize,'bracelet');
- assert.equal((await pick(await user(),9999,'gymbox')).label,'Clase gratis en GymBox','new prize list (0016)');
+ assert.equal((await pick(await user(),7331,'necklace')).prize,'bracelet','boosted necklace starts at 7332');
+ assert.equal((await pick(await user(),7332,'necklace')).prize,'necklace','necklace 10% -> 12.03%');
+ assert.equal((await pick(await user(),6703,'credit5')).prize,'credit5','credit5 65% -> 67.04%');
+ assert.equal((await pick(await user(),6704,'credit5')).prize,'bracelet');
+ assert.equal((await pick(await user(),9999,'gymbox')).label,'Clase gratis en GymBox','gymbox stays last (0016/0017)');
  await assert.rejects(pick(await user(),0,'not-a-prize'));
  // Sin datos en el juego: el celular se vincula al usar el premio en el checkout.
  const nodata=await user();const nd=await pick(nodata,0,'credit5');assert.equal(nd.state,'won');assert.equal(nd.phone,null);assert.equal(nd.name,null);
