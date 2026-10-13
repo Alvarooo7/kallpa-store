@@ -11,11 +11,10 @@ const norm = (text: string) => text.toLowerCase().normalize('NFD').replace(/[̀-
 
 /**
  * Catálogo con los productos en primer plano: búsqueda al instante y filtros plegados tras un
- * botón "Filtros". En el catálogo sin filtro (`invite`) el botón pulsa suave para invitar a abrirlo.
+ * botón "Filtros".
  */
-export function CatalogBrowser({ title, ids, availability, filters, activeLabel, invite }: { title: string; ids: string[]; availability: Record<string, ProductAvailability>; filters: CatalogFilter[]; activeLabel?: string; invite: boolean }) {
+export function CatalogBrowser({ title, ids, availability, filters, activeLabel }: { title: string; ids: string[]; availability: Record<string, ProductAvailability>; filters: CatalogFilter[]; activeLabel?: string }) {
   const [open, setOpen] = useState(false);
-  const [opened, setOpened] = useState(false);
   const [query, setQuery] = useState('');
   const panelId = useId();
   const products = useMemo(() => ids.map(id => bySlug(id)!).filter(Boolean), [ids]);
@@ -27,7 +26,7 @@ export function CatalogBrowser({ title, ids, availability, filters, activeLabel,
       return words.every(word => hay.includes(word));
     });
   }, [products, query]);
-  const toggle = () => { setOpen(value => !value); setOpened(true); };
+  const toggle = () => setOpen(value => !value);
 
   return <section className="catalog-results">
     <div className="wrap">
@@ -37,7 +36,7 @@ export function CatalogBrowser({ title, ids, availability, filters, activeLabel,
           <span className="sr-only">Buscar en el catálogo</span>
           <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar productos…" autoComplete="off" />
         </label>
-        <button type="button" className={`catalog-filter-btn${open ? ' on' : ''}${activeLabel ? ' active' : ''}${invite && !opened ? ' invite' : ''}`} aria-expanded={open} aria-controls={panelId} onClick={toggle}>
+        <button type="button" className={`catalog-filter-btn${open ? ' on' : ''}${activeLabel ? ' active' : ''}`} aria-expanded={open} aria-controls={panelId} onClick={toggle}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
           <span>Filtros</span>
           {activeLabel && <b>{activeLabel}</b>}

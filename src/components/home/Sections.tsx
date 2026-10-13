@@ -34,7 +34,7 @@ export function Hero() {
             </div>
           </div>
           <div className="ctas">
-            <Link className="btn" href="/catalogo">Ver catálogo</Link>
+            <Link className="btn invite" href="/catalogo">Ver catálogo</Link>
             <Link className="tl" href="/envios">Cómo llega</Link>
           </div>
           </div>

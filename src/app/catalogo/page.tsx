@@ -78,7 +78,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
 
   return (
     <>
-      <CatalogBrowser title={title} ids={products.map(product => product.id)} availability={availability} filters={filters} activeLabel={activeLabel} invite={!activeLabel} />
+      <CatalogBrowser title={title} ids={products.map(product => product.id)} availability={availability} filters={filters} activeLabel={activeLabel} />
       <section className="catalog-more">
         <div className="wrap">
           <div className="catalog-related">
