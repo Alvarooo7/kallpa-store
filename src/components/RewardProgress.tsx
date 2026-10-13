@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useShop } from './Providers';
 import { money } from '@/lib/format';
-import { REWARD_MINIMUM, rewardCredit } from '@/lib/rewards';
+import { REWARD_MINIMUM, rewardCredit, rewardDelivery } from '@/lib/rewards';
 export function RewardProgress({ subtotal }: { subtotal: number }) {
   const { closeUI, reward } = useShop();
   if (process.env.NEXT_PUBLIC_REWARDS_ENABLED !== 'true') return null;
@@ -11,7 +11,7 @@ export function RewardProgress({ subtotal }: { subtotal: number }) {
     const missing = Math.max(0, REWARD_MINIMUM - subtotal);
     return <div className={`cart-reward${missing ? '' : ' applied'}`} role="status">
       <span className="cart-reward-icon" aria-hidden="true">🎁</span>
-      <div><b>{reward.label}</b><span>{missing ? `Te faltan ${money(missing)} para usar tu premio.` : credit ? 'Premio aplicado a este pedido.' : 'Gratis · va en tu paquete.'}</span></div>
+      <div><b>{reward.label}</b><span>{missing ? `Te faltan ${money(missing)} para usar tu premio.` : credit ? 'Premio aplicado a este pedido.' : rewardDelivery(reward) === 'whatsapp' ? 'Gratis · coordinamos tu clase por WhatsApp.' : 'Gratis · va en tu paquete.'}</span></div>
       <strong>{missing ? 'Pendiente' : credit ? `−${money(credit)}` : 'Gratis'}</strong>
     </div>;
   }

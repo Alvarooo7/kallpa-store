@@ -27,7 +27,7 @@ export function RewardTerms({ open, onClose }: { open: boolean; onClose: () => v
       <h3>Cómo usarlo</h3>
       <ul>
         <li>Se suma solo a tu carrito y vale <b>30 días</b>.</li>
-        <li>Compra mínima de <b>S/ {REWARD_MINIMUM}</b> en productos. El descuento no se acumula con otros cupones; el regalo físico va en tu paquete.</li>
+        <li>Compra mínima de <b>S/ {REWARD_MINIMUM}</b> en productos. El descuento no se acumula con otros cupones; los regalos van en tu paquete y la clase en GymBox se coordina por WhatsApp.</li>
         <li>Tus datos de entrega los completas al hacer tu pedido.</li>
       </ul>
       <h3>Condiciones</h3>

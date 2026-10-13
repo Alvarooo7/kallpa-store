@@ -1,13 +1,16 @@
 export type RewardTier = 'sorpresa' | 'plus' | 'premium';
 export type RewardFamily = 'style' | 'practical';
-export type Prize = { id: string; label: string; practicalLabel?: string; probability: number; amount?: number; minimum?: number };
+/** delivery 'whatsapp': no va en el paquete, se coordina por WhatsApp (p. ej. una clase). */
+export type Prize = { id: string; label: string; practicalLabel?: string; probability: number; amount?: number; minimum?: number; delivery?: 'whatsapp' };
 export const TIERS: { id: RewardTier; label: string; minimum: number; prizes: Prize[] }[] = [
   { id: 'sorpresa', label: 'Sorpresa', minimum: 60, prizes: [
-    { id: 'credit5', label: 'Crédito S/ 5', probability: 40, amount: 5, minimum: 60 },
-    { id: 'bracelet', label: 'Pulsera sorpresa', practicalLabel: 'Organizadores de cables', probability: 25 },
-    { id: 'ring', label: 'Anillo ajustable', practicalLabel: 'Paño + estuche', probability: 20 },
-    { id: 'stand', label: 'Soporte para celular', probability: 10 },
-    { id: 'necklace', label: 'Collar sorpresa', practicalLabel: 'Accesorio práctico sorpresa', probability: 5 },
+    // Mismo orden y pesos que reward_pool (0016): el sorteo del servidor manda.
+    { id: 'credit5', label: 'Crédito S/ 5', probability: 45, amount: 5, minimum: 60 },
+    { id: 'bracelet', label: 'Pulsera sorpresa', probability: 15 },
+    { id: 'necklace', label: 'Collar sorpresa', probability: 15 },
+    { id: 'ring', label: 'Anillo sorpresa', probability: 10 },
+    { id: 'perfume', label: 'Perfume decant sorpresa', probability: 10 },
+    { id: 'gymbox', label: 'Clase gratis en GymBox', probability: 5, delivery: 'whatsapp' },
   ] },
   { id: 'plus', label: 'Plus', minimum: 120, prizes: [
     { id: 'credit10', label: 'Crédito S/ 10', probability: 30, amount: 10, minimum: 100 },
@@ -41,3 +44,8 @@ export function rewardCredit(reward: WelcomeReward | null) {
   return TIERS[0].prizes.find(prize => prize.id === reward.prize)?.amount ?? 0;
 }
 export const REWARD_MINIMUM = 60;
+/** Cómo recibe el cliente un premio no monetario, según su id o etiqueta. */
+export function rewardDelivery(reward: { prize?: string; label?: string } | null | undefined) {
+  const prize = TIERS[0].prizes.find(item => item.id === reward?.prize || item.label === reward?.label);
+  return prize?.delivery === 'whatsapp' ? 'whatsapp' : 'package';
+}

@@ -12,7 +12,7 @@ import { isEmail, toE164Pe } from '@/lib/validation';
 import { accountHeaders, browserAuth } from '@/lib/auth-browser';
 import Link from 'next/link';
 import { RewardGame } from './RewardGame';
-import { REWARD_MINIMUM, rewardCredit } from '@/lib/rewards';
+import { REWARD_MINIMUM, rewardCredit, rewardDelivery } from '@/lib/rewards';
 
 export function OrderModal() {
   const { ui, closeUI, cart, subtotal, reward, setReward } = useShop();
@@ -230,7 +230,7 @@ export function OrderModal() {
               }}>
                 {wonReward ? <div className={`checkout-reward-card${claimReward ? ' on' : ''}`}>
                   <span aria-hidden="true">🎁</span>
-                  <div><b>{wonReward.label}</b><small>{subtotal < REWARD_MINIMUM ? `Agrega ${money(REWARD_MINIMUM - subtotal)} en productos para usarlo.` : rewardCredit(wonReward) ? 'Se descuenta automáticamente en este pedido.' : 'Va gratis en tu paquete.'}</small></div>
+                  <div><b>{wonReward.label}</b><small>{subtotal < REWARD_MINIMUM ? `Agrega ${money(REWARD_MINIMUM - subtotal)} en productos para usarlo.` : rewardCredit(wonReward) ? 'Se descuenta automáticamente en este pedido.' : rewardDelivery(wonReward) === 'whatsapp' ? 'Gratis: coordinamos tu clase por WhatsApp.' : 'Va gratis en tu paquete.'}</small></div>
                   <label><input type="checkbox" checked={claimReward} onChange={e => setClaimReward(e.target.checked)} /> Usar</label>
                 </div> : <>
                 <label className="marketing-optin"><input type="checkbox" checked={claimReward} onChange={e => setClaimReward(e.target.checked)} /><span>Quiero reclamar mi regalo · compras desde S/ 60 después de descuentos.</span></label>

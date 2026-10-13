@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { accountHeaders } from '@/lib/auth-browser';
-import { REWARD_MINIMUM, TIERS, type WelcomeReward } from '@/lib/rewards';
+import { REWARD_MINIMUM, TIERS, rewardDelivery, type WelcomeReward } from '@/lib/rewards';
 import { RewardDeck } from './RewardDeck';
 import { CheckoutAccount } from './CheckoutAccount';
 import { RewardTerms } from './RewardTerms';
@@ -112,7 +112,7 @@ export function RewardGame({ embedded = false, beforeRedirect, onReward, onAccou
       {result.state === 'won' && <>
         <h3>Cómo usarlo</h3>
         <ol className="pull-steps">
-          <li>{credit ? `Ya está en tu carrito: se descuenta solo en compras desde S/ ${REWARD_MINIMUM}.` : `Ya está en tu carrito: va gratis en tu paquete en compras desde S/ ${REWARD_MINIMUM}.`}</li>
+          <li>{credit ? `Ya está en tu carrito: se descuenta solo en compras desde S/ ${REWARD_MINIMUM}.` : rewardDelivery(result) === 'whatsapp' ? `Ya está en tu carrito: con tu compra desde S/ ${REWARD_MINIMUM} coordinamos tu clase por WhatsApp.` : `Ya está en tu carrito: va gratis en tu paquete en compras desde S/ ${REWARD_MINIMUM}.`}</li>
           <li>Al comprar, completa tus datos de entrega y confirma tu pedido{expires ? ` antes del ${expires}` : ''}.</li>
         </ol>
         {!embedded && (cart.length

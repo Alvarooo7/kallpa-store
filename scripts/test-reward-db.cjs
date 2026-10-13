@@ -87,10 +87,11 @@ const assert = require('node:assert/strict');
  const noStock=await user();await db.exec("update reward_stock set available=0");const unlimited=await welcome(noStock,45);assert.equal(unlimited.state,'won','gifts are unlimited');assert.equal(unlimited.kind,'physical');assert.equal((await db.query("select available from reward_stock where sku='bracelet:style'")).rows[0].available,0,'welcome gifts do not touch stock');
  // Carta elegida: +2 puntos a ese premio, el resto en proporción (tirada 0-9999).
  async function pick(u,roll,prize){return (await db.query("select welcome_reward($1,null,null,true,$2,'style',$3) as data",[u.id,roll,prize])).rows[0].data;}
- assert.equal((await pick(await user(),9296,'necklace')).prize,'stand','boosted necklace starts at 9297');
- assert.equal((await pick(await user(),9297,'necklace')).prize,'necklace','necklace 5% -> 7.03%');
- assert.equal((await pick(await user(),4201,'credit5')).prize,'credit5','credit5 40% -> 42.02%');
- assert.equal((await pick(await user(),4202,'credit5')).prize,'bracelet');
+ assert.equal((await pick(await user(),5857,'necklace')).prize,'bracelet','boosted necklace starts at 5858');
+ assert.equal((await pick(await user(),5858,'necklace')).prize,'necklace','necklace 15% -> 17.02%');
+ assert.equal((await pick(await user(),4702,'credit5')).prize,'credit5','credit5 45% -> 47.03%');
+ assert.equal((await pick(await user(),4703,'credit5')).prize,'bracelet');
+ assert.equal((await pick(await user(),9999,'gymbox')).label,'Clase gratis en GymBox','new prize list (0016)');
  await assert.rejects(pick(await user(),0,'not-a-prize'));
  // Sin datos en el juego: el celular se vincula al usar el premio en el checkout.
  const nodata=await user();const nd=await pick(nodata,0,'credit5');assert.equal(nd.state,'won');assert.equal(nd.phone,null);assert.equal(nd.name,null);

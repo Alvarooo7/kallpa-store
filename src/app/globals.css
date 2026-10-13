@@ -110,7 +110,8 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .pull-steps { display:grid; gap:10px; margin:0; padding:0; list-style:none; counter-reset:pull-step; text-align:left; }
 .pull-steps li { counter-increment:pull-step; display:grid; grid-template-columns:24px minmax(0,1fr); gap:10px; font-size:.86rem; line-height:1.45; color:#efe4c2; }
 .pull-steps li::before { content:counter(pull-step); font:700 1.15rem/1.2 "Outfit",sans-serif; color:#fff9e4; }
-.pull-reveal-id { display:block; margin-top:12px; font-size:.65rem; opacity:.55; }
+.pull-reveal .btn.pull-cta { margin-top:28px; }
+.pull-reveal-id { display:block; margin-top:14px; font-size:.65rem; opacity:.55; }
 @keyframes pull-rise { from { transform:translateY(140px) scale(.55); opacity:0; } to { transform:none; opacity:1; } }
 .welcome-game .game-message { color:#ffd25e; font-weight:600; text-align:center; }
 @media(prefers-reduced-motion:reduce) {
