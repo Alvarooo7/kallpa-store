@@ -12,11 +12,11 @@ Para confirmar cuentas nuevas dentro del popup, añadir `{{ .Token }}` a la plan
 - `/mi-premio` muestra solo el juego y acceso a reglas. Tarjetas en abanico, exploración por swipe/flechas/teclado, botón circular, giro y resultado. No hay selector de niveles: solo Sorpresa. Tablas Plus/Premium conservadas para históricos, no ofrecidas.
 - Sin pedido, confirmación ni pago previo. Para el giro definitivo se requiere cuenta verificada, nombre y celular; esta implementación pide esos datos ANTES del sorteo para evitar premios anónimos repetidos. No SMS. Registro no da consentimiento publicitario.
 - `welcome_rewards` guarda un resultado por cuenta/correo/celular; incluye los filtros históricos. Cupón personal activo inmediatamente, 30 días desde el giro. Se aplica automáticamente en esa MISMA compra, mínimo S/60 de productos ANTES del descuento de la ruleta. No acumulable con otros cupones. Físico: S/60 después de descuentos, sin envío.
-- Stock físico se reserva al girar. Requiere existencias reales para todos los premios de la familia. Reservas vencidas/canceladas NO se reponen automáticamente: revisar manualmente; no hay redibujo ni giro nuevo por vencer/cancelar. No activar sin definir esta operación.
+- Regalos físicos de bienvenida ilimitados (0014): el giro no consulta ni descuenta `reward_stock`, nunca devuelve `unavailable` por existencias. No hay redibujo ni giro nuevo por vencer/cancelar.
 - Al checkout, cuenta/correo/celular deben coincidir. La transacción aplica descuento o vincula regalo y devuelve referencia, que se agrega a WhatsApp y al correo interno del pedido. El juego por sí solo no envía correo interno; el resultado queda en base de datos. WhatsApp no envía automáticamente: el cliente envía el mensaje preparado.
 - Sin premio usado en ese pedido, WhatsApp y confirmación incluyen enlace al juego para un pedido posterior. No se alteran retroactivamente pedidos registrados.
 - Autorizaciones de retorno de Google/confirmación: `/mi-premio` y `/?checkout=resume` en producción y localhost. Configurar **Confirm signup** con ConfirmationURL y Google, y probar login real antes de activar. Carrito temporal conservado en sessionStorage (30 min), nunca contraseñas.
-- Conservar ambos flags apagados hasta aplicar 0013, cargar stock y probar. No se cambió ningún flag ni inventario remoto.
+- Conservar ambos flags apagados hasta aplicar 0013 y 0014 y probar. No se cambió ningún flag ni inventario remoto.
 
 ## Historial: esquema previo (no usar para las reglas actuales)
 

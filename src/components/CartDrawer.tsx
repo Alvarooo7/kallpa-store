@@ -6,7 +6,7 @@ import { useShop } from './Providers';
 import { bySlug, productLineName, productPriceKnown, productUnitPrice, variantById } from '@/lib/catalog';
 import { money } from '@/lib/format';
 import { FREE_EXPRESS_FROM } from '@/lib/shipping';
-import { RewardProgress } from './RewardProgress';
+import { RewardProgress, useRewardDiscount } from './RewardProgress';
 
 export function CartDrawer() {
   const { cart, setQuantity, remove, subtotal, ui, openUI, closeUI } = useShop();
@@ -16,6 +16,7 @@ export function CartDrawer() {
   const remainingForFreeExpress = Math.max(0, FREE_EXPRESS_FROM - subtotal);
   const freeExpress = cart.length > 0 && remainingForFreeExpress === 0;
   const progress = Math.min(100, (subtotal / FREE_EXPRESS_FROM) * 100);
+  const rewardDiscount = useRewardDiscount(needsQuote ? 0 : subtotal);
   const quoteMessage = `Hola Kallpa, quiero confirmar precio y disponibilidad de mi selección: ${cart.map(l => { const p = bySlug(l.id); return `${l.q} × ${p ? productLineName(p, l.variantId) : l.id}`; }).join(', ')}.`;
 
   return (
@@ -65,7 +66,7 @@ export function CartDrawer() {
               <strong>{Math.round(progress)}%</strong>
               <div className="express-goal-bar"><i style={{ width: `${progress}%` }} /></div>
             </div>
-            <div className="tot"><span>{needsQuote && hasConfirmedPrice ? 'Subtotal confirmado' : 'Total'}</span><span>{needsQuote && !hasConfirmedPrice ? 'Por confirmar' : money(subtotal)}</span></div>
+            <div className="tot"><span>{needsQuote && hasConfirmedPrice ? 'Subtotal confirmado' : 'Total'}</span><span>{needsQuote && !hasConfirmedPrice ? 'Por confirmar' : money(subtotal - rewardDiscount)}</span></div>
             {needsQuote && <p style={{ fontSize: '.8rem', color: 'var(--t2)' }}>Tu selección incluye productos por cotizar. Confirmaremos sus precios y el total antes de tomar el pedido.</p>}
           </>
         )}

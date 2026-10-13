@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useId, useRef, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { browserAuth } from '@/lib/auth-browser';
 
-export function CheckoutAccount({ onAccount, beforeRedirect, returnPath = '/?checkout=resume', popup = false }: { onAccount: (email: string) => void; beforeRedirect: () => void; returnPath?: string; popup?: boolean }) {
+export function CheckoutAccount({ onAccount, beforeRedirect, returnPath = '/?checkout=resume', popup = false }: { onAccount: (email: string, fullName?: string) => void; beforeRedirect: () => void; returnPath?: string; popup?: boolean }) {
   const [email, setEmail] = useState('');
   const inputId = useId();
   const [password, setPassword] = useState('');
@@ -18,9 +19,17 @@ export function CheckoutAccount({ onAccount, beforeRedirect, returnPath = '/?che
     const auth = browserAuth();
     if (!auth) return;
     let active = true;
-    const update = (value: string) => { if (active) { setSigned(value); callback.current(value); } };
-    void auth.auth.getSession().then(({ data }) => update(data.session?.user.email_confirmed_at ? data.session.user.email ?? '' : ''));
-    const { data } = auth.auth.onAuthStateChange((_event, session) => update(session?.user.email_confirmed_at ? session.user.email ?? '' : ''));
+    // Google entrega el nombre en los metadatos: lo usamos para no pedirlo dos veces.
+    const update = (user?: User) => {
+      if (!active) return;
+      const value = user?.email_confirmed_at ? user.email ?? '' : '';
+      const fullName = String(user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? '').trim();
+      setSigned(value);
+      if (value) setMessage('');
+      callback.current(value, fullName || undefined);
+    };
+    void auth.auth.getSession().then(({ data }) => update(data.session?.user));
+    const { data } = auth.auth.onAuthStateChange((_event, session) => update(session?.user));
     return () => { active = false; data.subscription.unsubscribe(); };
   }, []);
   async function login(google = false) {

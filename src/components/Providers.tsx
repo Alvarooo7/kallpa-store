@@ -4,6 +4,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { PRODUCTS, bySlug, productPriceKnown, productUnitPrice, variantById } from '@/lib/catalog';
 import type { CartLine } from '@/lib/types';
 import { track } from '@/lib/analytics';
+import { accountHeaders, browserAuth } from '@/lib/auth-browser';
+import type { WelcomeReward } from '@/lib/rewards';
 
 type UI = 'cart' | 'favs' | 'order' | 'lead' | null;
 
@@ -20,6 +22,9 @@ type Shop = {
   ui: UI;
   openUI: (v: UI) => void;
   closeUI: () => void;
+  /** Premio de bienvenida de la cuenta conectada; el carrito y el checkout lo aplican solos. */
+  reward: WelcomeReward | null;
+  setReward: (reward: WelcomeReward | null) => void;
 };
 
 const Ctx = createContext<Shop | null>(null);
@@ -36,6 +41,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [favs, setFavs] = useState<string[]>([]);
   const [ui, setUi] = useState<UI>(null);
   const [cartReady, setCartReady] = useState(false);
+  const [reward, setReward] = useState<WelcomeReward | null>(null);
 
   // localStorage solo después de montar: evita desajustes de hidratación.
   useEffect(() => {
@@ -58,6 +64,27 @@ export function Providers({ children }: { children: React.ReactNode }) {
     if (!cartReady) return;
     try { sessionStorage.setItem('kallpa_cart', JSON.stringify({ savedAt: Date.now(), lines: cart })); } catch { /* optional storage */ }
   }, [cart, cartReady]);
+
+  // Con sesión iniciada, el premio ya ganado acompaña al carrito en cualquier página.
+  useEffect(() => {
+    const auth = browserAuth();
+    if (!auth || process.env.NEXT_PUBLIC_REWARDS_ENABLED !== 'true') return;
+    let version = 0;
+    const load = async (signedIn: boolean) => {
+      const current = ++version;
+      if (!signedIn) { setReward(null); return; }
+      try {
+        const response = await fetch('/api/rewards', { headers: await accountHeaders(), cache: 'no-store' });
+        const data = await response.json() as WelcomeReward;
+        if (current === version) setReward(response.ok && data.label ? data : null);
+      } catch { /* sin premio visible: el checkout lo valida igual en el servidor */ }
+    };
+    void auth.auth.getSession().then(({ data }) => load(Boolean(data.session?.user.email_confirmed_at)));
+    const { data } = auth.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') void load(Boolean(session?.user.email_confirmed_at));
+    });
+    return () => { version++; data.subscription.unsubscribe(); };
+  }, []);
 
   const persistFavs = (next: string[]) => {
     setFavs(next);
@@ -120,6 +147,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     subtotal,
     favs, isFav: (id) => favs.includes(id), toggleFav,
     ui, openUI: setUi, closeUI: () => setUi(null),
+    reward, setReward,
   };
 
   // Bloquea el scroll del fondo mientras hay una capa abierta.

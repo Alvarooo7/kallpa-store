@@ -35,3 +35,9 @@ export function prizeLabel(prize: Prize, family: RewardFamily) { return family =
 export type RewardOrder = { id: number; number: string; status: string; net: number; phone: string | null };
 export type WelcomeReward = { id?: string; state: 'eligible' | 'blocked' | 'unavailable' | 'won' | 'used' | 'review' | 'expired'; prize?: string; label?: string; kind?: string; code?: string; minimum?: number; expiresAt?: string; name?: string; phone?: string };
 export type RewardResult = { state: 'eligible' | 'pending' | 'blocked' | 'unavailable' | 'won' | 'reserved' | 'review' | 'expired' | 'used'; tier?: RewardTier; label?: string; kind?: string; code?: string; minimum?: number; expiresAt?: string; error?: string; orders?: RewardOrder[] };
+/** Soles a descontar por un premio de crédito ganado; 0 si es regalo físico o no está vigente. */
+export function rewardCredit(reward: WelcomeReward | null) {
+  if (reward?.state !== 'won' || reward.kind !== 'credit') return 0;
+  return TIERS[0].prizes.find(prize => prize.id === reward.prize)?.amount ?? 0;
+}
+export const REWARD_MINIMUM = 60;

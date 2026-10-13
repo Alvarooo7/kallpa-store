@@ -9,26 +9,99 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .welcome-game { max-width: 510px; margin: auto; background: radial-gradient(ellipse at 50% 65%, #4a4120, #17190f 75%); color: #fff9e4; border-radius: 24px; padding: 16px; }
 .welcome-game-top { display:flex; justify-content:space-between; align-items:center; font-size:.75rem; }
 .welcome-game-top .gift-card-brand span { color:#f65b1b; }
-.welcome-game .gift-stage { background:transparent; margin:0; padding:18px 0; }
-.welcome-game .gift-carousel { height:300px; }
-.welcome-game .gift-card { width:178px; min-height:248px; background:linear-gradient(145deg,#f6e7b7,#bba261); border:2px solid #e4cc7e; }
-.welcome-game .gift-card.focused { background:linear-gradient(145deg,#a9c7bf,#608d84); color:#fffde7; border-color:#fce27c; box-shadow:0 0 0 4px #fbd35e24,0 22px 40px #0008; }
-.welcome-game .gift-card-symbol { color:#ffe388; }
-.gift-spin-ring { width:108px; height:108px; margin:12px auto; border:1px solid #e5c76c88; padding:8px; border-radius:50%; box-shadow:0 0 35px #ecb32328; }
-.gift-spin-ring .gift-play { width:90px; height:90px; min-height:90px; border-radius:50%; border:1px solid #ffedb0; background:linear-gradient(140deg,#ffe78b,#dfb43d); color:#28220c; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font:700 15px inherit; cursor:pointer; }
-.gift-play span { font-size:32px; line-height:1; }
-.gift-play:disabled { opacity:.6; cursor:wait; }
-.gift-spin-ring.running { animation:gift-glow .5s alternate infinite; }
-@keyframes gift-glow { to { box-shadow:0 0 55px #ecb32388; } }
 .game-account-area { background:#fff; color:#141414; border-radius:18px; padding:12px; margin-top:14px; }
 .game-account-area[hidden] { display:none; }
 .game-account-area fieldset { border:0; padding:8px; min-width:0; }
 .game-account-area select { max-width:100%; padding:10px; }
-.welcome-game .reward-winner { background:linear-gradient(150deg,#a9c7bf,#47776c); color:#fff; border:2px solid #dfc779; min-height:310px; display:flex; flex-direction:column; justify-content:center; text-align:center; }
-.welcome-game .reward-winner small { font-size:.65rem; }
 .welcome-game .game-terms { font-size:.7rem; opacity:.8; line-height:1.6; margin-top:16px; }
 .welcome-game > p[role=status], .welcome-game > p[role=alert] { font-size:.85rem; margin-top:14px; }
-@media(prefers-reduced-motion:reduce) { .gift-spin-ring.running { animation:none; } }
+
+/* Carta de bienvenida: se elige una carta boca abajo y se arrastra a la ranura para activarla. */
+.pull-deck { text-align:center; padding:6px 0 2px; user-select:none; -webkit-user-select:none; }
+.pull-head { display:grid; justify-items:center; gap:6px; margin-top:6px; }
+.pull-gift { font-size:30px; line-height:1; filter:drop-shadow(0 4px 14px #f6a03a66); }
+.pull-deck.activating .pull-gift { animation:pull-bounce .6s ease-in-out infinite alternate; }
+.pull-head h2 { min-height:2.3em; display:flex; align-items:center; max-width:18ch; font-size:clamp(1.25rem,4.4vw,1.6rem); line-height:1.15; color:#fff9e4; text-wrap:balance; transition:color .2s; }
+.pull-deck.armed .pull-head h2, .pull-deck.activating .pull-head h2 { color:#ffd25e; }
+.pull-stage { position:relative; height:392px; margin:0 -16px; overflow:hidden; touch-action:pan-y; cursor:grab; outline-offset:-4px; }
+.pull-frame { position:absolute; top:9px; left:50%; width:188px; height:256px; transform:translateX(-50%); border:1.5px solid #e9d48a59; border-radius:20px; }
+.pull-card { position:absolute; top:15px; left:50%; width:176px; height:244px; padding:16px 14px; display:flex; flex-direction:column; align-items:center; justify-content:space-between; border-radius:16px; overflow:hidden; cursor:pointer; box-shadow:0 16px 30px #0008; transition:transform .45s cubic-bezier(.2,.8,.2,1), opacity .35s, box-shadow .2s; }
+.pull-card::before { content:""; position:absolute; inset:7px; border:1px solid currentColor; border-radius:11px; opacity:.22; pointer-events:none; }
+.pull-card::after { content:""; position:absolute; inset:0; background:linear-gradient(115deg,transparent 35%,#ffffff2e 50%,transparent 65%); pointer-events:none; }
+.pull-card.focused { cursor:grab; touch-action:none; box-shadow:0 0 0 3px #ffd25e, 0 0 32px #ffc93c66, 0 18px 36px #0009; }
+.pull-card.dragging { cursor:grabbing; transition:opacity .35s, box-shadow .2s; }
+.pull-deck.armed .pull-card.focused { box-shadow:0 0 0 3px #fff2b0, 0 0 50px #ffd25eaa, 0 18px 36px #0009; }
+.back-sand { background:linear-gradient(150deg,#f8ecc9,#d8bd7c); color:#3a2a10; }
+.back-sage { background:linear-gradient(150deg,#c3dcd4,#5f8f84); color:#10231f; }
+.back-ember { background:linear-gradient(150deg,#ff8a4c,#c4441a); color:#fff4ea; }
+.back-clay { background:linear-gradient(150deg,#f0b59c,#9c4f3c); color:#fff2ec; }
+.back-ink { background:linear-gradient(150deg,#41452f,#16180e); color:#f3e5b4; }
+.pull-card-brand { font:700 17px/1 "Outfit",sans-serif; letter-spacing:-.03em; }
+.pull-card-brand i { font-style:normal; color:#f65b1b; }
+.back-ember .pull-card-brand i, .back-clay .pull-card-brand i, .pull-prize.credit .pull-card-brand i { color:#fff2b0; }
+.pull-card-mark { width:74px; height:74px; display:grid; place-items:center; border:1.5px solid currentColor; border-radius:50%; background:#ffffff26; font:700 40px/1 "Outfit",sans-serif; }
+.pull-card-label { font:600 15px/1.2 "Outfit",sans-serif; }
+.pull-card small { font-size:.68rem; opacity:.75; }
+.pull-chevrons { position:absolute; top:274px; left:50%; display:grid; transform:translateX(-50%); transition:opacity .3s; }
+.pull-chevrons i { width:13px; height:13px; margin-top:-5px; border-right:2px solid #e9d48a; border-bottom:2px solid #e9d48a; transform:rotate(45deg); animation:pull-chevron 1.4s ease-in-out infinite; }
+.pull-chevrons i:nth-child(2) { animation-delay:.2s; }
+.pull-mouth { position:absolute; bottom:24px; left:50%; width:210px; height:26px; transform:translateX(-50%); border-radius:50%; background:radial-gradient(ellipse at center,#ffd25e 0%,#f0a32bcc 35%,transparent 70%); filter:blur(4px); opacity:.8; transition:transform .3s, opacity .3s; }
+.pull-deck.armed .pull-mouth { transform:translateX(-50%) scale(1.25); opacity:1; }
+.pull-deck.activating .pull-mouth { animation:pull-mouth .9s ease-in-out infinite alternate; }
+.pull-deck.activating .pull-chevrons { opacity:0; }
+.pull-hint { margin:2px 0 10px; font-size:.82rem; color:#e9d48a; }
+.pull-dots { display:flex; justify-content:center; gap:6px; }
+.pull-dots i { width:6px; height:6px; border-radius:3px; background:#ffffff38; transition:width .25s, background .25s; }
+.pull-dots i.on { width:18px; background:#ffd25e; }
+.pull-alt { display:block; min-height:44px; margin:14px auto 0; padding:10px 20px; border:1px solid #e5c76c66; border-radius:999px; background:none; color:#f3e5b4; font:600 .8rem/1 inherit; cursor:pointer; }
+.pull-alt:hover:not(:disabled) { background:#e5c76c18; border-color:#e5c76c; }
+.pull-alt:disabled { opacity:.5; cursor:wait; }
+.pull-deck .gift-disclaimer { max-width:40ch; margin:12px auto 0; font-size:.72rem; line-height:1.5; color:#cbbf9c; }
+@keyframes pull-chevron { 0%,100% { opacity:.2; } 50% { opacity:1; } }
+@keyframes pull-mouth { to { transform:translateX(-50%) scale(1.45); opacity:1; } }
+@keyframes pull-bounce { to { transform:translateY(-6px) scale(1.08); } }
+.pull-reveal { position:relative; padding:14px 0 4px; overflow:hidden; text-align:center; }
+.pull-reveal-eyebrow { margin:6px 0 18px; font:600 1.45rem/1.15 "Outfit",sans-serif; color:#ffd25e; }
+.pull-prize { position:relative; width:min(240px,78%); aspect-ratio:176/244; margin:0 auto; padding:20px 18px; display:flex; flex-direction:column; align-items:center; justify-content:space-between; border-radius:20px; background:linear-gradient(150deg,#c3dcd4,#5f8f84); color:#0f221e; box-shadow:0 0 0 3px #ffd25e, 0 0 60px #ffd25e55, 0 24px 50px #000a; animation:pull-rise .75s cubic-bezier(.2,.9,.25,1.15) both; }
+.pull-prize.credit { background:linear-gradient(150deg,#ff8a4c,#c4441a); color:#fff7ef; }
+.pull-prize strong { font:700 68px/1 "Outfit",sans-serif; letter-spacing:-.03em; }
+.pull-prize strong small { margin-right:4px; font-size:28px; vertical-align:top; }
+.pull-prize strong.gift { font-size:26px; line-height:1.15; letter-spacing:0; }
+.pull-prize > span:not(.pull-card-brand) { font:600 1rem "Outfit",sans-serif; }
+.pull-prize-mark { font-size:40px; }
+.pull-prize > small { font-size:.72rem; opacity:.85; }
+.pull-reveal h3 { margin:24px 0 10px; font-size:1rem; color:#ffd25e; text-align:left; }
+.pull-steps { display:grid; gap:10px; margin:0; padding:0; list-style:none; counter-reset:pull-step; text-align:left; }
+.pull-steps li { counter-increment:pull-step; display:grid; grid-template-columns:24px minmax(0,1fr); gap:10px; font-size:.86rem; line-height:1.45; color:#efe4c2; }
+.pull-steps li::before { content:counter(pull-step); font:700 1.15rem/1.2 "Outfit",sans-serif; color:#fff9e4; }
+.pull-reveal-id { display:block; margin-top:12px; font-size:.65rem; opacity:.55; }
+@keyframes pull-rise { from { transform:translateY(140px) scale(.55); opacity:0; } to { transform:none; opacity:1; } }
+.welcome-game .game-message { color:#ffd25e; font-weight:600; text-align:center; }
+.game-family { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:2px 0 16px; }
+.game-family label { position:relative; display:grid; gap:2px; padding:12px 14px; border:1px solid #ddd; border-radius:12px; text-align:left; cursor:pointer; }
+.game-family label.on { border-color:#f65b1b; background:#fff5ee; box-shadow:0 0 0 1px #f65b1b; }
+.game-family label:has(input:focus-visible) { outline:2px solid #f65b1b; outline-offset:2px; }
+.game-family input { position:absolute; opacity:0; pointer-events:none; }
+.game-family b { font-size:14px; }
+.game-family span { font-size:12px; color:#666; }
+@media(prefers-reduced-motion:reduce) {
+  .pull-card, .pull-mouth, .pull-dots i { transition:none; }
+  .pull-chevrons i, .pull-deck.activating .pull-mouth, .pull-deck.activating .pull-gift, .pull-prize { animation:none; }
+}
+/* El premio ganado viaja con el carrito y el checkout. */
+.cart-reward { display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:12px; align-items:center; padding:12px 14px; border:1px dashed #e0b25c; border-radius:12px; background:#fffaf0; }
+.cart-reward.applied { border-style:solid; border-color:#f65b1b; background:#fff5ee; }
+.cart-reward-icon { font-size:22px; text-align:center; }
+.cart-reward b { display:block; font-family:"Outfit",sans-serif; font-size:.92rem; line-height:1.25; }
+.cart-reward span { font-size:.78rem; color:var(--t2); }
+.cart-reward strong { font-family:"Outfit",sans-serif; color:var(--acc); white-space:nowrap; }
+.checkout-reward-card { display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:12px; align-items:center; margin-bottom:14px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; }
+.checkout-reward-card.on { border-color:#f65b1b; background:#fff5ee; }
+.checkout-reward-card > span { font-size:22px; }
+.checkout-reward-card b { display:block; font-family:"Outfit",sans-serif; }
+.checkout-reward-card small { display:block; font-size:.78rem; line-height:1.4; color:var(--t2); }
+.checkout-reward-card label { display:flex; align-items:center; gap:6px; min-height:44px; font-size:.8rem; cursor:pointer; }
+.sl.reward-line { color:var(--acc); font-weight:600; }
 
 /* /mi-premio: info a la izquierda y juego a la derecha en escritorio; juego primero en móvil. */
 .premio-page { padding:0 0 40px; color:#fff9e4; background:radial-gradient(ellipse 70% 55% at 72% 35%, #2f2a13, #17190f 72%) #17190f; }
@@ -41,7 +114,6 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .premio-layout { max-width:1180px; margin:0 auto; padding:12px 24px 0; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,500px); gap:clamp(40px,6vw,88px); align-items:center; }
 .premio-game { padding:0; }
 .premio-page .welcome-game-top { display:none; }
-.premio-page .gift-stage h2 { text-wrap:balance; }
 .premio-page .welcome-game { max-width:none; margin:0; border:1px solid #e5c76c26; box-shadow:0 30px 80px #0007; }
 .premio-eyebrow { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:#e5c76c; margin:0 0 14px; }
 .premio-info h1 { font-size:clamp(2.1rem,3.7vw,3.3rem); line-height:1.04; max-width:15ch; color:#fff9e4; }
@@ -70,7 +142,6 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
   .premio-bar nav a { min-height:36px; padding:0 12px; font-size:.75rem; }
   .premio-layout { padding:0; gap:28px; }
   .premio-page .welcome-game { border:0; border-radius:0; box-shadow:none; padding:4px 16px 16px; }
-  .premio-page .gift-stage { margin-inline:-16px; padding-inline:16px; border-radius:0; }
   .premio-info { padding:0 16px; }
 }
 @media(prefers-reduced-motion:reduce) { .premio-bar nav a { transition:none; } }
@@ -106,33 +177,14 @@ body:has(.standalone-game) .wa, body:has(.standalone-game) .top { display: none;
 .reward-login{display:grid;gap:12px;max-width:420px;margin-block:24px}
 .reward-login input{border:1px solid var(--line);padding:14px;border-radius:10px;width:100%;font:inherit}
 .reward-login small{color:var(--t2)}
-.reward-deck{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:24px 8px;margin-block:16px}
-.reward-card{flex:0 0 190px;scroll-snap-align:center;min-height:240px;background:#141414;color:white;border:2px solid #f65b1b;border-radius:24px;padding:24px 18px;display:flex;flex-direction:column;justify-content:center;gap:18px;text-align:center}
-.reward-card strong{font-size:2.8rem;color:#ff7035}.reward-card small{color:#eee}
-.spinning .reward-card{animation:reward-shuffle .32s ease-in-out infinite alternate}
-.reward-winner{background:#fff5ee;border:1px solid #f65b1b;border-radius:24px;padding:24px;margin-block:24px;overflow-wrap:anywhere}
-.reward-winner h2{font-size:clamp(1.6rem,5vw,2.5rem);margin-block:14px}
-.reward-winner code{display:block;background:white;padding:14px;border-radius:10px;user-select:all;font-size:.9rem}
 .reward-rules{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;font-size:.85rem}.reward-rules ul{padding-left:20px}
 .reward-note{padding:16px;background:var(--w2);border-radius:12px}
 .reward-order{display:grid;gap:10px;margin:20px 0}.reward-order select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:white;font:inherit}.reward-order small{color:var(--t2)}
-.gift-stage{isolation:isolate;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#493126,#171614 65%);color:#fff6e9;border-radius:28px;padding:26px 16px 22px;margin:22px 0;text-align:center}
-.gift-orbit{font-size:34px;color:#ff9149}.gift-eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.16em;color:#e1bfa0}.gift-stage h2{font-size:clamp(1.2rem,4vw,1.7rem);max-width:22ch;margin:12px auto}
-.gift-carousel{height:325px;position:relative;perspective:900px;touch-action:pan-y;outline-offset:-4px;cursor:grab}
-.gift-card{position:absolute;top:18px;left:50%;width:205px;min-height:270px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(145deg,#ffeccf,#d6b882);color:#25180e;border-radius:16px;border:1px solid #ffe8bb;box-shadow:0 18px 35px #0007;transition:transform .35s,opacity .35s;pointer-events:none}
-.gift-card.focused{background:linear-gradient(145deg,#ff763d,#b93e12);color:white;border-color:#ffb28b}
-.gift-card-brand{font-weight:800;font-size:18px}.gift-card-brand>span{color:#3b2313}.gift-card-symbol{font-size:32px}.gift-card strong{font-size:24px;line-height:1.1}.gift-card small{font-size:.7rem}.gift-card-odds{font-size:.67rem;border-top:1px solid currentColor;padding-top:9px}
-.gift-controls{display:flex;justify-content:center;gap:22px;align-items:center;margin-bottom:16px;font-size:.8rem}.gift-controls button{border:1px solid #bda28a;border-radius:50%;width:44px;height:44px;background:transparent;color:white}
-.gift-play{width:min(100%,350px);min-height:48px}.gift-stage .gift-disclaimer{max-width:45ch;margin:14px auto 0;font-size:.73rem;color:#d5c1b4;line-height:1.5}
-.gift-family{display:flex;flex-wrap:wrap;gap:14px;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:.85rem}.gift-family legend{padding-inline:6px}.gift-family label{display:flex;gap:8px;align-items:center;min-height:44px}
-.gift-levels{margin:30px 0}.gift-levels h2{font-size:1.5rem}.gift-levels>div[role=group]{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.gift-levels button[aria-pressed=true]{background:var(--k);color:white}.gift-levels ul{list-style:none;padding:0}.gift-levels li{padding:10px 0;border-bottom:1px solid var(--line);font-size:.85rem}.gift-levels li b{margin-left:10px;color:var(--acc)}.gift-levels>p{font-size:.78rem;color:var(--t2)}
-.gift-reveal{position:relative;overflow:hidden;animation:gift-reveal .5s ease-out}.gift-confetti{position:absolute;inset:0;pointer-events:none}.gift-confetti i{position:absolute;top:-12px;width:7px;height:11px;background:#f65b1b;animation:gift-confetti 1.6s ease-out both}.gift-confetti i:nth-child(even){background:#d9b65d}
-@keyframes gift-reveal{from{opacity:0;transform:rotateY(35deg) scale(.94)}to{opacity:1;transform:none}}
+.gift-card-brand{font-weight:800;font-size:18px}.gift-card-brand>span{color:#3b2313}
+.gift-confetti{position:absolute;inset:0;pointer-events:none}.gift-confetti i{position:absolute;top:-12px;width:7px;height:11px;background:#f65b1b;animation:gift-confetti 1.6s ease-out both}.gift-confetti i:nth-child(even){background:#d9b65d}
 @keyframes gift-confetti{to{transform:translateY(350px) rotate(270deg);opacity:0}}
-@media(max-width:500px){.gift-stage{margin-inline:-6px;padding-inline:10px}.reward-page{padding-top:26px!important}.gift-levels .btn{padding:10px;font-size:.78rem}}
-@media(prefers-reduced-motion:reduce){.gift-card{transition:none}.gift-reveal,.gift-confetti i{animation:none}.gift-confetti{display:none}}
-@keyframes reward-shuffle{to{transform:translateY(-10px) rotate(3deg)}}
-@media(prefers-reduced-motion:reduce){.spinning .reward-card{animation:none}}
+@media(max-width:500px){.reward-page{padding-top:26px!important}}
+@media(prefers-reduced-motion:reduce){.gift-confetti{display:none}}
 #cursos .wrap{max-width:840px}
 #cursos .shead h2{font-size:clamp(1.6rem,3vw,2.1rem)}
 #cursos .course-card-photo{aspect-ratio:16/10;max-height:240px}

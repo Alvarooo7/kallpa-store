@@ -9,13 +9,13 @@ import type { Zone } from '@/lib/types';
 import { EXPRESS_TIERS, FREE_EXPRESS_FROM, expressFeeForDistrict, expressTierForDistrict, type LimaDeliveryMode } from '@/lib/shipping';
 import { COMPANY, waLink } from '@/lib/company';
 import { isEmail, toE164Pe } from '@/lib/validation';
-import { accountHeaders } from '@/lib/auth-browser';
+import { accountHeaders, browserAuth } from '@/lib/auth-browser';
 import Link from 'next/link';
 import { RewardGame } from './RewardGame';
-import type { WelcomeReward } from '@/lib/rewards';
+import { REWARD_MINIMUM, rewardCredit } from '@/lib/rewards';
 
 export function OrderModal() {
-  const { ui, closeUI, cart, subtotal } = useShop();
+  const { ui, closeUI, cart, subtotal, reward, setReward } = useShop();
   const [zone, setZone] = useState<Zone>('lima');
   const [deliveryMode, setDeliveryMode] = useState<LimaDeliveryMode>('scheduled');
   const [district, setDistrict] = useState('');
@@ -29,7 +29,6 @@ export function OrderModal() {
   const [claimReward, setClaimReward] = useState(false);
   const [accountEmail, setAccountEmail] = useState('');
   const [checkoutEmail, setCheckoutEmail] = useState('');
-  const [welcomeReward, setWelcomeReward] = useState<WelcomeReward | null>(null);
   const [draftFields, setDraftFields] = useState<Record<string, string>>({});
   const on = ui === 'order';
   useEffect(() => {
@@ -45,6 +44,20 @@ export function OrderModal() {
       sessionStorage.removeItem('kallpa_checkout_resume');
     } catch { /* storage unavailable: checkout still works */ }
   }, [on]);
+  const wonReward = reward?.state === 'won' ? reward : null;
+  // Un premio ganado se aplica solo: activa el reclamo y trae los datos con los que se guardó.
+  useEffect(() => {
+    if (!on || !wonReward) return;
+    setClaimReward(true);
+    void browserAuth()?.auth.getSession().then(({ data }) => {
+      const email = data.session?.user.email_confirmed_at ? data.session.user.email ?? '' : '';
+      if (email) { setAccountEmail(email); setCheckoutEmail(email); }
+    });
+    for (const [name, value] of [['name', wonReward.name], ['phone', wonReward.phone?.replace(/^\+51/, '')]]) {
+      const input = formRef.current?.elements.namedItem(name!);
+      if (input instanceof HTMLInputElement && !input.value && value) input.value = value;
+    }
+  }, [on, wonReward]);
   useEffect(() => {
     for (const [name, value] of Object.entries(draftFields)) {
       const input = formRef.current?.elements.namedItem(name);
@@ -64,7 +77,8 @@ export function OrderModal() {
   const freeExpress = subtotal >= FREE_EXPRESS_FROM;
   const expressFee = isExpress && !freeExpress ? expressFeeForDistrict(district) ?? 0 : 0;
   const expressTier = isExpress ? expressTierForDistrict(district) : null;
-  const total = subtotal + expressFee;
+  const rewardDiscount = claimReward && subtotal >= REWARD_MINIMUM ? rewardCredit(wonReward) : 0;
+  const total = subtotal - rewardDiscount + expressFee;
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -116,7 +130,7 @@ export function OrderModal() {
       });
       const data = (await r.json()) as {
         number?: string; error?: string; field?: string; whatsapp?: string;
-        totalCents?: number; discountCents?: number;
+        totalCents?: number; discountCents?: number; reward?: unknown;
       };
       if (!r.ok) {
         if (r.status === 400 || r.status === 409) {
@@ -134,6 +148,7 @@ export function OrderModal() {
       track('Lead', { value: total, currency: 'PEN', contents: cart, shipping: expressFee });
       if (data.totalCents != null) setResult({ totalCents: data.totalCents, discountCents: data.discountCents ?? 0 });
       setDone(data.number ?? 'VD-0000');
+      if (data.reward && reward) setReward({ ...reward, state: 'used' });
       if (data.whatsapp) {
         setWhatsapp(data.whatsapp);
         if (!claimReward) window.location.assign(data.whatsapp);
@@ -179,7 +194,7 @@ export function OrderModal() {
                 </>
               )}
               {whatsapp && <a className="btn acc block" style={{ marginTop: 14 }} href={whatsapp}>Abrir WhatsApp para confirmar</a>}
-              {done !== 'error' && <p className="mini2">¿Todavía no jugaste? <Link href="/mi-premio" onClick={closeUI}>Abre la ruleta</Link> y guarda tu regalo para tu siguiente pedido. No necesitas confirmar ni pagar para jugar.</p>}
+              {done !== 'error' && !reward && <p className="mini2">¿Todavía no jugaste? <Link href="/mi-premio" onClick={closeUI}>Abre la ruleta</Link> y guarda tu regalo para tu siguiente pedido. No necesitas confirmar ni pagar para jugar.</p>}
               <button className="btn block" style={{ marginTop: 14 }} onClick={closeUI}>Cerrar</button>
             </>
           ) : (
@@ -213,9 +228,15 @@ export function OrderModal() {
                 const name = target instanceof HTMLInputElement || target instanceof HTMLSelectElement ? target.name : '';
                 if (name && fieldErrors[name]) setFieldErrors((current) => { const next = { ...current }; delete next[name]; return next; });
               }}>
+                {wonReward ? <div className={`checkout-reward-card${claimReward ? ' on' : ''}`}>
+                  <span aria-hidden="true">🎁</span>
+                  <div><b>{wonReward.label}</b><small>{subtotal < REWARD_MINIMUM ? `Agrega ${money(REWARD_MINIMUM - subtotal)} en productos para usarlo.` : rewardCredit(wonReward) ? 'Se descuenta automáticamente en este pedido.' : 'Va gratis en tu paquete.'} Usa el mismo celular de tu premio.</small></div>
+                  <label><input type="checkbox" checked={claimReward} onChange={e => setClaimReward(e.target.checked)} /> Usar</label>
+                </div> : <>
                 <label className="marketing-optin"><input type="checkbox" checked={claimReward} onChange={e => setClaimReward(e.target.checked)} /><span>Quiero reclamar mi regalo · compras desde S/ 60 después de descuentos.</span></label>
                 <p className="mini2">Puedes comprar sin crear cuenta. Para el regalo, ingresa aquí y usaremos el correo de tu cuenta para el pedido. <Link href="/reglas-premios" target="_blank" rel="noopener noreferrer">Ver reglas y premios</Link>.</p>
-                {claimReward && <RewardGame embedded beforeRedirect={saveDraft} onAccount={email => { setAccountEmail(email); if (email) setCheckoutEmail(email); else setWelcomeReward(null); }} onReward={reward => { setWelcomeReward(reward); if (reward.name && formRef.current) { const input = formRef.current.elements.namedItem('name'); if (input instanceof HTMLInputElement && !input.value) input.value = reward.name; } if (reward.phone && formRef.current) { const input = formRef.current.elements.namedItem('phone'); if (input instanceof HTMLInputElement && !input.value) input.value = reward.phone; } }} />}
+                </>}
+                {claimReward && !wonReward && <RewardGame embedded beforeRedirect={saveDraft} onAccount={email => { setAccountEmail(email); if (email) setCheckoutEmail(email); }} onReward={reward => { if (reward.name && formRef.current) { const input = formRef.current.elements.namedItem('name'); if (input instanceof HTMLInputElement && !input.value) input.value = reward.name; } if (reward.phone && formRef.current) { const input = formRef.current.elements.namedItem('phone'); if (input instanceof HTMLInputElement && !input.value) input.value = reward.phone; } }} />}
                 <div className="field"><label htmlFor="o-name">Nombre completo</label><input id="o-name" name="name" required aria-invalid={!!fieldErrors.name} aria-describedby={fieldErrors.name ? 'o-name-error' : undefined} placeholder="Como figura en tu DNI" />{fieldErrors.name && <span className="field-error" id="o-name-error">{fieldErrors.name}</span>}</div>
                 <div className="field"><label htmlFor="o-phone">Celular con WhatsApp</label><input id="o-phone" name="phone" required inputMode="tel" autoComplete="tel" aria-invalid={!!fieldErrors.phone} aria-describedby={fieldErrors.phone ? 'o-phone-error' : undefined} placeholder="9XX XXX XXX" />{fieldErrors.phone && <span className="field-error" id="o-phone-error">{fieldErrors.phone}</span>}</div>
                 <div className="field"><label htmlFor="o-email">Correo electrónico</label><input id="o-email" name="email" type="email" required autoComplete="email" value={checkoutEmail} readOnly={claimReward && !!accountEmail} onChange={e => setCheckoutEmail(e.target.value)} aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? 'o-email-error' : undefined} placeholder="tucorreo@gmail.com" />{fieldErrors.email && <span className="field-error" id="o-email-error">{fieldErrors.email}</span>}</div>
@@ -260,7 +281,7 @@ export function OrderModal() {
 
                 <div style={{ margin: '16px 0 0' }}>
                   <div className="sl"><span>Subtotal</span><span>{money(subtotal)}</span></div>
-                  {claimReward && welcomeReward?.state === 'won' && <p className="mini2">Premio: <b>{welcomeReward.label}</b>. {subtotal >= 60 ? 'Se aplicará al registrar el pedido si cumple las condiciones. El total definitivo aparecerá en la confirmación.' : 'Completa S/ 60 en productos para usarlo.'}</p>}
+                  {claimReward && wonReward && subtotal >= REWARD_MINIMUM && <div className="sl reward-line"><span>Premio · {wonReward.label}</span><span>{rewardDiscount ? `−${money(rewardDiscount)}` : 'Gratis'}</span></div>}
                   <div className="sl"><span>{zone === 'prov' ? 'Envío a provincia' : isExpress ? 'Envío express' : 'Entrega programada'}</span><span>{isExpress ? district ? freeExpress ? 'Gratis' : money(expressFee) : 'Elige distrito' : 'Gratis'}</span></div>
                   <div className="sl t"><span>Total</span><span>{money(total)}</span></div>
                 </div>
