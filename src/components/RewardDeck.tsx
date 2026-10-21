@@ -101,8 +101,8 @@ export function RewardDeck({ prizes, spinning, target, disabled, onSpin, onLande
   }
 
   const focusedPowered = powered === prizes[active].id;
-  const title = stopped ? '¡Aquí está tu regalo!' : spinning ? 'Girando…' : charging ? 'Cargando poder…' : armed ? '¡Suelta para cargar el poder!' : powered ? '¡Tu carta tiene poder!' : 'Elige tu regalo de bienvenida';
-  const hint = spinning ? 'Sorteando tu premio de forma segura…' : powered ? `Pulsa Girar: tu carta con poder tiene +${PICK_BOOST}% de probabilidad` : `Arrastra una carta al brillo para darle poder +${PICK_BOOST}% y luego pulsa Girar`;
+  const title = stopped ? '¡Aquí está tu regalo!' : spinning ? 'Girando…' : charging ? 'Cargando poder…' : armed ? '¡Suelta para cargar el poder!' : powered ? '¡Tu carta tiene poder!' : 'Elige una carta';
+  const hint = spinning ? 'Sorteando tu premio…' : powered ? `Tu carta tiene +${PICK_BOOST}%. Ahora pulsa Girar.` : `Desliza para elegir. Toca la carta para darle +${PICK_BOOST}% (opcional).`;
   const auraOn = (focusedPowered && !spinning) || dragging || charging;
   return <div className={`pull-deck${spinning ? ' spinning' : ''}${armed ? ' armed' : ''}${auraOn ? ' powered' : ''}${dragging ? ' dragging' : ''}${stopped ? ' stopped' : ''}`}>
     <button type="button" className="pull-terms" onClick={onTerms}>TyC</button>
