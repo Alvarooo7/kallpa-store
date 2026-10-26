@@ -10,6 +10,7 @@ import { OrderModal } from '@/components/OrderModal';
 import { LeadModal } from '@/components/LeadModal';
 import { WhatsAppBubble } from '@/components/WhatsAppBubble';
 import { FreeExpressCelebration } from '@/components/FreeExpressCelebration';
+import { PageMotion } from '@/components/PageMotion';
 import { JsonLd, storeJsonLd, DEFAULT_TITLE, DEFAULT_DESC } from '@/lib/seo';
 import { SITE_URL, COMPANY } from '@/lib/company';
 
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main" className="skip">Saltar al contenido</a>
           <Header />
           <main id="main">{children}</main>
+          <PageMotion />
           <Footer />
           <CartDrawer />
           <FavsDrawer />

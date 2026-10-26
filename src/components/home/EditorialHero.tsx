@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { gsap } from 'gsap';
 import { ProductImage } from '../ProductImage';
 import { ProductPrice } from '../ProductPrice';
 import { bySlug } from '@/lib/catalog';
@@ -48,12 +49,35 @@ const slides = [
 
 export function EditorialHero() {
   const [active, setActive] = useState(0);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const previousActive = useRef(active);
   const slide = slides[active];
   const product = slide.product ? bySlug(slide.product) : null;
 
+  useEffect(() => {
+    if (previousActive.current === active) return;
+    previousActive.current = active;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !stageRef.current) return;
+
+    const context = gsap.context(() => {
+      gsap.from('.editorial-hero-picture', { scale: 1.025, duration: .8, ease: 'power2.out', clearProps: 'transform' });
+      gsap.from('.editorial-hero-copy > *', {
+        y: 16, autoAlpha: .25, duration: .55, stagger: .075,
+        ease: 'power3.out', clearProps: 'transform,opacity,visibility',
+      });
+      if (product) {
+        gsap.from('.editorial-product-card', {
+          x: 14, autoAlpha: .25, duration: .55, delay: .2,
+          ease: 'power3.out', clearProps: 'transform,opacity,visibility',
+        });
+      }
+    }, stageRef);
+    return () => context.revert();
+  }, [active, product]);
+
   return (
     <section className="editorial-hero" aria-label="Colecciones destacadas">
-      <div className={`editorial-hero-stage editorial-hero-stage--${slide.id}`}>
+      <div ref={stageRef} className={`editorial-hero-stage editorial-hero-stage--${slide.id}`}>
         <picture className="editorial-hero-picture">
           <source media="(max-width: 760px)" srcSet={slide.mobileImage} type="image/webp" />
           <Image

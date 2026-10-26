@@ -339,12 +339,18 @@ body:has(.nike-home) .wa .tip { display: none; }
   body:has(.nike-home) .tools .ib:first-child { min-width: 38px; padding: 0 9px; }
   body:has(.nike-home) .tools .ib:first-child::after { display: none; }
 }
+@media (min-width: 761px) and (max-width: 1100px) {
+  .nike-home .editorial-hero-stage { height: clamp(440px, 60vw, 660px); }
+  .nike-home .editorial-hero-stage--audio .editorial-hero-image { object-position: 68% center; }
+}
 @media (max-width: 760px) {
   body:has(.nike-home) header.nav { width: calc(100% - 24px); margin-top: 12px; border-radius: 20px 20px 0 0; }
   body:has(.nike-home) header.nav .wrap { min-height: 62px; padding-inline: 16px; }
   .nike-home .editorial-hero { width: calc(100% - 24px); padding: 0 7px 7px; border-radius: 0 0 20px 20px; }
   .nike-home .editorial-hero-stage { height: clamp(390px, 54svh, 420px); border-radius: 16px; }
   .nike-home .editorial-hero-image { object-position: center top; }
+  .nike-home .editorial-hero-stage--audio .editorial-hero-picture { right: -20%; }
+  .nike-home .editorial-hero-stage--audio .editorial-hero-image { object-position: center 76%; }
   .nike-home .editorial-hero-shade { background: linear-gradient(180deg, #10130f9e 0%, #10130f42 46%, #10130fb8 100%); }
   .nike-home .editorial-hero-copy { top: 28px; left: 24px; width: min(78%, 350px); transform: none; }
   .nike-home .editorial-hero-eyebrow { margin-bottom: 12px; font-size: .66rem; }
@@ -367,12 +373,16 @@ body:has(.nike-home) .wa .tip { display: none; }
   .nike-home .editorial-hero-copy h1 { font-size: clamp(2.35rem, 10.1vw, 3.5rem); }
   .nike-home .editorial-hero-copy p { max-width: 25ch; }
 }
+@media (min-width: 600px) and (max-width: 760px) {
+  .nike-home .editorial-hero-stage--audio .editorial-hero-image { object-position: center 66%; }
+}
 @media (max-width: 360px) {
   .nike-home .editorial-hero-copy { top: 18px; }
   .nike-home .editorial-hero-eyebrow { margin-bottom: 8px; }
   .nike-home .editorial-hero-copy h1 { margin-bottom: 8px; font-size: 2.15rem; }
   .nike-home .editorial-hero-copy p { margin-bottom: 12px; font-size: .82rem; }
   .nike-home .editorial-hero-cta { min-height: 40px; }
+  .nike-home .editorial-hero-stage--audio .editorial-hero-cta { gap: 8px; padding-inline: 12px; font-size: .72rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nike-home .editorial-hero-cta,

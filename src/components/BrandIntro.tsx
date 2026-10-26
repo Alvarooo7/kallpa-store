@@ -25,6 +25,7 @@ export function BrandIntro() {
     flightRef.current?.cancel();
     document.documentElement.dataset.intro = 'done';
     setFinished(true);
+    window.dispatchEvent(new Event('kallpa:intro-complete'));
   }, []);
 
   useEffect(() => {
