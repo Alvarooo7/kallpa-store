@@ -1,0 +1,216 @@
+/* Sistema editorial para las páginas interiores de Kallpa. */
+body:has(.editorial-page) {
+  --w: #fff;
+  --w2: #f6f4f1;
+  --t: #171715;
+  --t2: #706d68;
+  --line: #e9e5df;
+  --k: #171715;
+  --acc: #171715;
+  background: #fff;
+  color: #171715;
+  font-family: "DM Sans", Arial, sans-serif;
+}
+body:has(.editorial-page) .top { display: none; }
+body:has(.editorial-page) header.nav {
+  position: relative;
+  top: auto;
+  width: min(calc(100% - 48px), 1440px);
+  margin: 24px auto 0;
+  border: 1px solid #eeeae5;
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  background: #fff;
+  box-shadow: 0 12px 45px #32200e0b;
+  backdrop-filter: none;
+}
+body:has(.editorial-page) header.nav .wrap { max-width: 1440px; min-height: 80px; padding-inline: clamp(22px, 3vw, 44px); }
+body:has(.editorial-page) header.nav .logo { font-family: "Outfit", sans-serif; font-size: 1.75rem; letter-spacing: -.055em; }
+body:has(.editorial-page) header.nav .logo i { color: #d87547; }
+body:has(.editorial-page) nav.main { gap: clamp(16px, 2.7vw, 38px); }
+body:has(.editorial-page) nav.main a { font-family: "DM Sans", sans-serif; font-size: .83rem; font-weight: 600; }
+body:has(.editorial-page) .tools { gap: clamp(10px, 1.6vw, 22px); }
+body:has(.editorial-page) .tools .ib:first-child { display: inline-flex; gap: 10px; min-width: 142px; min-height: 38px; padding: 0 15px; border-radius: 999px; background: #f5f3f0; }
+body:has(.editorial-page) .tools .ib:first-child::after { content: "Buscar"; color: #88837e; font: 500 .78rem "DM Sans", sans-serif; }
+body:has(.editorial-page) .bdg { background: #171715; }
+
+.editorial-page {
+  width: min(calc(100% - 48px), 1440px);
+  max-width: 1440px;
+  margin: 0 auto 64px;
+  border: 1px solid #eeeae5;
+  border-top: 0;
+  border-radius: 0 0 28px 28px;
+  background: #fff;
+  box-shadow: 0 24px 50px #32200e0b;
+}
+.editorial-page h1,
+.editorial-page h2,
+.editorial-page h3 { font-family: "Outfit", sans-serif; letter-spacing: -.045em; }
+.editorial-kicker { display: block; font: 700 .68rem/1.2 "DM Sans", sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+.editorial-page .btn.acc,
+.editorial-page .catalog-add { border-color: #171715; border-radius: 999px; background: #171715; color: #fff; }
+.editorial-page .btn.acc:hover,
+.editorial-page .catalog-add:hover { border-color: #383834; background: #383834; }
+
+/* Catálogo */
+.editorial-catalog-page { padding: 8px 0 42px; }
+.editorial-catalog-page .catalog-results { padding: 0 0 24px; }
+.editorial-catalog-page .catalog-results > .wrap,
+.editorial-catalog-page .catalog-more > .wrap { max-width: none; padding-inline: clamp(18px, 2.8vw, 40px); }
+.catalog-lead {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  align-items: center;
+  min-height: 280px;
+  padding: clamp(30px, 4vw, 58px);
+  overflow: hidden;
+  border-radius: 22px;
+  background: radial-gradient(circle at 81% 15%, #667050 0, transparent 35%), linear-gradient(110deg, #202820, #353827);
+  color: #fff;
+}
+.catalog-lead-copy { position: relative; z-index: 1; max-width: 680px; }
+.catalog-lead h1 { max-width: 13ch; margin: 18px 0 16px; color: #fff; font-size: clamp(2.8rem, 5vw, 5.3rem); line-height: .96; text-wrap: balance; }
+.catalog-lead p { max-width: 46ch; margin: 0; color: #ffffffda; font-size: clamp(.88rem, 1.2vw, 1.02rem); line-height: 1.5; }
+.catalog-lead-gallery { position: relative; display: flex; align-items: center; justify-content: center; height: 100%; min-width: 0; }
+.catalog-lead-photo { width: min(47%, 210px); aspect-ratio: 1; overflow: hidden; border: 7px solid #fff; border-radius: 18px; background: #f4f2ef; box-shadow: 0 20px 35px #05070455; transform: translate(10px, 18px) rotate(-8deg); }
+.catalog-lead-photo + .catalog-lead-photo { margin-left: -14px; transform: translate(0, -12px) rotate(9deg); }
+.catalog-lead-photo .product-photo { width: 100%; height: 100%; object-fit: cover; }
+.editorial-catalog-page .catalog-toolbar { top: 0; margin: 0; padding: 24px 0 12px; background: #fff; }
+.editorial-catalog-page .catalog-search { min-height: 50px; background: #f6f4f1; border-color: transparent; }
+.editorial-catalog-page .catalog-filter-btn { min-height: 50px; border-color: #e6e1da; }
+.editorial-catalog-page .catalog-summary { justify-content: flex-start; margin: 12px 0 18px; }
+.editorial-catalog-page .catalog-summary span { font-size: .7rem; }
+.editorial-catalog-page .catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.editorial-catalog-page .catalog-grid .card { min-width: 0; padding: 10px 10px 16px; border: 1px solid #eeeae5; border-radius: 20px; background: #fff; box-shadow: 0 10px 28px #29201609; }
+.editorial-catalog-page .catalog-grid .card .tile { aspect-ratio: 1.05; border-radius: 13px; }
+.editorial-catalog-page .catalog-grid .card .cat,
+.editorial-catalog-page .catalog-grid .card .nm,
+.editorial-catalog-page .catalog-grid .card .mini2,
+.editorial-catalog-page .catalog-grid .card .pr,
+.editorial-catalog-page .catalog-grid .card .stock-chip { margin-left: 6px; margin-right: 6px; }
+.editorial-catalog-page .catalog-grid .card .nm { font-size: 1rem; line-height: 1.2; }
+.editorial-catalog-page .catalog-grid .catalog-add { width: calc(100% - 12px); margin-left: 6px; }
+.catalog-add-compact { display: none; }
+.editorial-catalog-page .catalog-more { padding-bottom: 0; }
+.editorial-catalog-page .catalog-related { margin-top: 22px; }
+
+/* Ficha de producto */
+.editorial-product-page.wrap { padding: 20px clamp(18px, 2.8vw, 40px) 48px; }
+.editorial-product-page .sheet { width: 100%; border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
+.editorial-product-page .pdp { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(24px, 4vw, 58px); }
+.editorial-product-page .pdp .gal { padding: 0; background: transparent; }
+.editorial-product-page .pdp .stage { aspect-ratio: 1.04; border-radius: 20px; background: #f6f4f1; }
+.editorial-product-page .pdp .th { gap: 10px; margin-top: 12px; }
+.editorial-product-page .pdp .det { padding: clamp(8px, 2.6vw, 38px) 0 0; }
+.editorial-product-page .pdp .det h1 { max-width: 17ch; font-size: clamp(2.1rem, 3.3vw, 3.65rem) !important; line-height: 1.04 !important; }
+.editorial-product-page .pdp .det > .pr { font-size: 1.25rem; }
+.editorial-product-page .product-intro { max-width: 52ch; font-size: 1rem; }
+.editorial-product-page .product-variants,
+.editorial-product-page .seg,
+.editorial-product-page .delivery-promise { border-radius: 14px; }
+.editorial-product-page .pdp .det > .btn.block { min-height: 54px; font-size: .9rem; }
+.editorial-product-page .product-disclosures { margin-top: 28px; }
+
+/* Cursos */
+.courses-page.editorial-page { max-width: 1440px !important; padding: 20px clamp(18px, 2.8vw, 40px) 54px !important; }
+.courses-page .course-breadcrumb { margin: 0 0 18px; }
+.course-list-page .courses-heading { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 320px; max-width: none; margin-bottom: 28px; padding: clamp(30px, 5vw, 64px); overflow: hidden; border-radius: 22px; background: linear-gradient(90deg, #171a18e8, #1e231b88 58%, #1e231b16), url('/hero/editorial-crossfit-wide.webp') center 42% / cover; color: #fff; }
+.course-list-page .courses-heading .eb { color: #fff; }
+.course-list-page .courses-heading h1 { max-width: 13ch; color: #fff; font-size: clamp(2.7rem, 5.2vw, 5.2rem); line-height: .97; }
+.course-list-page .courses-heading p { max-width: 43ch; color: #ffffffe0; }
+.course-list-page .course-grid { max-width: none; gap: 20px; }
+.course-list-page .course-card { border-color: #eeeae5; border-radius: 20px; box-shadow: 0 10px 28px #2920160a; }
+.course-list-page .course-card-photo { aspect-ratio: 16 / 9; }
+.course-list-page .course-how { background: #f6f4f1; }
+.course-item-page .course-detail { gap: clamp(26px, 4vw, 56px); }
+.course-item-page .course-detail-photo { border-radius: 20px; }
+.course-item-page .course-decision { padding-top: 12px; }
+.course-item-page .course-location { grid-column: 1; grid-row: 2; padding-top: 0; }
+.course-item-page .course-detail h1 { font-size: clamp(2.4rem, 4vw, 4.2rem); line-height: 1; }
+.course-item-page .course-overview { max-width: 72ch; }
+.course-item-page .course-info-grid section { padding-right: 24px; }
+
+/* Envíos */
+.editorial-shipping-page.wrap { padding: 8px clamp(18px, 2.8vw, 40px) 54px; }
+.shipping-page-heading { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 280px; padding: clamp(30px, 5vw, 60px); overflow: hidden; border-radius: 22px; background: radial-gradient(circle at 86% 53%, #d87547 0 9%, transparent 9.3% 16%, #d8754733 16.3% 17%, transparent 17.3%), linear-gradient(120deg, #232620, #45442f); color: #fff; }
+.shipping-page-heading h1 { max-width: 14ch; margin: 16px 0; color: #fff; font-size: clamp(2.7rem, 5vw, 5.2rem); line-height: .98; }
+.shipping-page-heading p { max-width: 58ch; margin: 0; color: #ffffffdb; line-height: 1.55; }
+.editorial-shipping-page #envios { padding-top: 28px !important; }
+.editorial-shipping-page #envios > .wrap { max-width: none; padding-inline: 0; }
+.editorial-shipping-page .sh { border-radius: 20px; }
+.editorial-shipping-page .shipping-ranges { padding: 44px 0 0; }
+.editorial-shipping-page .shipping-range-grid article { border-color: #eeeae5; border-radius: 17px; background: #f8f7f4; }
+
+/* Cuenta y documentos */
+.account-page.editorial-page { max-width: 1040px !important; padding: 38px clamp(22px, 4vw, 60px) 64px !important; }
+.editorial-page .account-signin { max-width: 460px; margin: 0 auto; padding: 42px; border: 1px solid #eeeae5; border-radius: 20px; background: #f8f7f4; }
+.editorial-page .account-signin h1 { font-size: clamp(2.3rem, 4vw, 3.4rem); }
+.editorial-page .account-hero { border-bottom-color: #eeeae5; }
+.editorial-page .account-section h2 { font-size: 1.65rem; }
+.editorial-document-page.wrap { max-width: 1020px !important; padding: 42px clamp(22px, 5vw, 70px) 64px !important; }
+.editorial-document-page .legal h1 { font-size: clamp(2.3rem, 4.2vw, 3.7rem) !important; }
+.editorial-document-page .legal .upd { margin: 14px 0 28px; }
+.editorial-document-page .legal .box { border-radius: 17px; background: #f8f7f4; }
+.reward-page.editorial-document-page h1 { font-size: clamp(2.4rem, 4.2vw, 3.7rem); }
+
+@media (max-width: 960px) {
+  body:has(.editorial-page) nav.main { display: none; }
+  body:has(.editorial-page) header.nav .wrap { grid-template-columns: 1fr auto; }
+  body:has(.editorial-page) .tools .ib:first-child { min-width: 38px; padding: 0 9px; }
+  body:has(.editorial-page) .tools .ib:first-child::after { display: none; }
+  .editorial-catalog-page .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  body:has(.editorial-page) header.nav { width: calc(100% - 24px); margin-top: 12px; border-radius: 20px 20px 0 0; }
+  body:has(.editorial-page) header.nav .wrap { min-height: 62px; padding-inline: 16px; }
+  .editorial-page { width: calc(100% - 24px); margin-bottom: 40px; border-radius: 0 0 20px 20px; }
+  .catalog-lead { display: block; min-height: 220px; padding: 26px 24px; border-radius: 16px; }
+  .catalog-lead-copy { max-width: 84%; }
+  .catalog-lead h1 { margin: 13px 0 10px; font-size: clamp(2.2rem, 8vw, 3.25rem); }
+  .catalog-lead p { max-width: 34ch; font-size: .8rem; }
+  .catalog-lead-gallery { position: absolute; right: -12px; bottom: -18px; width: 36%; height: auto; opacity: .9; }
+  .catalog-lead-photo { width: 100%; border-width: 5px; }
+  .catalog-lead-photo + .catalog-lead-photo { display: none; }
+  .editorial-catalog-page .catalog-toolbar { padding-top: 14px; }
+  .editorial-catalog-page .catalog-grid { gap: 12px; }
+  .editorial-catalog-page .catalog-grid .card { padding: 6px 6px 10px; border-radius: 15px; }
+  .editorial-catalog-page .catalog-grid .card .tile { border-radius: 10px; }
+  .editorial-catalog-page .catalog-grid .card .nm { font-size: .82rem; }
+  .editorial-catalog-page .catalog-add-wide { display: none; }
+  .editorial-catalog-page .catalog-add-compact { display: inline; }
+  .editorial-catalog-page .catalog-grid .catalog-add { min-height: 36px; font-size: .69rem; }
+  .editorial-product-page.wrap { padding: 15px 16px 34px; }
+  .editorial-product-page .pdp { grid-template-columns: 1fr; gap: 14px; }
+  .editorial-product-page .pdp .stage { aspect-ratio: 1; border-radius: 15px; }
+  .editorial-product-page .pdp .det { padding-top: 6px; }
+  .editorial-product-page .pdp .det h1 { font-size: clamp(2rem, 8vw, 2.8rem) !important; }
+  .courses-page.editorial-page { padding: 15px 16px 38px !important; }
+  .course-list-page .courses-heading { min-height: 260px; padding: 28px; border-radius: 16px; background-position: 62% center; }
+  .course-list-page .courses-heading h1 { font-size: clamp(2.4rem, 8vw, 3.8rem); }
+  .course-list-page .courses-heading p { max-width: 34ch; font-size: .85rem; }
+  .course-list-page .course-card-photo { aspect-ratio: 4 / 3; }
+  .course-item-page .course-detail h1 { font-size: clamp(2.1rem, 8vw, 3.1rem); }
+  .course-item-page .course-detail-photo { grid-column: 1; grid-row: 1; }
+  .course-item-page .course-detail-photo img { object-position: center top; }
+  .course-item-page .course-decision { grid-column: 1; grid-row: 2; }
+  .course-item-page .course-location { grid-column: 1; grid-row: 3; }
+  .editorial-shipping-page.wrap { padding: 7px 16px 38px; }
+  .shipping-page-heading { min-height: 250px; padding: 28px; border-radius: 16px; }
+  .shipping-page-heading h1 { font-size: clamp(2.5rem, 8vw, 3.7rem); }
+  .shipping-page-heading p { font-size: .85rem; }
+  .account-page.editorial-page,
+  .editorial-document-page.wrap { padding: 24px 20px 42px !important; }
+  .editorial-page .account-signin { padding: 22px; }
+}
+@media (max-width: 420px) {
+  .catalog-lead-copy { max-width: 100%; }
+  .catalog-lead-gallery { display: none; }
+  .editorial-catalog-page .catalog-grid .card .cat,
+  .editorial-catalog-page .catalog-grid .card .nm,
+  .editorial-catalog-page .catalog-grid .card .mini2,
+  .editorial-catalog-page .catalog-grid .card .pr,
+  .editorial-catalog-page .catalog-grid .card .stock-chip { margin-left: 2px; margin-right: 2px; }
+  .editorial-catalog-page .catalog-grid .catalog-add { width: calc(100% - 4px); margin-left: 2px; }
+}

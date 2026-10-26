@@ -18,6 +18,10 @@ export function ProductCard({ p, availability }: { p: Product; availability: Pro
   const stockMessage = stockLabel(selectedStock);
   const purchasable = canAddToCart(selectedStock);
   const defaultButtonLabel = p.priceKnown ? 'Agregar al carrito' : 'Agregar para cotizar';
+  const buttonLabel = stockButtonLabel(selectedStock, defaultButtonLabel);
+  const compactButtonLabel = !purchasable
+    ? selectedStock.status === 'coming_soon' ? 'Próximamente' : 'Agotado'
+    : p.priceKnown ? 'Agregar' : 'Consultar';
 
   return (
     <div className="card" style={{ position: 'relative' }}>
@@ -51,10 +55,11 @@ export function ProductCard({ p, availability }: { p: Product; availability: Pro
       <button
         type="button"
         className="catalog-add"
+        aria-label={buttonLabel}
         disabled={!purchasable}
         onClick={() => add(p.id, 1, { allowQuote: true, variantId, stockAvailable: selectedStock.available })}
       >
-        {stockButtonLabel(selectedStock, defaultButtonLabel)}
+        <span className="catalog-add-wide">{buttonLabel}</span><span className="catalog-add-compact" aria-hidden="true">{compactButtonLabel}</span>
       </button>
     </div>
   );

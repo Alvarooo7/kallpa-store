@@ -36,7 +36,7 @@ export function ProductDetail({ p, recs, availability }: { p: Product; recs: Pro
   }, [p.id, p.short, p.price]);
 
   return (
-    <div className="wrap" style={{ paddingTop: 26, paddingBottom: 40 }}>
+    <div className="wrap editorial-page editorial-product-page">
       <nav aria-label="Ruta" style={{ fontSize: '.8rem', color: 'var(--t2)', marginBottom: 18 }}>
         <Link href="/">Inicio</Link> / <Link href="/catalogo">Catálogo</Link> / <span style={{ color: 'var(--t)' }}>{p.short}</span>
       </nav>

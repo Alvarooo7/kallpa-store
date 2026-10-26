@@ -21,7 +21,7 @@ export default async function LegalPage({ params }: { params: Promise<{ doc: str
   const hoy = new Date().toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
-    <div className="wrap" style={{ maxWidth: 820, paddingTop: 30, paddingBottom: 50 }}>
+    <div className="wrap editorial-page editorial-document-page">
       <div className="legal" style={{ padding: 0 }}>
         <h1 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 600, fontSize: '1.9rem', lineHeight: 1.15, margin: 0 }}>{d.t}</h1>
         <p className="upd">Vigente desde el {hoy}</p>

@@ -2,6 +2,7 @@
 import { useId, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ProductCard } from './ProductCard';
+import { ProductImage } from './ProductImage';
 import { bySlug } from '@/lib/catalog';
 import { waLink } from '@/lib/company';
 import type { ProductAvailability } from '@/lib/types';
@@ -30,11 +31,21 @@ export function CatalogBrowser({ title, ids, availability, filters, activeLabel 
 
   return <section className="catalog-results">
     <div className="wrap">
+      <header className="catalog-lead">
+        <div className="catalog-lead-copy">
+          <span className="editorial-kicker">Kallpa / Catálogo</span>
+          <h1>{title}</h1>
+          <p>Encuentra lo que acompaña tu ritmo: tecnología, entrenamiento y accesorios para cada día.</p>
+        </div>
+        <div className="catalog-lead-gallery" aria-hidden="true">
+          {products.slice(0, 2).map(product => <div className="catalog-lead-photo" key={product.id}><ProductImage p={product} /></div>)}
+        </div>
+      </header>
       <div className="catalog-toolbar">
         <label className="catalog-search">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
           <span className="sr-only">Buscar en el catálogo</span>
-          <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar productos…" autoComplete="off" />
+          <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar…" autoComplete="off" />
         </label>
         <button type="button" className={`catalog-filter-btn${open ? ' on' : ''}${activeLabel ? ' active' : ''}`} aria-expanded={open} aria-controls={panelId} onClick={toggle}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
@@ -51,7 +62,6 @@ export function CatalogBrowser({ title, ids, availability, filters, activeLabel 
       </div>
 
       <div className="catalog-summary">
-        <h1>{title}</h1>
         <span>{query ? `${shown.length} de ${products.length}` : `${products.length} ${products.length === 1 ? 'producto' : 'productos'}`}</span>
         {activeLabel && <Link className="catalog-clear" href="/catalogo" aria-label={`Quitar filtro ${activeLabel}`}>{activeLabel} ✕</Link>}
       </div>

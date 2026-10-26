@@ -16,10 +16,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const course = courseBySlug((await params).slug);
   if (!course) notFound();
-  return <div className="wrap courses-page"><nav className="course-breadcrumb" aria-label="Ruta"><Link href="/">Inicio</Link> / <Link href="/cursos">Cursos</Link> / {course.name}</nav>
-    <div className="course-detail"><div><div className="course-detail-photo"><Image src={course.image} alt={course.imageAlt} width={1254} height={1254} priority sizes="(max-width: 444px) calc(100vw - 44px), (max-width: 850px) 400px, 444px" /></div>
+  return <div className="wrap courses-page course-item-page editorial-page"><nav className="course-breadcrumb" aria-label="Ruta"><Link href="/">Inicio</Link> / <Link href="/cursos">Cursos</Link> / {course.name}</nav>
+    <div className="course-detail">
+      <div className="course-detail-photo"><Image src={course.image} alt={course.imageAlt} width={1254} height={1254} priority sizes="(max-width: 444px) calc(100vw - 44px), (max-width: 850px) 400px, 600px" /></div>
+      <div className="course-decision"><span className="eb">{course.category} · Presencial</span><h1>{course.name}</h1><CoursePlans course={course} /></div>
       <div className="course-location"><span className="eb">Dónde entrenamos</span><h2>Jesús María, Lima</h2><p>{course.location}</p></div>
-    </div><div className="course-decision"><span className="eb">{course.category} · Presencial</span><h1>{course.name}</h1><CoursePlans course={course} /></div></div>
+    </div>
     <div className="course-overview"><h2>Sobre el curso</h2><p>{course.description}</p><p className="course-audience">{course.audience}</p></div>
     <div className="course-info-grid"><section><h2>Qué incluye</h2><ul className="ben">{course.benefits.map(benefit => <li key={benefit}>{benefit}</li>)}</ul></section>
       <section><h2>Horarios</h2><dl className="course-schedule">{course.schedules.map(schedule => <div key={schedule.days}><dt>{schedule.days}</dt><dd>{schedule.hours}</dd></div>)}</dl></section></div>

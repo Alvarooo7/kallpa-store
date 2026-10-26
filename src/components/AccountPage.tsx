@@ -38,8 +38,8 @@ export function AccountPage() {
     return () => { active = false; };
   }, [account?.email]);
 
-  if (account === undefined) return <main className="wrap account-page"><p className="account-loading">Cargando tu cuenta…</p></main>;
-  if (!account) return <main className="wrap account-page">
+  if (account === undefined) return <main className="wrap account-page editorial-page"><p className="account-loading">Cargando tu cuenta…</p></main>;
+  if (!account) return <main className="wrap account-page editorial-page">
     <div className="account-signin">
       <h1>Mi cuenta</h1>
       <p>Ingresa para ver tus pedidos y tus premios.</p>
@@ -48,7 +48,7 @@ export function AccountPage() {
   </main>;
 
   const credit = rewardCredit(reward);
-  return <main className="wrap account-page">
+  return <main className="wrap account-page editorial-page">
     <section className="account-hero">
       <AccountAvatar {...account} size={56} />
       <div>

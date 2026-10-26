@@ -77,7 +77,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
   const activeLabel = activeUse ? USE_LABELS[activeUse] : active === 'todos' ? undefined : category.label;
 
   return (
-    <>
+    <div className="editorial-page editorial-catalog-page">
       <CatalogBrowser title={title} ids={products.map(product => product.id)} availability={availability} filters={filters} activeLabel={activeLabel} />
       <section className="catalog-more">
         <div className="wrap">
@@ -91,6 +91,6 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

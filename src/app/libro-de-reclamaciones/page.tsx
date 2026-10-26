@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function LibroPage() {
   const hoy = new Date().toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
   return (
-    <div className="wrap" style={{ maxWidth: 820, paddingTop: 30, paddingBottom: 50 }}>
+    <div className="wrap editorial-page editorial-document-page">
       <div className="legal" style={{ padding: 0 }}>
         <h1 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 600, fontSize: '1.9rem', lineHeight: 1.15, margin: 0 }}>
           Libro de Reclamaciones

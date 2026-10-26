@@ -12,15 +12,12 @@ export const metadata: Metadata = {
 
 export default function EnviosPage() {
   return (
-    <div className="wrap" style={{ paddingTop: 30 }}>
-      <span className="eb">Logística</span>
-      <h1 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem,4vw,2.6rem)', lineHeight: 1.08, margin: '0 0 14px' }}>
-        Dos velocidades. Tú eliges.
-      </h1>
-      <p style={{ color: 'var(--t2)', maxWidth: '58ch' }}>
-        Si puedes esperar la ventana del día, no pagas nada. Si lo quieres en horas, el express es gratis desde S/ 200;
-        antes de esa meta se aplica el rango de tu distrito.
-      </p>
+    <div className="wrap editorial-page editorial-shipping-page">
+      <header className="shipping-page-heading">
+        <span className="editorial-kicker">Kallpa / Envíos</span>
+        <h1>Dos velocidades. Tú eliges.</h1>
+        <p>Si puedes esperar la ventana del día, no pagas nada. Si lo quieres en horas, el express es gratis desde S/ 200; antes de esa meta se aplica el rango de tu distrito.</p>
+      </header>
       <Envios heading={false} />
       <section className="shipping-ranges" aria-labelledby="shipping-ranges-title">
         <span className="eb">Express desde Pueblo Libre</span>
