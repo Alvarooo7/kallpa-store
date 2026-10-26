@@ -61,6 +61,9 @@ export function ProductDetail({ p, recs, availability }: { p: Product; recs: Pro
               <p style={{ fontSize: '.76rem', color: 'var(--t2)', margin: '11px 0 0' }}>
                 {p.images.length} fotos del producto. Selecciona una miniatura para ampliarla.
               </p>
+              {p.id === 'gorros-natacion' && selected === 1 && <p style={{ fontSize: '.76rem', color: 'var(--t2)', margin: '7px 0 0' }}>
+                Imagen referencial del color negro; confirma el acabado al pedirlo.
+              </p>}
             </> : <p style={{ fontSize: '.76rem', color: 'var(--t2)', margin: '11px 0 0' }}>Foto real pendiente de cargar.</p>}
             {p.video && <video className="product-video" controls preload="none" poster={p.images[0].src} aria-label={`Video de ${p.short}`}><source src={p.video} type="video/mp4" /><track kind="captions" />Tu navegador no admite este video.</video>}
           </div>

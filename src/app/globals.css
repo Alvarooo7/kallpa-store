@@ -298,17 +298,38 @@ button{font:inherit;cursor:pointer;color:inherit}
 img{display:block;max-width:100%}
 .brand-intro{display:none}
 html[data-intro="run"] body{overflow:hidden}
-html[data-intro="run"] .brand-intro{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;overflow:hidden;background:#fff;color:#101112;animation:brand-intro-exit .55s cubic-bezier(.76,0,.24,1) 2.3s forwards}
-.brand-intro-stage{position:relative;display:grid;place-items:center;width:100%;height:100%;background:#fff}
-.brand-intro-word{display:inline-flex;align-items:baseline;font-family:"Outfit",system-ui,sans-serif;font-size:clamp(2.4rem,9vw,5.4rem);font-weight:700;line-height:1;letter-spacing:-.07em;white-space:nowrap;padding-right:.16em}
-.brand-intro-letter{display:inline-block;opacity:0;transform:translateY(.55em) rotate(-9deg) scale(.72);transform-origin:center bottom;animation:brand-letter-arrive .65s cubic-bezier(.18,1.3,.45,1) forwards}
-.brand-intro-dot{display:inline-block;color:var(--acc);opacity:0;transform:translateY(-1.15em) scale(.5);transform-origin:center bottom;animation:brand-dot-land .9s ease-out 1.15s forwards}
-.brand-intro-skip{position:absolute;right:max(24px,4vw);bottom:max(24px,4vw);z-index:2;border:1px solid var(--line);border-radius:999px;padding:9px 15px;background:transparent;color:var(--t2);font-size:.78rem}
-.brand-intro-skip:hover,.brand-intro-skip:focus-visible{background:var(--t);color:#fff}
-@keyframes brand-letter-arrive{65%{opacity:1;transform:translateY(-.07em) rotate(2deg) scale(1.05)}100%{opacity:1;transform:translateY(0) rotate(0) scale(1)}}
-@keyframes brand-dot-land{0%{opacity:0;transform:translateY(-1.15em) scale(.5)}42%{opacity:1;transform:translateY(.06em) scale(1.2,.78)}62%{opacity:1;transform:translateY(-.23em) scale(.9,1.1)}82%{opacity:1;transform:translateY(.02em) scale(1.04,.94)}100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes brand-intro-exit{to{transform:translateY(-100%)}}
-@media(prefers-reduced-motion:reduce){html[data-intro="run"] .brand-intro{animation:none}.brand-intro-letter,.brand-intro-dot{animation:none;opacity:1;transform:none}}
+html[data-intro="run"] .brand-intro{position:fixed;inset:0;z-index:1000;display:block;pointer-events:auto}
+html[data-intro="run"] .brand-intro-thrown{pointer-events:none}
+html[data-intro="run"] header.nav .logo i{opacity:0}
+html[data-intro="run"]:has(.brand-intro-landed) header.nav .logo i{opacity:1;animation:brand-logo-impact .42s cubic-bezier(.2,1.5,.4,1) both}
+.brand-intro-scene{position:absolute;inset:0;overflow:hidden;background:#fff;opacity:1;transition:opacity .28s ease .16s}
+.brand-intro-thrown .brand-intro-scene{opacity:0}
+.brand-intro-copy{position:absolute;z-index:3;left:7vw;top:39%;display:flex;flex-direction:column;gap:.12em;color:#171715;font-family:"Outfit",system-ui,sans-serif;font-size:clamp(3.125rem,6.25vw,6rem);font-weight:700;letter-spacing:-.065em;line-height:.94;white-space:nowrap;pointer-events:none}
+.brand-intro-line{display:block;opacity:0}
+.brand-intro-started .brand-intro-line-first{animation:brand-line-from-left .55s cubic-bezier(.16,.86,.28,1) .04s both}
+.brand-intro-started .brand-intro-line-second{animation:brand-line-from-right .55s cubic-bezier(.16,.86,.28,1) .16s both}
+.brand-intro-athlete{position:absolute;z-index:2;aspect-ratio:1415/1111;opacity:0;transform-origin:72% 88%;pointer-events:none;mask-image:linear-gradient(to bottom,#000 0%,#000 78%,transparent 100%)}
+.brand-intro-started .brand-intro-athlete{animation:brand-athlete-enter .7s cubic-bezier(.2,.9,.2,1) both,brand-athlete-windup .4s ease-in-out .7s both}
+.brand-intro-athlete img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom right}
+.brand-intro-ready{opacity:1;transition:opacity .12s}
+.brand-intro-release{opacity:0;transition:opacity .12s}
+.brand-intro-thrown .brand-intro-ready{opacity:0}
+.brand-intro-thrown .brand-intro-release{opacity:1}
+.brand-intro-thrown .brand-intro-athlete{opacity:1;animation:brand-athlete-follow .45s ease-out both}
+.brand-intro-ball{position:fixed;z-index:4;top:0;left:0;display:block;border-radius:50%;background:radial-gradient(circle at 33% 29%,#ffae53,#f77822 50%,#d34d13 100%);box-shadow:inset -5px -7px 10px #ad3a1740,0 10px 18px #b64c2630;opacity:0;pointer-events:none}
+.brand-intro-landed .brand-intro-ball{visibility:hidden}
+.brand-intro-skip{position:absolute;right:max(24px,4vw);bottom:max(24px,4vw);z-index:6;border:1px solid #d6d0ca;border-radius:999px;padding:10px 18px;background:#fff;color:#625c57;font-size:.78rem;pointer-events:auto}
+.brand-intro-skip:hover,.brand-intro-skip:focus-visible{background:#1b1b19;color:#fff}
+html[data-intro="run"] .wa{opacity:0;pointer-events:none}
+@keyframes brand-athlete-enter{from{opacity:0;transform:translateX(12%) scale(.96)}to{opacity:1;transform:none}}
+@keyframes brand-athlete-windup{from{transform:translateX(0) rotate(0)}to{transform:translateX(1.4%) rotate(2deg)}}
+@keyframes brand-athlete-follow{from{transform:translateX(1.4%) rotate(2deg)}to{transform:translateX(-2%) rotate(-2deg)}}
+@keyframes brand-line-from-left{from{opacity:0;transform:translateX(-110vw)}to{opacity:1;transform:none}}
+@keyframes brand-line-from-right{from{opacity:0;transform:translateX(110vw)}to{opacity:1;transform:none}}
+@keyframes brand-logo-impact{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.8)}100%{opacity:1;transform:scale(1)}}
+@media(max-width:760px){.brand-intro-copy{left:6vw;top:17%;font-size:clamp(2.5625rem,10.625vw,3.875rem)}.brand-intro-skip{right:22px;bottom:28px;padding:8px 13px;font-size:.7rem}}
+@media(max-width:360px){.brand-intro-copy{font-size:10.625vw}}
+@media(prefers-reduced-motion:reduce){.brand-intro-athlete,.brand-intro-line{animation:none!important;opacity:0}.brand-intro-ball{display:none}}
 .wrap{max-width:1200px;margin:0 auto;padding:0 22px}
 h1,h2,h3,.dsp{font-family:"Outfit",system-ui,sans-serif;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.08}
 h2{font-size:clamp(1.65rem,3vw,2.3rem)}
@@ -886,8 +907,9 @@ ul.ben li{margin-bottom:.34em}
 .skip{position:absolute;left:-9999px;top:0;z-index:100;background:var(--k);color:#fff;padding:12px 18px;border-radius:0 0 8px 0}
 .skip:focus{left:0}
 
-/* Fotografías completas: conservar proporciones y evitar recortes del equipo. */
+/* Fotografías de producto a sangre en las tarjetas; el detalle conserva la foto completa. */
 .product-photo{display:block;width:100%;height:100%;object-fit:contain;min-width:0;min-height:0;position:relative;z-index:1}
+.card .tile .product-photo{object-fit:cover}
 .card .tile,.pdp .stage,.anchor .fig,.hstage,.hmini,.promofig>div,.whyfig,.li .t,.sres .t,.recs .r .t{overflow:hidden}
 .card .tile:after,.anchor .fig:after,.hstage:after{display:none}
 .pdp .stage{overflow:hidden;background:#f4f4f2}

@@ -1,0 +1,381 @@
+/* Prueba editorial de portada. Todos los cambios visuales se limitan a la home. */
+body:has(.nike-home) {
+  --w: #fff;
+  --w2: #f5f5f5;
+  --w3: #e5e5e5;
+  --k: #111;
+  --k2: #111;
+  --t: #111;
+  --t2: #707072;
+  --line: #e5e5e5;
+  --acc: #111;
+  background: #fff;
+  color: #111;
+  font-family: Arial, "Helvetica Neue", sans-serif;
+}
+
+body:has(.nike-home) .wrap { max-width: 1440px; padding-inline: clamp(20px, 3.3vw, 48px); }
+body:has(.nike-home) .top { background: #f5f5f5; color: #707072; border-bottom: 1px solid #e5e5e5; }
+body:has(.nike-home) .top .wrap { min-height: 34px; padding-block: 4px; }
+body:has(.nike-home) .top b,
+body:has(.nike-home) .top a:hover { color: #111; }
+body:has(.nike-home) .top .sep { background: #d0d0d0; }
+body:has(.nike-home) .top .top-gift { color: #111; text-decoration: underline; text-underline-offset: 3px; }
+body:has(.nike-home) #cutTop { color: #111; }
+body:has(.nike-home) header.nav { position: relative; top: auto; background: #fff; border-bottom: 1px solid #e5e5e5; backdrop-filter: none; }
+body:has(.nike-home) header.nav .wrap { min-height: 78px; }
+body:has(.nike-home) header.nav .logo { font-family: Arial, "Helvetica Neue", sans-serif; font-weight: 700; font-size: 1.75rem; letter-spacing: -.065em; }
+body:has(.nike-home) .logo i { color: #111; }
+body:has(.nike-home) nav.main a { color: #111; font-size: .95rem; }
+body:has(.nike-home) nav.main a:hover { opacity: .6; }
+body:has(.nike-home) .tools { gap: 20px; }
+body:has(.nike-home) .bdg { background: #111; }
+body:has(.nike-home) .spanel,
+body:has(.nike-home) .mnav { background: #fff; }
+
+.nike-home {
+  --color-obsidian: #111;
+  --color-paper-white: #fff;
+  --color-concrete-gray: #e5e5e5;
+  --color-soft-mist: #f5f5f5;
+  --color-steel: #707072;
+  --text-display: 76px;
+  --radius-buttons: 30px;
+  color: #111;
+  background: #fff;
+  font-family: Arial, "Helvetica Neue", sans-serif;
+}
+.nike-home h1, .nike-home h2, .nike-home h3,
+.nike-home .cat b, .nike-home .hero-floating-card b,
+.nike-home .diag .pain { font-family: Arial, "Helvetica Neue", sans-serif; font-weight: 500; letter-spacing: -.025em; }
+.nike-home h2 { font-size: clamp(1.55rem, 2.5vw, 2.15rem); line-height: 1.18; }
+.nike-home section { padding-block: 48px; }
+.nike-home .eb { color: #707072; font-size: .72rem; font-weight: 500; letter-spacing: .04em; text-transform: none; }
+.nike-home .eb:before { display: none; }
+.nike-home .btn { border-radius: 30px; padding: 12px 24px; background: #111; color: #fff; font-family: inherit; font-size: 1rem; font-weight: 500; letter-spacing: 0; text-transform: none; box-shadow: none; animation: none; }
+.nike-home .btn:hover, .nike-home .btn.acc:hover { background: #333; }
+.nike-home .btn.acc { background: #111; }
+.nike-home .btn.w { background: #fff; color: #111; }
+.nike-home .btn.w:hover { background: #e5e5e5; color: #111; }
+.nike-home .btn.out { background: transparent; color: #111; border: 1px solid #111; }
+.nike-home .btn.out:hover { background: #111; color: #fff; }
+.nike-home .tl, .nike-home .vall { font-family: inherit; font-size: .9rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.nike-home .tl:hover, .nike-home .vall:hover { color: #707072; border-color: #707072; }
+
+/* Luchito ocupa la escena principal; los productos siguen siendo interactivos. */
+.nike-home .hero-model { min-height: min(760px, calc(100svh - 112px)); background: #111; color: #fff; }
+.nike-home .hero-model .wrap { max-width: 1440px; min-height: min(760px, calc(100svh - 112px)); padding-block: 64px 44px; }
+.nike-home .hero-model .hero-copy { width: 45%; max-width: 580px; }
+.nike-home .hero-model .eb { color: #e5e5e5; }
+.nike-home .hero-model h1 { max-width: 12ch; color: #fff; font-family: Impact, "Arial Narrow", Arial, sans-serif; font-size: clamp(3.5rem, 5.5vw, 4.75rem); font-weight: 500; line-height: 1; letter-spacing: -.025em; text-transform: uppercase; }
+.nike-home .hero-model .hsub { color: #e5e5e5; font-size: 1rem; line-height: 1.55; }
+.nike-home .hero-model .hsub b { color: #fff; font-weight: 500; }
+.nike-home .hero-model .speed { border-top: 1px solid #707072; border-bottom: 1px solid #707072; border-radius: 0; background: transparent; color: #fff; }
+.nike-home .hero-model .speed .tx span { color: #c9c9c9; }
+.nike-home .hero-model .tagp { background: #fff; color: #111; border-color: #fff; }
+.nike-home .hero-model .ctas { margin-bottom: 24px; }
+.nike-home .hero-model .ctas .btn { background: #fff; color: #111; }
+.nike-home .hero-model .ctas .btn:hover { background: #e5e5e5; }
+.nike-home .hero-model .ctas .tl { color: #fff; border-color: #fff; }
+.nike-home .hero-model .pills { gap: 8px; }
+.nike-home .hero-model .pl { background: transparent; color: #e5e5e5; border: 1px solid #707072; border-radius: 30px; }
+.nike-home .hero-model .pl i { background: #fff; }
+.nike-home .hero-visual { width: 56%; right: 1%; }
+.nike-home .hero-orange-shape { display: none; }
+.nike-home .hero-model-photo { left: 11%; width: 78%; height: 97%; }
+.nike-home .hero-floating-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 0; box-shadow: none; }
+.nike-home .hero-floating-card:hover, .nike-home .hero-floating-card:focus-within { box-shadow: none; border-color: #707072; }
+.nike-home .hero-floating-card.selected { border-color: #111; }
+.nike-home .hero-floating-photo { border-radius: 0; }
+.nike-home .hero-product-add { background: #111; }
+.nike-home .hero-build-hint { background: #fff; border-radius: 30px; color: #111; }
+.nike-home .hero-build-hint b { color: #111; }
+
+/* Tres escenas de Luchito, luego una galería plana de productos. */
+.nike-home #usos { padding-block: 56px 12px; }
+.nike-home #usos .band { padding: 0; background: #fff; color: #111; border-radius: 0; overflow: visible; }
+.nike-home #usos .band h2 { color: #111; }
+.nike-home #usos .cats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nike-home #usos .cat { position: relative; overflow: hidden; background: #111; }
+.nike-home #usos .cat .tile { aspect-ratio: 4/4.6; border-radius: 0; transform: none; }
+.nike-home #usos .cat .use-photo img { object-position: center 30%; }
+.nike-home #usos .cat:hover .use-photo img { transform: scale(1.025); }
+.nike-home #usos .cat .row { position: absolute; inset: auto 0 0; align-items: flex-end; margin: 0; padding: 24px; background: rgba(17,17,17,.78); color: #fff; }
+.nike-home #usos .cat b { color: #fff; font-size: 1.5rem; }
+.nike-home #usos .cat span { color: #e5e5e5; font-size: .9rem; }
+.nike-home #usos .circ { border-color: #fff; color: #fff; }
+.nike-home #usos .cat:hover .circ { background: #fff; color: #111; }
+.nike-home .nike-featured { padding-block: 52px 72px; border-bottom: 1px solid #e5e5e5; }
+.nike-home .nike-product-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+.nike-home .nike-product-tile { min-width: 0; display: block; }
+.nike-home .nike-product-photo { height: clamp(260px, 31vw, 440px); display: grid; place-items: center; overflow: hidden; background: #f5f5f5; }
+.nike-home .nike-product-photo .product-photo { width: 100%; height: 100%; object-fit: contain; }
+.nike-home .nike-product-meta { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 14px 2px; }
+.nike-home .nike-product-meta b { font-weight: 500; font-size: 1rem; }
+.nike-home .nike-product-meta span { color: #707072; font-size: .875rem; text-align: right; }
+.nike-home .nike-product-tile:hover .nike-product-meta b { text-decoration: underline; text-underline-offset: 3px; }
+
+.nike-home #ancla .anchor { gap: clamp(32px, 5vw, 80px); }
+.nike-home #ancla .fig { border-radius: 0; }
+.nike-home #ancla .fig:after { display: none; }
+.nike-home #ancla .tagline { background: #111; border-radius: 30px; backdrop-filter: none; }
+.nike-home #combo .band { border-radius: 0; background: #111; }
+.nike-home #combo .promofig { gap: 8px; }
+.nike-home #combo .promofig div { border-radius: 0; }
+.nike-home #combo .btn.out { color: #fff; border-color: #fff; }
+.nike-home #combo .btn.out:hover { background: #fff; color: #111; }
+.nike-home .diag a:hover { background: #f5f5f5; }
+.nike-home .diag a:hover .fix span { color: #111; }
+.nike-home .diag a:hover .arw { background: #111; border-color: #111; }
+.nike-home .ships { gap: 8px; }
+.nike-home .sh { border-radius: 0; box-shadow: none; }
+
+body:has(.nike-home) footer { background: #fff; color: #707072; border-top: 1px solid #e5e5e5; }
+body:has(.nike-home) footer .cols { border-bottom-color: #e5e5e5; }
+body:has(.nike-home) footer h4,
+body:has(.nike-home) footer .logo { color: #111; }
+body:has(.nike-home) footer a:hover { color: #111; text-decoration: underline; }
+body:has(.nike-home) footer .aviso { background: #f5f5f5 !important; border-color: #e5e5e5 !important; }
+body:has(.nike-home) footer .aviso p,
+body:has(.nike-home) footer .aviso b { color: #111 !important; }
+
+@media (max-width: 1000px) and (min-width: 761px) {
+  .nike-home .hero-model .hero-copy { width: 51%; }
+  .nike-home .hero-model h1 { font-size: clamp(3rem, 5.2vw, 4rem); }
+  .nike-home .hero-visual { width: 51%; right: 0; }
+  .nike-home .hero-model-photo { left: 4%; width: 92%; }
+}
+@media (max-width: 760px) {
+  body:has(.nike-home) header.nav .wrap { min-height: 62px; }
+  .nike-home .hero-model { min-height: 0; background: #111; }
+  .nike-home .hero-model .wrap { min-height: 0; padding-block: 0 18px; padding-inline: 0; }
+  .nike-home .hero-model .hero-copy { width: 100%; max-width: none; }
+  .nike-home .hero-banner { min-height: 440px; padding: 28px 22px; border-radius: 0; background: #111; }
+  .nike-home .hero-banner:before { display: none; }
+  .nike-home .hero-banner > .eb,
+  .nike-home .hero-banner > h1,
+  .nike-home .hero-banner > .hsub,
+  .nike-home .hero-banner > .ctas { width: 58%; }
+  .nike-home .hero-banner > .eb { color: #e5e5e5; font-size: .7rem; white-space: normal; }
+  .nike-home .hero-banner > h1 { font-size: clamp(2.15rem, 8.5vw, 3.5rem); line-height: 1; }
+  .nike-home .hero-banner > .hsub { color: #e5e5e5; font-size: .86rem; }
+  .nike-home .hero-mobile-photo { top: 0; right: -40px; width: 60%; height: 100%; }
+  .nike-home .hero-mobile-photo img { object-fit: cover; object-position: center top; mask-image: none; -webkit-mask-image: none; }
+  .nike-home .hero-banner .ctas .btn { font-size: .85rem; padding: 10px 18px; }
+  .nike-home .hero-mobile-delivery { color: #e5e5e5; padding-inline: 20px; }
+  .nike-home .hero-mobile-delivery b { color: #fff; }
+  .nike-home .hero-mobile-delivery a { color: #fff; text-decoration: underline; }
+  .nike-home .hero-model .pills { justify-content: flex-start; gap: 6px 12px; padding-inline: 20px; }
+  .nike-home .hero-model .pl { color: #e5e5e5; }
+  .nike-home #usos { padding-top: 36px; }
+  .nike-home #usos .cats { grid-template-columns: 1fr; }
+  .nike-home #usos .cat .tile { aspect-ratio: 4/3; }
+  .nike-home #usos .cat .row { padding: 18px; }
+  .nike-home .nike-featured { padding-block: 38px 52px; }
+  .nike-home .nike-product-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; }
+  .nike-home .nike-product-tile { flex: 0 0 78%; scroll-snap-align: start; }
+  .nike-home .nike-product-photo { height: min(78vw, 390px); }
+  .nike-home #ancla .fig { border-radius: 0; }
+  .nike-home #combo .band { padding: 28px 22px; }
+}
+@media (max-width: 420px) {
+  .nike-home .hero-banner { min-height: 400px; }
+  .nike-home .hero-banner > .eb,
+  .nike-home .hero-banner > h1,
+  .nike-home .hero-banner > .hsub,
+  .nike-home .hero-banner > .ctas { width: 56%; }
+  .nike-home .hero-banner > h1 { font-size: clamp(1.95rem, 8.5vw, 2.5rem); }
+  .nike-home .hero-mobile-photo { right: -52px; width: 64%; }
+}
+
+/* Portada editorial inspirada en las referencias de hero minimalista. */
+body:has(.nike-home) {
+  background: #fff;
+  font-family: "DM Sans", Arial, sans-serif;
+}
+body:has(.nike-home) .top { display: none; }
+body:has(.nike-home) header.nav {
+  width: min(100% - 48px, 1440px);
+  margin: 24px auto 0;
+  border: 1px solid #eeeae5;
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  background: #fff;
+  box-shadow: 0 12px 45px #32200e0b;
+}
+body:has(.nike-home) header.nav .wrap { padding-inline: clamp(22px, 3vw, 44px); min-height: 80px; }
+body:has(.nike-home) header.nav .logo { font-family: "Outfit", sans-serif; letter-spacing: -.055em; }
+body:has(.nike-home) header.nav .logo i { color: #d87547; }
+body:has(.nike-home) nav.main { gap: clamp(16px, 2.7vw, 38px); }
+body:has(.nike-home) nav.main a { font-family: "DM Sans", sans-serif; font-size: .83rem; font-weight: 600; }
+body:has(.nike-home) .tools { gap: clamp(10px, 1.6vw, 22px); }
+body:has(.nike-home) .tools .ib:first-child {
+  display: inline-flex;
+  gap: 10px;
+  min-width: 142px;
+  min-height: 38px;
+  padding: 0 15px;
+  border-radius: 999px;
+  background: #f5f3f0;
+}
+body:has(.nike-home) .tools .ib:first-child::after { content: "Buscar"; color: #88837e; font: 500 .78rem "DM Sans", sans-serif; }
+
+.nike-home .editorial-hero {
+  width: min(100% - 48px, 1440px);
+  margin: 0 auto 34px;
+  padding: 0 14px 14px;
+  border: 1px solid #eeeae5;
+  border-top: 0;
+  border-radius: 0 0 28px 28px;
+  background: #fff;
+  box-shadow: 0 24px 50px #32200e0b;
+}
+.nike-home .editorial-hero-stage {
+  position: relative;
+  height: clamp(440px, calc(100svh - 126px), 740px);
+  overflow: hidden;
+  border-radius: 24px;
+  background: #84745f;
+  color: #fff;
+  isolation: isolate;
+}
+.nike-home .editorial-hero-picture { position: absolute; inset: 0; display: block; }
+.nike-home .editorial-hero-image { object-fit: cover; object-position: center 24%; }
+.nike-home .editorial-hero-shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(20, 23, 18, .68) 0%, rgba(24, 24, 19, .38) 38%, rgba(20, 20, 16, .03) 72%), linear-gradient(0deg, #17181465, transparent 40%);
+  pointer-events: none;
+}
+.nike-home .editorial-hero-copy {
+  position: absolute;
+  z-index: 2;
+  top: 43%;
+  left: clamp(28px, 5vw, 78px);
+  width: min(44%, 520px);
+  transform: translateY(-50%);
+}
+.nike-home .editorial-hero-eyebrow { display: block; margin-bottom: 18px; font-size: .74rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.nike-home .editorial-hero-copy h1 {
+  max-width: 11ch;
+  margin: 0 0 18px;
+  color: #fff;
+  font: 500 clamp(3.6rem, 6.2vw, 6.4rem)/.98 "Outfit", sans-serif;
+  letter-spacing: -.065em;
+  text-wrap: balance;
+}
+.nike-home .editorial-hero-copy p { max-width: 32ch; margin: 0 0 26px; color: #fff; font-size: clamp(.96rem, 1.4vw, 1.18rem); line-height: 1.45; }
+.nike-home .editorial-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 50px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: #fff;
+  color: #1b1b19;
+  font: 700 .88rem "DM Sans", sans-serif;
+  transition: transform .2s, background .2s;
+}
+.nike-home .editorial-hero-cta:hover { background: #eee9e3; transform: translateY(-2px); }
+.nike-home .editorial-product-card {
+  position: absolute;
+  z-index: 3;
+  right: clamp(26px, 3.5vw, 52px);
+  bottom: 22px;
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-rows: repeat(3, auto);
+  align-content: center;
+  column-gap: 13px;
+  width: min(400px, 39%);
+  min-height: 112px;
+  padding: 8px;
+  border: 1px solid #eee;
+  border-radius: 18px;
+  background: #fff;
+  color: #242421;
+  box-shadow: 0 18px 46px #201c1840;
+  transition: transform .2s, box-shadow .2s, opacity .55s ease;
+}
+.nike-home .editorial-product-card:hover { transform: translateY(-4px); box-shadow: 0 22px 52px #201c1850; }
+.nike-home .editorial-product-photo { grid-row: 1 / 4; display: grid; place-items: center; width: 104px; height: 94px; overflow: hidden; border-radius: 12px; background: #f4f2ef; }
+.nike-home .editorial-product-photo .product-photo { max-width: 100%; max-height: 100%; width: auto; height: 100%; object-fit: contain; }
+.nike-home .editorial-product-category { margin: 0; color: #8a817b; font-size: .59rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+.nike-home .editorial-product-card strong { margin: 0; font: 600 1rem "Outfit", sans-serif; }
+.nike-home .editorial-product-claim { display: none; }
+.nike-home .editorial-product-price { margin: 0; font-size: .95rem; font-weight: 700; }
+.nike-home .editorial-product-price .now { color: #242421; }
+.nike-home .editorial-hero-dots { position: absolute; z-index: 4; bottom: 22px; left: 50%; display: flex; gap: 9px; transform: translateX(-50%); }
+.nike-home .editorial-hero-dots button { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%; background: #ffffff86; cursor: pointer; transition: width .2s, background .2s; }
+.nike-home .editorial-hero-dots button.active { width: 25px; border-radius: 99px; background: #fff; }
+.nike-home .editorial-hero-dots button:focus-visible,
+.nike-home .editorial-hero-cta:focus-visible,
+.nike-home .editorial-product-card:focus-visible { outline: 3px solid #ffba80; outline-offset: 3px; }
+
+.nike-home #usos .cat .tile,
+.nike-home #ancla .fig,
+.nike-home .nike-product-photo,
+.nike-home #combo .band,
+.nike-home #combo .promofig div,
+.nike-home .sh { border-radius: 22px; overflow: hidden; }
+.nike-home #usos .cat { border-radius: 22px; }
+.nike-home #usos .cat .row { border-radius: 0 0 22px 22px; }
+.nike-home .nike-product-grid,
+.nike-home #usos .cats { gap: 16px; }
+.nike-home .nike-featured { padding-top: 44px; }
+.nike-home .nike-product-photo { background: #f6f4f1; }
+body:has(.nike-home) .wa .tip { display: none; }
+
+@media (max-width: 1100px), (max-height: 650px) {
+  .nike-home .editorial-product-card { display: none; }
+}
+
+@media (max-width: 960px) {
+  body:has(.nike-home) nav.main { display: none; }
+  body:has(.nike-home) header.nav .wrap { grid-template-columns: 1fr auto; }
+  body:has(.nike-home) .tools .ib:first-child { min-width: 38px; padding: 0 9px; }
+  body:has(.nike-home) .tools .ib:first-child::after { display: none; }
+}
+@media (max-width: 760px) {
+  body:has(.nike-home) header.nav { width: calc(100% - 24px); margin-top: 12px; border-radius: 20px 20px 0 0; }
+  body:has(.nike-home) header.nav .wrap { min-height: 62px; padding-inline: 16px; }
+  .nike-home .editorial-hero { width: calc(100% - 24px); padding: 0 7px 7px; border-radius: 0 0 20px 20px; }
+  .nike-home .editorial-hero-stage { height: clamp(390px, 54svh, 420px); border-radius: 16px; }
+  .nike-home .editorial-hero-image { object-position: center top; }
+  .nike-home .editorial-hero-shade { background: linear-gradient(180deg, #10130f9e 0%, #10130f42 46%, #10130fb8 100%); }
+  .nike-home .editorial-hero-copy { top: 28px; left: 24px; width: min(78%, 350px); transform: none; }
+  .nike-home .editorial-hero-eyebrow { margin-bottom: 12px; font-size: .66rem; }
+  .nike-home .editorial-hero-copy h1 { margin-bottom: 12px; font-size: clamp(2.4rem, 9.6vw, 4.1rem); }
+  .nike-home .editorial-hero-copy p { max-width: 29ch; margin-bottom: 18px; font-size: .86rem; }
+  .nike-home .editorial-hero-stage--crossfit .editorial-hero-copy p,
+  .nike-home .editorial-hero-stage--glasses .editorial-hero-copy p { display: none; }
+  .nike-home .editorial-hero-cta { min-height: 44px; padding-inline: 18px; font-size: .78rem; }
+  .nike-home .editorial-hero-stage--crossfit .editorial-hero-cta { min-height: 36px; gap: 8px; padding-inline: 10px; font-size: .72rem; }
+  .nike-home .editorial-product-card { right: 8px; bottom: 8px; display: grid; grid-template-columns: 50px minmax(0, 1fr); grid-template-rows: repeat(2, auto); width: min(174px, 72%); min-height: 58px; padding: 5px; column-gap: 7px; border-radius: 12px; }
+  .nike-home .editorial-product-photo { grid-row: 1 / 3; width: 50px; height: 48px; border-radius: 8px; }
+  .nike-home .editorial-product-category { display: none; }
+  .nike-home .editorial-product-card strong { font-size: .7rem; }
+  .nike-home .editorial-product-price { font-size: .72rem; }
+  .nike-home .editorial-hero-dots { bottom: 20px; left: 18px; transform: none; }
+  .nike-home #usos .cats { gap: 12px; }
+}
+@media (max-width: 420px) {
+  .nike-home .editorial-hero-copy { left: 20px; width: calc(100% - 40px); }
+  .nike-home .editorial-hero-copy h1 { font-size: clamp(2.35rem, 10.1vw, 3.5rem); }
+  .nike-home .editorial-hero-copy p { max-width: 25ch; }
+}
+@media (max-width: 360px) {
+  .nike-home .editorial-hero-copy { top: 18px; }
+  .nike-home .editorial-hero-eyebrow { margin-bottom: 8px; }
+  .nike-home .editorial-hero-copy h1 { margin-bottom: 8px; font-size: 2.15rem; }
+  .nike-home .editorial-hero-copy p { margin-bottom: 12px; font-size: .82rem; }
+  .nike-home .editorial-hero-cta { min-height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nike-home .editorial-hero-cta,
+  .nike-home .editorial-product-card,
+  .nike-home .editorial-hero-dots button { transition: none; }
+}

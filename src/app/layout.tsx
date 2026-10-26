@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import './nike-home.css';
 import { Providers } from '@/components/Providers';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -35,12 +36,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           try {
             var params = new URLSearchParams(location.search);
             var forced = params.get('intro');
-            var fromAd = params.has('gclid') || params.has('fbclid') || params.has('ttclid') ||
-              params.has('msclkid') || Array.from(params.keys()).some(function(key) { return key.indexOf('utm_') === 0; });
             var reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-            var run = location.pathname === '/' && !reducedMotion && (forced === '1' ||
-              (forced !== '0' && !location.hash && !fromAd &&
-              (${process.env.NODE_ENV !== 'production'} || localStorage.getItem('kallpa_intro_seen_v1') !== '1')));
+            var run = location.pathname === '/' && !reducedMotion && forced !== '0';
             document.documentElement.dataset.intro = run ? 'run' : 'skip';
           } catch (error) {
             document.documentElement.dataset.intro = 'skip';

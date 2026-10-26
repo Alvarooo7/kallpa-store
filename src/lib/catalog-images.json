@@ -239,6 +239,22 @@
       "alt": "Información del fabricante de creatina Universe Nutrition"
     }
   ],
+  "gorros-natacion": [
+    {
+      "src": "/products/gorros-natacion/rosado.webp",
+      "thumbSrc": "/products/gorros-natacion/rosado-thumb.webp",
+      "width": 1000,
+      "height": 1000,
+      "alt": "Gorro de natación rosado con textura en relieve"
+    },
+    {
+      "src": "/products/gorros-natacion/negro.webp",
+      "thumbSrc": "/products/gorros-natacion/negro-thumb.webp",
+      "width": 1000,
+      "height": 1000,
+      "alt": "Vista referencial del gorro de natación en color negro"
+    }
+  ],
   "lentes-torneo": [
     {
       "src": "/products/generated-professional/lentes-torneo/hero-web.webp",

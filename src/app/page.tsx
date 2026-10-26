@@ -1,4 +1,4 @@
-import { Hero, Usos, Anchor, Combo, Diagnostico, Envios, Faq, FAQ_ITEMS } from '@/components/home/Sections';
+import { Hero, Usos, Destacados, Anchor, Combo, Diagnostico, Envios, Faq, FAQ_ITEMS } from '@/components/home/Sections';
 import { JsonLd } from '@/lib/seo';
 import { PRODUCTS } from '@/lib/catalog';
 import { SITE_URL } from '@/lib/company';
@@ -24,18 +24,19 @@ const listJsonLd = {
 
 export default function Home() {
   return (
-    <>
+    <div className="nike-home">
       <BrandIntro />
       <JsonLd data={listJsonLd} />
       <JsonLd data={faqJsonLd} />
       <Hero />
       <Usos />
+      <Destacados />
       <Anchor />
       <Combo />
       <Diagnostico />
       <HomeCourses />
       <Envios />
       <Faq />
-    </>
+    </div>
   );
 }

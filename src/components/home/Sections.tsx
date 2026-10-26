@@ -4,51 +4,11 @@ import { ProductImage } from '../ProductImage';
 import { ProductPrice } from '../ProductPrice';
 import { CutoffClock } from '../DeliveryPromise';
 import { PRODUCTS, PAINS, USES, bySlug } from '@/lib/catalog';
-import { HeroProducts } from './HeroProducts';
-import { HeroSearchPrompt } from './HeroSearchPrompt';
+import { EditorialHero } from './EditorialHero';
 import { CatalogVideo } from './CatalogVideo';
 
 export function Hero() {
-  const featured = ['lenovo-xt80', 'zeblaze-stratos-2-ultra', 'blackview-bv200'].map(id => bySlug(id)!);
-  return (
-    <div className="hero hero-products hero-model">
-      <div className="wrap">
-        <div className="hero-copy">
-          <div className="hero-banner">
-          <div className="hero-mobile-photo"><Image src="/hero/luchito-mobile-v5.png" alt="Luchito sosteniendo un paquete Kallpa, con polo blanco de la marca y ropa deportiva" fill loading="lazy" fetchPriority="high" quality={90} sizes="(max-width: 760px) 290px, 1px" /></div>
-          <span className="eb">Delivery gratis el mismo día</span>
-          <h1>Hoy lo pides.<br />Hoy lo tienes.</h1>
-          <p className="hsub">
-            <span className="hero-summary-full">Pide antes de las <b>9 a.m.</b> Recibe de 12 a 7 p.m. y paga al recibir.</span>
-            <span className="hero-summary-mobile"><HeroSearchPrompt /><br />Pagas al recibir.</span>
-          </p>
-          <div className="speed" style={{ marginBottom: 26 }}>
-            <div className="s">
-              <span className="tagp free">Gratis</span>
-              <span className="tx"><b>Si esperas la ventana</b><span>Hoy, entre 12 y 7 p.m.</span></span>
-            </div>
-            <div className="div" />
-            <div className="s">
-              <span className="tagp pay">S/ 10+</span>
-              <span className="tx"><b>Si lo quieres ya</b><span>Express, en cuestión de horas</span></span>
-            </div>
-          </div>
-          <div className="ctas">
-            <Link className="btn invite" href="/catalogo">Ver catálogo</Link>
-            <Link className="tl" href="/envios">Cómo llega</Link>
-          </div>
-          </div>
-          <p className="hero-mobile-delivery">En Lima: pide antes de las <b>9 a.m.</b> y recibe de <b>12 a 7 p.m.</b> <Link href="/envios">Ver envíos →</Link></p>
-          <div className="pills">
-            <span className="pl"><i />Pagas al recibir</span>
-            <span className="pl"><i />Envío Gratis o Express</span>
-            <span className="pl"><i />Garantía 3 meses</span>
-          </div>
-        </div>
-        <HeroProducts products={featured} />
-      </div>
-    </div>
-  );
+  return <EditorialHero />;
 }
 
 export function Usos() {
@@ -73,6 +33,28 @@ export function Usos() {
               </Link>
             ))}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Destacados() {
+  const featured = ['lenovo-xt80', 'zeblaze-stratos-2-ultra', 'blackview-bv200'].map(id => bySlug(id)!);
+  return (
+    <section className="nike-featured" aria-labelledby="nike-featured-title">
+      <div className="wrap">
+        <div className="shead">
+          <div><span className="eb">Elegidos para ti</span><h2 id="nike-featured-title">Lo que acompaña tu día.</h2></div>
+          <Link className="vall" href="/catalogo">Ver catálogo completo</Link>
+        </div>
+        <div className="nike-product-grid">
+          {featured.map(p => (
+            <Link className="nike-product-tile" href={`/p/${p.id}`} key={p.id}>
+              <div className="nike-product-photo"><ProductImage p={p} /></div>
+              <div className="nike-product-meta"><b>{p.short}</b><span>{p.cat}</span></div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
