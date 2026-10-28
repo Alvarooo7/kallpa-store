@@ -55,6 +55,11 @@ export function EditorialHero() {
   const product = slide.product ? bySlug(slide.product) : null;
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setActive((active + 1) % slides.length), 10_000);
+    return () => window.clearTimeout(timer);
+  }, [active]);
+
+  useEffect(() => {
     if (previousActive.current === active) return;
     previousActive.current = active;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !stageRef.current) return;

@@ -351,6 +351,8 @@ body:has(.nike-home) .wa .tip { display: none; }
   .nike-home .editorial-hero-image { object-position: center top; }
   .nike-home .editorial-hero-stage--audio .editorial-hero-picture { right: -20%; }
   .nike-home .editorial-hero-stage--audio .editorial-hero-image { object-position: center 76%; }
+  .nike-home .editorial-hero-stage--glasses .editorial-hero-picture { right: -20%; }
+  .nike-home .editorial-hero-stage--glasses .editorial-hero-image { object-position: center 25%; }
   .nike-home .editorial-hero-shade { background: linear-gradient(180deg, #10130f9e 0%, #10130f42 46%, #10130fb8 100%); }
   .nike-home .editorial-hero-copy { top: 28px; left: 24px; width: min(78%, 350px); transform: none; }
   .nike-home .editorial-hero-eyebrow { margin-bottom: 12px; font-size: .66rem; }
@@ -375,6 +377,7 @@ body:has(.nike-home) .wa .tip { display: none; }
 }
 @media (min-width: 600px) and (max-width: 760px) {
   .nike-home .editorial-hero-stage--audio .editorial-hero-image { object-position: center 66%; }
+  .nike-home .editorial-hero-stage--glasses .editorial-hero-image { object-position: center 35%; }
 }
 @media (max-width: 360px) {
   .nike-home .editorial-hero-copy { top: 18px; }
