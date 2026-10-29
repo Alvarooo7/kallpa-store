@@ -71,8 +71,7 @@ export function PageMotion() {
       }, root);
     };
 
-    const introDisabled = new URLSearchParams(window.location.search).get('intro') === '0';
-    if (pathname === '/' && !introDisabled && document.querySelector('.brand-intro')) {
+    if (pathname === '/' && document.documentElement.dataset.intro === 'run' && document.querySelector('.brand-intro')) {
       window.addEventListener('kallpa:intro-complete', start, { once: true });
     } else {
       start();

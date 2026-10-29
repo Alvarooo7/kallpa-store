@@ -20,6 +20,7 @@ export function BrandIntro() {
   const athleteRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLSpanElement>(null);
   const flightRef = useRef<Animation | null>(null);
+  const runOnMountRef = useRef<boolean | null>(null);
 
   const finish = useCallback(() => {
     flightRef.current?.cancel();
@@ -29,6 +30,13 @@ export function BrandIntro() {
   }, []);
 
   useEffect(() => {
+    // Conservar la decisión de esta carga durante la doble ejecución de efectos en desarrollo.
+    runOnMountRef.current ??= document.documentElement.dataset.intro === 'run';
+    if (!runOnMountRef.current) {
+      setFinished(true);
+      return;
+    }
+
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const disabled = new URLSearchParams(window.location.search).get('intro') === '0';
     if (reducedMotion || disabled) {
@@ -37,7 +45,6 @@ export function BrandIntro() {
       return;
     }
 
-    // También se ejecuta al volver a la home mediante navegación interna.
     document.documentElement.dataset.intro = 'run';
     const placeAthlete = () => {
       const mobile = window.innerWidth <= 760;
